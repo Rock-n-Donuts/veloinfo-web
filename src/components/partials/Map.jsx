@@ -5,7 +5,7 @@ import Cookie from 'js-cookie';
 
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { Tile, Vector as LayerVector } from 'ol/layer';
+import { Tile, Vector as LayerVector, VectorImage } from 'ol/layer';
 import { OSM, Vector } from 'ol/source';
 import { Style, Fill, Stroke, Icon } from 'ol/style';
 import View from 'ol/View';
@@ -73,18 +73,18 @@ function Map({ className, defaultCenter, defaultZoom }) {
         [initialCenter, initialZoom],
     );
 
-    const drawLine = useCallback((coords) => {
-        const points = coords.map((coord) => transform(coord, 'EPSG:4326', 'EPSG:3857'));
-
-        const featureLine = new Feature({
-            geometry: new LineString(points),
-        });
-
+    const drawLines = useCallback((lines) => {
         const vectorLine = new Vector({});
-        vectorLine.addFeature(featureLine);
 
-        const vectorLineLayer = new LayerVector({
+        lines.forEach(({ coords }) => {
+            const points = coords.map((coord) => transform(coord, 'EPSG:4326', 'EPSG:3857'));
+            const featureLine = new Feature({
+                geometry: new LineString(points),
+            });
             
+            vectorLine.addFeature(featureLine);
+        });
+        const vectorLineLayer = new LayerVector({
             source: vectorLine,
             style: new Style({
                 fill: new Fill({ color: '#0000FF', weight: 6 }),
@@ -93,8 +93,8 @@ function Map({ className, defaultCenter, defaultZoom }) {
         });
 
         mapRef.current.addLayer(vectorLineLayer);
-
         return vectorLineLayer;
+
     }, []);
 
     // eslint-disable-next-line no-unused-vars
@@ -139,7 +139,7 @@ function Map({ className, defaultCenter, defaultZoom }) {
     useEffect(() => {
         let lines = [];
         if (troncons !== null) {
-            lines = troncons.filter((_, i) => i < 100).map(({ coords }) => drawLine(coords));
+            lines = drawLines(troncons);
         }
 
         return () => {
@@ -147,7 +147,7 @@ function Map({ className, defaultCenter, defaultZoom }) {
                 lines.forEach((line) => mapRef.current.removeLayer(line));
             }
         };
-    }, [troncons, drawLine]);
+    }, [troncons, drawLines]);
 
     return (
         <div

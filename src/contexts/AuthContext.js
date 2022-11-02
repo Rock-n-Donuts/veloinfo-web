@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
             .then((res) => {
                 const { data = null } = res || {};
                 const { token = null } = data || {};
-                axios.defaults.headers.common = { Authorization: `bearer ${token}` };
+                axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
                 console.log('Got user.', data);
                 setUser(data);
             })
