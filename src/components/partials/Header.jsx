@@ -13,9 +13,7 @@ const defaultProps = {
 
 function Header({ className }) {
     return (
-        <div className={classNames([styles.container, { [className]: className !== null }])}>
-            <button type="button" className={styles.toggler}>Menu</button>
-        </div>
+        <div className={classNames([styles.container, { [className]: className !== null }])}></div>
     );
 }
 

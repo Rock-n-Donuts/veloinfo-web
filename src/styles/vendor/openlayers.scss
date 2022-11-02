@@ -224,12 +224,12 @@
 }
 
 .ol-attribution {
-    text-align: right;
+    text-align: left;
+    left: 0.5em;
     bottom: 0.5em;
-    right: 0.5em;
     max-width: calc(100% - 1.3em);
     display: flex;
-    flex-flow: row-reverse;
+    // flex-flow: row-reverse;
     align-items: center;
 }
 
@@ -275,7 +275,7 @@
 
 .ol-attribution.ol-uncollapsible {
     bottom: 0;
-    right: 0;
+    left: 0;
     border-radius: 4px 0 0;
 }
 

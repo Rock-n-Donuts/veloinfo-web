@@ -3,6 +3,10 @@
 @import './variables';
 @import './placeholders';
 
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
@@ -17,6 +21,7 @@ button {
     padding: 0;
     margin: 0;
     background: transparent;
+    color: inherit;
     font: inherit;
     cursor: pointer;
 }

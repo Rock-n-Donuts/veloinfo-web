@@ -49,7 +49,7 @@ export const DataProvider = ({ children }) => {
         }        
     }, [getData, date, user])
 
-    useInterval(pollData, pollingDelay * 1000);
+    // useInterval(pollData, pollingDelay * 1000);
 
     return (
         <DataContext.Provider value={{ data, loading, error }}>

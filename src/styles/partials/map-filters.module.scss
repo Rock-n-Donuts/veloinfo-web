@@ -7,4 +7,23 @@
     justify-content: flex-end;
     height: 50px;
     padding: 10px;
+    color: $color-white;
+
+    .left,
+    .dateRange,
+    .filters {
+        flex: 1 1 0;
+    }
+
+    .left {
+        
+    }
+
+    .dateRange {
+        text-align: center;
+    }
+
+    .filters {
+        text-align: right;
+    }
 }

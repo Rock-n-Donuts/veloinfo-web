@@ -15,4 +15,11 @@
     .map {
         flex-grow: 1;
     }
+
+    .addContributionButton {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 10px;
+    }
 }

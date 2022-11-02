@@ -5,9 +5,9 @@ import Cookie from 'js-cookie';
 
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { Tile, Vector as LayerVector, VectorImage } from 'ol/layer';
+import { Tile, Vector as LayerVector } from 'ol/layer';
 import { OSM, Vector } from 'ol/source';
-import { Style, Fill, Stroke, Icon } from 'ol/style';
+import { Style, Stroke, Icon } from 'ol/style';
 import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
@@ -23,7 +23,7 @@ const propTypes = {
 const defaultProps = {
     className: null,
     defaultCenter: [-73.561668, 45.508888],
-    defaultZoom: 14,
+    defaultZoom: 15,
 };
 
 function Map({ className, defaultCenter, defaultZoom }) {
@@ -87,14 +87,12 @@ function Map({ className, defaultCenter, defaultZoom }) {
         const vectorLineLayer = new LayerVector({
             source: vectorLine,
             style: new Style({
-                fill: new Fill({ color: '#0000FF', weight: 6 }),
                 stroke: new Stroke({ color: '#0000FF', width: 4 }),
             }),
         });
 
         mapRef.current.addLayer(vectorLineLayer);
         return vectorLineLayer;
-
     }, []);
 
     // eslint-disable-next-line no-unused-vars
@@ -137,14 +135,14 @@ function Map({ className, defaultCenter, defaultZoom }) {
     }, [initMap]);
 
     useEffect(() => {
-        let lines = [];
+        let lines = null;
         if (troncons !== null) {
             lines = drawLines(troncons);
         }
 
         return () => {
             if (mapRef.current !== null && lines !== null) {
-                lines.forEach((line) => mapRef.current.removeLayer(line));
+                mapRef.current.removeLayer(lines);
             }
         };
     }, [troncons, drawLines]);

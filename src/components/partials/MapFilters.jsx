@@ -14,7 +14,13 @@ const defaultProps = {
 function MapFilters({ className }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
-            Filters
+            <div className={styles.left}>
+                <button type="button" className={styles.menuToggler}>
+                    Menu
+                </button>
+            </div>
+            <div className={styles.dateRange}>DateRange</div>
+            <div className={styles.filters}>Filters</div>
         </div>
     );
 }
