@@ -61,13 +61,13 @@ function Map({ className, defaultCenter, defaultZoom }) {
                 Cookie.set('mapZoom', mapRef.current.getView().getZoom(), { expires: 3650 });
             });
             mapRef.current.getView().on('change:center', () => {
-                Cookie.set(
-                    'mapCenter',
-                    JSON.stringify(
-                        transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-                    ),
-                    { expires: 3650 },
-                );
+                // Cookie.set(
+                //     'mapCenter',
+                //     JSON.stringify(
+                //         transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
+                //     ),
+                //     { expires: 3650 },
+                // );
             });
         },
         [initialCenter, initialZoom],
@@ -84,6 +84,7 @@ function Map({ className, defaultCenter, defaultZoom }) {
         vectorLine.addFeature(featureLine);
 
         const vectorLineLayer = new LayerVector({
+            
             source: vectorLine,
             style: new Style({
                 fill: new Fill({ color: '#0000FF', weight: 6 }),
@@ -138,7 +139,7 @@ function Map({ className, defaultCenter, defaultZoom }) {
     useEffect(() => {
         let lines = [];
         if (troncons !== null) {
-            lines = troncons.map(({ coords }) => drawLine(coords));
+            // lines = troncons.map(({ coords }) => drawLine(coords));
         }
 
         return () => {
