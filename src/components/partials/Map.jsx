@@ -61,13 +61,13 @@ function Map({ className, defaultCenter, defaultZoom }) {
                 Cookie.set('mapZoom', mapRef.current.getView().getZoom(), { expires: 3650 });
             });
             mapRef.current.getView().on('change:center', () => {
-                // Cookie.set(
-                //     'mapCenter',
-                //     JSON.stringify(
-                //         transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-                //     ),
-                //     { expires: 3650 },
-                // );
+                Cookie.set(
+                    'mapCenter',
+                    JSON.stringify(
+                        transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
+                    ),
+                    { expires: 3650 },
+                );
             });
         },
         [initialCenter, initialZoom],
@@ -139,7 +139,7 @@ function Map({ className, defaultCenter, defaultZoom }) {
     useEffect(() => {
         let lines = [];
         if (troncons !== null) {
-            // lines = troncons.map(({ coords }) => drawLine(coords));
+            lines = troncons.filter((_, i) => i < 1000).map(({ coords }) => drawLine(coords));
         }
 
         return () => {
