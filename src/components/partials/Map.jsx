@@ -139,7 +139,7 @@ function Map({ className, defaultCenter, defaultZoom }) {
     useEffect(() => {
         let lines = [];
         if (troncons !== null) {
-            lines = troncons.filter((_, i) => i < 1000).map(({ coords }) => drawLine(coords));
+            lines = troncons.filter((_, i) => i < 100).map(({ coords }) => drawLine(coords));
         }
 
         return () => {
