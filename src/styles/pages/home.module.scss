@@ -1,0 +1,18 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    @extend %fullscreen;
+
+    display: flex;
+    flex-direction: column;
+
+    .mapFilters {
+        color: $color-white;
+        background-color: $color-blue-background;
+    }
+
+    .map {
+        flex-grow: 1;
+    }
+}

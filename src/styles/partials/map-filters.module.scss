@@ -1,0 +1,10 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 50px;
+    padding: 10px;
+}

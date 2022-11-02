@@ -1,5 +1,7 @@
 @import './vendor/openlayers';
+@import './reset';
 @import './variables';
+@import './placeholders';
 
 body {
     margin: 0;
@@ -7,4 +9,14 @@ body {
         'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+    appearance: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
 }

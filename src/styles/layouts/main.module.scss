@@ -1,0 +1,18 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    @extend %fullscreen;
+
+    z-index: 0;
+
+    .header {
+        position: absolute;
+        z-index: 1;
+    }
+
+    .main {
+        @extend %fullscreen;
+        z-index: 0;
+    }
+}
