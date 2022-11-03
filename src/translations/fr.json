@@ -7,5 +7,7 @@
     "next": "Suivant",
     "back": "Retour",
     "continue": "Continuer",
-    "publish": "Publier"
+    "publish": "Publier",
+    "position-info": "Positionner l'information",
+    "loading": "Chargement"
 }

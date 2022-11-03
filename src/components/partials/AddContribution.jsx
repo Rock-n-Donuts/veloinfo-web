@@ -22,12 +22,14 @@ const defaultProps = {
 function AddContribution({ className, opened, onClose }) {
     const [contributionTypeSelected, setContributionTypeSelected] = useState(null);
     const [formActive, setFormActive] = useState(false);
+
+    // i know
     const [transitioningToBack, setTransitioningToBack] = useState(false);
     const [transitioningToNext, setTransitioningToNext] = useState(false);
 
-    const selectContribution = useCallback(
-        (id) => {
-            setContributionTypeSelected(id);
+    const selectContributionType = useCallback(
+        (contributionType) => {
+            setContributionTypeSelected(contributionType);
         },
         [setContributionTypeSelected],
     );
@@ -52,7 +54,13 @@ function AddContribution({ className, opened, onClose }) {
         <div
             className={classNames([
                 styles.container,
-                { [className]: className !== null, [styles.opened]: opened, [styles.formActive]: formActive, [styles.transitioningToBack]: transitioningToBack, [styles.transitioningToNext]: transitioningToNext },
+                {
+                    [className]: className !== null,
+                    [styles.opened]: opened,
+                    [styles.formActive]: formActive,
+                    [styles.transitioningToBack]: transitioningToBack,
+                    [styles.transitioningToNext]: transitioningToNext,
+                },
             ])}
         >
             <div className={styles.content}>
@@ -62,13 +70,14 @@ function AddContribution({ className, opened, onClose }) {
                 <div className={styles.inner}>
                     <ContributionSelector
                         className={styles.contributionSelector}
-                        selectedId={contributionTypeSelected}
-                        onSelectId={selectContribution}
+                        selected={contributionTypeSelected}
+                        onSelect={selectContributionType}
                         onNext={showForm}
                     />
                     <ContributionForm
+                        active={formActive}
                         className={styles.contributionForm}
-                        selectedId={contributionTypeSelected}
+                        contributionType={contributionTypeSelected}
                         onBack={hideForm}
                     />
                 </div>

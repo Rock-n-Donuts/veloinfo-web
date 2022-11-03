@@ -8,27 +8,26 @@ import styles from '../../styles/partials/contribution-selector.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    selectedId: PropTypes.string,
-    onSelectId: PropTypes.func,
+    selected: PropTypes.shape({}),
+    onSelect: PropTypes.func,
     onNext: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
-    selectedId: null,
+    selected: null,
     onSelect: null,
     onNext: null,
 };
 
-function ContributionSelector({ className, selectedId, onSelectId, onNext }) {
+function ContributionSelector({ className, selected, onSelect, onNext }) {
     const [categoryIndexSelected, setCategoryIndexSelected] = useState(null);
     const selectedCategory =
         categoryIndexSelected !== null ? categories[categoryIndexSelected] : null;
 
     const { hidden: categoryHidden, contributions } = selectedCategory || {};
 
-    const selected =
-    selectedId !== null && selectedCategory !== null ? contributions.find(({ id }) => id === selectedId): null;
+    const { id: selectedId = null } = selected || {};
     const { hidden: finalHidden = categoryHidden } = selected || {};
 
     const intl = useIntl();
@@ -38,9 +37,9 @@ function ContributionSelector({ className, selectedId, onSelectId, onNext }) {
     const selectCategory = useCallback(
         (categoryIndex) => {
             setCategoryIndexSelected(categoryIndex);
-            onSelectId(null);
+            onSelect(null);
         },
-        [setCategoryIndexSelected, onSelectId],
+        [setCategoryIndexSelected, onSelect],
     );
 
     return (
@@ -101,7 +100,12 @@ function ContributionSelector({ className, selectedId, onSelectId, onNext }) {
                                     },
                                 ])}
                                 onClick={() => {
-                                    onSelectId(id);
+                                    onSelect({
+                                        ...contribution,
+                                        label: finalLabel,
+                                        icon: finalIcon,
+                                        color: finalColor,
+                                    });
                                 }}
                             >
                                 <span
@@ -126,7 +130,14 @@ function ContributionSelector({ className, selectedId, onSelectId, onNext }) {
                 <FormattedMessage id="contribution-hidden-warning" />
             </div>
             <div className={styles.actions}>
-                <button className={styles.nextButton} type="button" onClick={() => {onNext()}}>
+                <button
+                    className={styles.nextButton}
+                    disabled={selectedId === null}
+                    type="button"
+                    onClick={() => {
+                        onNext();
+                    }}
+                >
                     <FormattedMessage id="next" />
                 </button>
             </div>

@@ -7,5 +7,7 @@
     "next": "Next",
     "back": "Back",
     "continue": "Continue",
-    "publish": "Publish"
+    "publish": "Publish",
+    "position-info": "Position info",
+    "loading": "Loading"
 }

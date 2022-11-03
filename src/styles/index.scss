@@ -24,4 +24,9 @@ button {
     color: inherit;
     font: inherit;
     cursor: pointer;
+
+    &:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
 }

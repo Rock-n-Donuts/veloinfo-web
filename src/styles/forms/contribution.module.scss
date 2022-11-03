@@ -5,8 +5,24 @@
     display: flex;
     flex-direction: column;
     
-    .content {
-        font-size: 80px;
+    // .content {
+        
+    // }
+
+    .mapContainer {
+        position: relative;
+    }
+
+    .map {
+        height: 400px;
+    }
+
+    .mapMarker {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        width: 100px;
+        transform: translateX(-50%);
     }
 
     .actions {
