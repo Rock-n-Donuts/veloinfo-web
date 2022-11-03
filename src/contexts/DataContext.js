@@ -18,8 +18,7 @@ export const DataProvider = ({ children }) => {
     const getData = useCallback( (date = null) => {
         axios
             .request({
-                url: 'https://jcarignan.com/velo/',// /update
-                headers: null,// tmp
+                url: '/update',// /update
                 method: 'get',
                 params: {
                     date,
