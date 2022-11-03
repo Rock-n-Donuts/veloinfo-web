@@ -24,7 +24,7 @@ function ContributionForm({ className, onBack }) {
     return (
         <form className={classNames([styles.container, { [className]: className !== null }])} onSubmit={submit}>
             <div className={styles.content}>
-                Form
+                
             </div>
             <div className={styles.actions}>
                 <button className={styles.backButton} type="button" onClick={() => {onBack()}}>
