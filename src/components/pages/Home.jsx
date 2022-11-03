@@ -20,12 +20,72 @@ function HomePage() {
     const [addContributionOpened, setAddContributionOpened] = useState(false);
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
-    const { troncons = null, contributions = null } = useData() || {};
+    const data = useData();
+    const { troncons = null, contributions = null } = data || {};
+
     const addContribution = useAddContribution();
 
     const lines = useMemo(() => {
         if (troncons !== null) {
-            return [{ coords: troncons.map(({ coords }) => coords) }];
+
+            const unknownPaths = troncons.filter(
+                ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
+            );
+
+            const clearedPaths = troncons.filter(
+                ({ side_one_state: s1, side_two_state: s2 }) => s1 === 1 && s2 === 1,
+            );
+            const snowyPaths = troncons.filter(
+                ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
+            );
+            const panifiedPaths = troncons.filter(
+                ({ side_one_state: s1, side_two_state: s2 }) =>
+                    s1 === 2 ||
+                    s1 === 3 ||
+                    s1 === 4 ||
+                    s1 === 10 ||
+                    s2 === 2 ||
+                    s2 === 3 ||
+                    s2 === 4 ||
+                    s2 === 10,
+            );
+
+            const inProgressPaths = troncons.filter(
+                ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
+            );
+
+            console.log(
+                troncons.length,
+                unknownPaths.length +
+                clearedPaths.length +
+                snowyPaths.length + 
+                panifiedPaths.length +
+                inProgressPaths.length
+            );
+            
+            return [
+                {
+                    coords: unknownPaths.map(({ coords }) => coords),
+                    color: 'gray'
+                },
+                {
+                    coords: clearedPaths.map(({ coords }) => coords),
+                    color: '#4fae77'
+                },
+                {
+                    coords: snowyPaths.map(({ coords }) => coords),
+                    color: '#367c98'
+                },
+                {
+                    coords: panifiedPaths.map(({ coords }) => coords),
+                    color: '#f09035'
+                },
+                {
+                    coords: inProgressPaths.map(({ coords }) => coords),
+                    color: '#8962c7'
+                },
+
+            ];
         } else {
             return null;
         }
@@ -122,7 +182,7 @@ function HomePage() {
                 onClose={closeAddContribution}
                 onContributionAdded={onContributionAdded}
             />
-            <Loading loading={lines === null} />
+            <Loading loading={data === null} />
         </div>
     );
 }

@@ -18,7 +18,7 @@ export const DataProvider = ({ children }) => {
         (date = null) => {
             axios
                 .request({
-                    url: '/update', // /update
+                    url: '/update',
                     method: 'get',
                     params: {
                         date,

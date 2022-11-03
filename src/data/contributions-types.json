@@ -2,7 +2,7 @@
     {
         "label": {
             "fr": "Passibilité de la piste",
-            "en": "Passibilité de la piste"
+            "en": "Cycle path passability"
         },
         "icon": "snow",
         "color": "#367c99",
@@ -40,7 +40,7 @@
     {
         "label": {
             "fr": "Information pour la ville",
-            "en": "Information pour la ville"
+            "en": "City request"
         },
         "icon": "warning",
         "color": "#f8d849",       
