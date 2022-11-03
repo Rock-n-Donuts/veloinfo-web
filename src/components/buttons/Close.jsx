@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIntl } from 'react-intl';
 
-import addContributionImage from '../../assets/images/add-contribution.svg';
+import closeIcon from '../../assets/images/close-icon.svg';
 
-import styles from '../../styles/buttons/add-contribution.module.scss';
+import styles from '../../styles/buttons/close.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -16,7 +16,7 @@ const defaultProps = {
     onClick: null,
 };
 
-function AddContributionButton({ className, onClick }) {
+function CloseButton({ className, onClick }) {
     const intl = useIntl();
     return (
         <button
@@ -25,16 +25,16 @@ function AddContributionButton({ className, onClick }) {
             onClick={onClick}
         >
             <img
-                src={addContributionImage}
+                src={closeIcon}
                 alt={intl.formatMessage({
-                    id: 'add-contribution',
+                    id: 'close'
                 })}
             />
         </button>
     );
 }
 
-AddContributionButton.propTypes = propTypes;
-AddContributionButton.defaultProps = defaultProps;
+CloseButton.propTypes = propTypes;
+CloseButton.defaultProps = defaultProps;
 
-export default AddContributionButton;
+export default CloseButton;

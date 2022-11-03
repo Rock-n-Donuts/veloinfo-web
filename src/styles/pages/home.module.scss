@@ -7,7 +7,7 @@
     display: flex;
     flex-direction: column;
 
-    .mapFilters {
+    .mapHeader {
         color: $color-white;
         background-color: $color-blue-background;
     }
@@ -21,5 +21,15 @@
         bottom: 0;
         right: 0;
         padding: 10px;
+    }
+
+    .addContribution {
+        @extend %fullscreen;
+    }
+
+    .homeMenu {
+        @extend %fullscreen;
+
+        max-width: 480px;
     }
 }

@@ -4,19 +4,17 @@
 .container {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     height: 50px;
     padding: 10px;
-    color: $color-white;
 
-    .left,
+    .menuToggler,
     .dateRange,
     .filters {
         flex: 1 1 0;
     }
 
-    .left {
-        
+    .menuToggler {
+        text-align: left;
     }
 
     .dateRange {

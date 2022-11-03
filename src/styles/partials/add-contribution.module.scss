@@ -1,0 +1,85 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    background-color: white;
+    transform: translateY(100%);
+    transition: transform 0.25s ease;
+
+    .closeButton {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 20px;
+    }
+
+    .content {
+        min-height: 100vh;
+        overflow: auto;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .inner {
+        position: relative;
+        overflow: hidden;
+        padding: 0 10px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .title {
+        padding: 0 10px;
+        font-weight: bold;
+        font-size: 26px;
+    }
+
+    .contributionSelector {
+        opacity: 1;
+        transition: opacity .2s ease;
+    }
+
+    .contributionForm {
+        
+        flex-grow: 0;
+        height: 0;
+        opacity: 0;
+        transition: opacity .2s ease;
+        pointer-events: none;
+    }
+
+    &.opened {
+        transform: translateY(0);
+    }
+
+    &.formActive {
+        .contributionSelector {
+            pointer-events: none;
+            opacity: 0;
+            height: 0;
+            flex-grow: 0;
+        }
+
+        .contributionForm {
+            flex-grow: 1;
+            opacity: 1;
+            pointer-events: auto;
+        }        
+    }
+
+    &.transitioningToNext {
+        .contributionSelector {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    &.transitioningToBack {
+        .contributionForm {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}

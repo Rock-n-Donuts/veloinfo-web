@@ -1,0 +1,31 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {    
+    display: flex;
+    flex-direction: column;
+    
+    .content {
+        font-size: 80px;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        margin-top: auto;
+
+        button {
+            color: $color-white;
+            background-color: $color-blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .backButton {
+            margin-right: auto;
+        }
+        .submitButton {
+            margin-left: auto;
+        }
+    }
+}

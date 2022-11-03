@@ -2,6 +2,7 @@
 import { IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
 import messagesFr from '../translations/fr.json';
+import messagesEn from '../translations/en.json';
 
 import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataContext';
@@ -14,6 +15,7 @@ axios.defaults.baseURL = `${api.proxy}${api.baseUrl}`;
 
 const messages = {
     fr: messagesFr,
+    en: messagesEn,
 };
 
 const propTypes = {};

@@ -1,0 +1,71 @@
+[
+    {
+        "label": {
+            "fr": "Passibilité de la piste",
+            "en": "Passibilité de la piste"
+        },
+        "icon": "snow",
+        "color": "#367c99",
+        "contributions": [
+            {
+                "id": "1",
+                "label" : {
+                    "fr": "Neige",
+                    "en": "Snow"
+                },
+                "icon": "snow",
+                "color": "#367c99"
+            },
+            {
+                "id": "2",
+                "label" : {
+                    "fr": "Glace",
+                    "en": "Ice"
+                },
+                "icon": "snow",
+                "color": "#367c99"
+            },
+            {
+                "id": "3",
+                "label" : {
+                    "fr": "Autre",
+                    "en": "Other"
+                },
+                "icon": "snow",
+                "color": "#367c99"
+            }
+        ]
+    },
+    {
+        "label": {
+            "fr": "Information pour la ville",
+            "en": "Information pour la ville"
+        },
+        "icon": "warning",
+        "color": "#f8d849",
+        "hidden": true,
+        "contributions": [
+            {
+                "id": "4",
+                "label" : {
+                    "fr": "Rack à vélo",
+                    "en": "Bike rack"
+                }
+            },
+            {
+                "id": "5",
+                "label" : {
+                    "fr": "Nid de poule",
+                    "en": "Pothole"
+                }
+            },
+            {
+                "id": "6",
+                "label" : {
+                    "fr": "Déneigement manquant",
+                    "en": "Snow missclear"
+                }
+            }
+        ]
+    }
+]

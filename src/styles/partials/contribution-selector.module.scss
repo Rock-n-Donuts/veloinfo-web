@@ -1,0 +1,108 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;    
+
+    .categories {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px 0;
+        margin: 0 -5px;
+    }
+
+    .button {
+        .buttonContent {            
+            position: relative;
+            background-color: #eeeeee;
+            border-radius: 20px;
+            border: 2px solid #cdcdcd;
+            transition: background-color .1s ease;
+        }
+
+        &.selected {
+            pointer-events: none;
+
+            .buttonContent {
+                box-shadow: 0 0 2px #000;
+                background-color: #f8f8f8;
+            }
+        }
+    }
+
+    .category {
+        display: block;
+        width: 50%;
+        padding: 5px;
+
+        .categoryContent {
+            display: block;
+            padding: 20px;
+        }
+
+        .icon {
+            display: block;
+            text-align: center;
+            margin: 0 auto;
+            max-width: 300px;
+        }
+
+        .label {
+            display: block;
+            font-weight: bold;
+        }
+    }
+
+    .contributions {
+        display: flex;
+        flex-direction: column;
+        padding: 20px 0;
+        margin: 0 -5px;
+    }
+
+    .contribution {        
+        padding: 5px 0;        
+    }
+
+    .contributionContent {
+        display: flex;
+        align-items: center;
+        padding: 5px 10px;
+
+        .label {
+            margin-left: auto;
+            font-weight: bold;
+        }
+
+        .icon {
+            width: 35px;
+            margin-left: auto;
+        }
+    }
+
+    .hiddenWarning {
+        font-size: 24px;
+        text-align: center;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+
+        &.active {
+            opacity: 1;
+        }
+    }
+
+    .actions {
+        margin-top: auto;
+        text-align: right;
+    }
+
+    .nextButton {
+        color: $color-white;
+        background-color: $color-blue;
+        padding: 10px 15px;
+        border-radius: 5px;
+    }
+}

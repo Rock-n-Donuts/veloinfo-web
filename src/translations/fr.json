@@ -1,3 +1,11 @@
 {
-    "add-contribution": "Ajouter une contribution"
+    "add-contribution": "Ajouter une contribution",
+    "add-contribution-title": "Ajouter une contribution à la carte",
+    "contribution-hidden-warning": "Cette contribution ne sera pas affiché sur la carte, mais la ville en sera informé.",
+    "close": "Fermer",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "back": "Retour",
+    "continue": "Continuer",
+    "publish": "Publier"
 }

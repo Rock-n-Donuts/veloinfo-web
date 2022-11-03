@@ -1,0 +1,27 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    display: inline-block;
+    position: relative;
+    
+
+    .background {
+        width: 100%;
+        height: 100%;
+    }
+
+    .content {
+        @extend %fullscreen;
+    }
+
+    .center {
+        position: relative;
+        padding: 15%;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }    
+}
