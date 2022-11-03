@@ -3,14 +3,15 @@ import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 
+import { useTroncons } from '../../contexts/DataContext';
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContributionButton from '../buttons/AddContribution';
 import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
+import Loading from '../partials/Loading';
 
 import styles from '../../styles/pages/home.module.scss';
-import { useTroncons } from '../../contexts/DataContext';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -103,6 +104,7 @@ function HomePage() {
                 onClose={closeAddContribution}
                 onContributionAdded={onContributionAdded}
             />
+            <Loading loading={lines === null} />
         </div>
     );
 }

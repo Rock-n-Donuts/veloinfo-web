@@ -1,0 +1,23 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    @extend %fullscreen;
+
+    display: flex;
+    padding: 10px;
+    background-color: rgba($color-white, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+
+    .icon {
+        margin: auto;
+        width: 40%;
+    }
+
+    &.loading {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}

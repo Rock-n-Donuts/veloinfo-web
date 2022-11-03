@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -11,10 +12,9 @@ import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 
-import loadingImage from '../../assets/images/loading.svg';
+import Loading from './Loading';
 
 import styles from '../../styles/partials/map.module.scss';
-import { useIntl } from 'react-intl';
 
 const propTypes = {
     className: PropTypes.string,
@@ -212,7 +212,7 @@ function Map({
 
         const error = () => {
             setLoadingUserPosition(false);
-            onPositionRefused();
+            onNoPosition();
         };
 
         if (askForPosition && ready) {
@@ -220,7 +220,7 @@ function Map({
                 setLoadingUserPosition(true);
                 navigator.geolocation.getCurrentPosition(success, error);
             } else {
-                onPositionRefused();
+                onNoPosition();
             }
         }
     }, [askForPosition, ready, onPositionRefused]);
@@ -259,17 +259,11 @@ function Map({
         <div
             className={classNames([
                 styles.container,
-                { [className]: className !== null, [styles.loading]: loadingUserPosition },
+                { [className]: className !== null },
             ])}
         >
             <div ref={mapContainerRef} className={styles.map} />
-            <div className={styles.loading}>
-                <img
-                    className={styles.loadingIcon}
-                    src={loadingImage}
-                    alt={intl.formatMessage({ id: 'loading' })}
-                />
-            </div>
+            <Loading loading={loadingUserPosition} />
         </div>
     );
 }
