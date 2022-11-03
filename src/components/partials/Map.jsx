@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -69,7 +68,6 @@ function Map({
 
     const [ready, setReady] = useState(false);
     const [loadingUserPosition, setLoadingUserPosition] = useState(false);
-    const intl = useIntl();
 
     const onChangeCenter = useCallback(() => {
         if (onCenterChanged !== null) {

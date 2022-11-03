@@ -30,3 +30,11 @@ button {
         pointer-events: none;
     }
 }
+
+input, textarea {
+    appearance: none;
+    font: inherit;
+    background-color: #fff;
+    border: 1px solid #a5a5a5;
+    border-radius: 5px;
+}

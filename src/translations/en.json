@@ -16,7 +16,9 @@
     "negative": "Negative",
     "name": "Name",
     "comment": "Comment",
-    "photo": "Photo",
+    "photo": "Picture",
+    "upload-photo": "Upload a picture",
     "error-server": "Server error :/",
-    "error-coords": "Please specify a point on the map"
+    "error-coords": "Please specify a point on the map",
+    "error-captcha": "Please verify the CAPTCHA"
 }

@@ -23,10 +23,6 @@ function AddContribution({ className, onClose, onContributionAdded }) {
     const [contributionTypeSelected, setContributionTypeSelected] = useState(null);
     const [formActive, setFormActive] = useState(false);
 
-    // i know
-    const [transitioningToBack, setTransitioningToBack] = useState(false);
-    const [transitioningToNext, setTransitioningToNext] = useState(false);
-
     const selectContributionType = useCallback(
         (contributionType) => {
             setContributionTypeSelected(contributionType);
@@ -35,27 +31,22 @@ function AddContribution({ className, onClose, onContributionAdded }) {
     );
 
     const showForm = useCallback(() => {
-        setTransitioningToNext(true);
-        setTimeout(() => {
-            setFormActive(true);
-            setTransitioningToNext(false);
-        }, 300);
-    }, [setFormActive, setTransitioningToNext]);
+        setFormActive(true);
+    }, [setFormActive]);
 
     const hideForm = useCallback(() => {
-        setTransitioningToBack(true);
-        setTimeout(() => {
-            setFormActive(false);
-            setTransitioningToBack(false);
-        }, 300);
-    }, [setFormActive, setTransitioningToBack]);
+        setFormActive(false);
+    }, [setFormActive]);
 
-    const onContributionSubmitted = useCallback( (contribution) => {
-        if (onContributionAdded !== null) {
-            setContributionTypeSelected(null);
-            onContributionAdded(contribution);
-        }        
-    }, [setContributionTypeSelected]);
+    const onContributionSubmitted = useCallback(
+        (contribution) => {
+            if (onContributionAdded !== null) {
+                setContributionTypeSelected(null);
+                onContributionAdded(contribution);
+            }
+        },
+        [setContributionTypeSelected, onContributionAdded],
+    );
 
     return (
         <div
@@ -64,8 +55,6 @@ function AddContribution({ className, onClose, onContributionAdded }) {
                 {
                     [className]: className !== null,
                     [styles.formActive]: formActive,
-                    [styles.transitioningToBack]: transitioningToBack,
-                    [styles.transitioningToNext]: transitioningToNext,
                 },
             ])}
         >
@@ -73,20 +62,24 @@ function AddContribution({ className, onClose, onContributionAdded }) {
                 <div className={styles.title}>
                     <FormattedMessage id="add-contribution-title" />
                 </div>
-                <div className={styles.inner}>
-                    <ContributionSelector
-                        className={styles.contributionSelector}
-                        selected={contributionTypeSelected}
-                        onSelect={selectContributionType}
-                        onNext={showForm}
-                    />
-                    <ContributionForm
-                        active={formActive}
-                        className={styles.contributionForm}
-                        contributionType={contributionTypeSelected}
-                        onBack={hideForm}
-                        onSuccess={onContributionSubmitted}
-                    />
+                <div className={styles.pages}>
+                    <div className={classNames([styles.page, styles.contributionSelector])}>
+                        <ContributionSelector
+                            className={styles.pageContent}
+                            selected={contributionTypeSelected}
+                            onSelect={selectContributionType}
+                            onNext={showForm}
+                        />
+                    </div>
+                    <div className={classNames([styles.page, styles.contributionForm])}>
+                        <ContributionForm
+                            active={formActive}
+                            className={styles.pageContent}
+                            contributionType={contributionTypeSelected}
+                            onBack={hideForm}
+                            onSuccess={onContributionSubmitted}
+                        />
+                    </div>
                 </div>
             </div>
             <CloseButton className={styles.closeButton} onClick={onClose} />

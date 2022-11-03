@@ -17,6 +17,8 @@
     "name": "Nom",
     "comment": "Commentaire",
     "photo": "Photo",
+    "upload-photo": "Télécharger une photo",
     "error-server": "Erreur avec le serveur :/",
-    "error-coords": "Veuillez spécifier un point sur la carte"
+    "error-coords": "Veuillez spécifier un point sur la carte",
+    "error-captcha": "Veuillez vérifier le CAPTCHA"
 }

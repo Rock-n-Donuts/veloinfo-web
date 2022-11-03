@@ -13,19 +13,6 @@
 
     .content {
         min-height: 100vh;
-        overflow: auto;
-        padding: 40px;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .inner {
-        position: relative;
-        overflow: hidden;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 0 10px;
-        flex-grow: 1;
         display: flex;
         flex-direction: column;
     }
@@ -33,20 +20,35 @@
     .title {
         max-width: 800px;
         margin: 0 auto;
-        padding: 0 10px 30px;
+        padding: 40px;
         font-weight: bold;
         font-size: 26px;
     }
 
+    .pages {
+        flex-grow: 1;
+        position: relative;
+    }    
+
+    .page {
+        @extend %fullscreen;
+
+        overflow: auto;
+    }
+
+    .pageContent {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 10px;
+        height: 100%;
+    }
+
     .contributionSelector {
         opacity: 1;
-        transition: opacity .2s ease;
+        transition: opacity .2s .2s ease;
     }
 
     .contributionForm {
-        
-        flex-grow: 0;
-        height: 0;
         opacity: 0;
         transition: opacity .2s ease;
         pointer-events: none;
@@ -56,28 +58,13 @@
         .contributionSelector {
             pointer-events: none;
             opacity: 0;
-            height: 0;
-            flex-grow: 0;
+            transition-delay: 0s;
         }
 
         .contributionForm {
-            flex-grow: 1;
             opacity: 1;
             pointer-events: auto;
+            transition-delay: .2s;
         }        
-    }
-
-    &.transitioningToNext {
-        .contributionSelector {
-            opacity: 0;
-            pointer-events: none;
-        }
-    }
-
-    &.transitioningToBack {
-        .contributionForm {
-            opacity: 0;
-            pointer-events: none;
-        }
     }
 }
