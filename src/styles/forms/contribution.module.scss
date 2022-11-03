@@ -93,7 +93,7 @@
     }
 
     .photo {
-        
+        margin-bottom: 20px;
     }
 
     .captchaContainer {
@@ -114,7 +114,7 @@
         display: flex;
         align-items: center;
         margin-top: auto;
-        padding: 20px 0;
+        padding: 20px 0 40px;
 
         button {
             color: $color-white;
@@ -131,6 +131,26 @@
         }
     }
 
+    .success {
+        @extend %fullscreen;
+
+        position: fixed;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: block;
+            margin: 0 auto;
+            width: 40%;
+            transform: translate(-50%, -50%);
+        }
+
+        pointer-events: none;
+    }
+
     &.loading {
         .form {
             opacity: 0.5;
@@ -141,6 +161,10 @@
     &.success {
         .form {
             opacity: 0;
+        }
+
+        .success {
+            opacity: 0.25;
         }
     }
 

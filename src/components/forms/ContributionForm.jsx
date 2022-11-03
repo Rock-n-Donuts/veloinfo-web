@@ -6,11 +6,13 @@ import axios from 'axios';
 
 import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from '../partials/FormGroup';
+import ImageUpload from '../partials/ImageUpload';
 import Map from '../partials/Map';
 import ContributionIcon from '../../icons/Contribution';
 
+import successImage from '../../assets/images/success.svg';
+
 import styles from '../../styles/forms/contribution.module.scss';
-import ImageUpload from '../partials/ImageUpload';
 
 const propTypes = {
     active: PropTypes.bool,
@@ -259,6 +261,9 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                     </button>
                 </div>
             </form>
+            <div className={styles.success}>
+                <img src={successImage} alt="Success" />
+            </div>
         </div>
     );
 }

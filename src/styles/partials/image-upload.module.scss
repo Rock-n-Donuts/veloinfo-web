@@ -5,12 +5,25 @@
     display: block;
     position: relative;
     height: 200px;
-    background-color: #eee;
+    background-color: #fff;
     border-radius: 5px;
-    border: 2px solid #dedede dashed;
+    border: 2px dashed #a5a5a5;
+    overflow: hidden;
+    cursor: pointer;
+    transition: background-color .2s ease, border .2s ease;
+
+    &:hover {
+        background-color: #eee;
+        border-color: #111;
+    }
 
     .label {
-        
+        @extend %fullscreen;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0.5;
     }
 
     img {
@@ -35,6 +48,10 @@
     &.hasFile {
         img {
             visibility: visible;
+        }
+
+        .label {
+            visibility: hidden;
         }
     }
 }
