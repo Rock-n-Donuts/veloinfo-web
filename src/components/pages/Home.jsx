@@ -3,13 +3,15 @@ import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 
-import { useTroncons } from '../../contexts/DataContext';
+import { useAddContribution, useData } from '../../contexts/DataContext';
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContributionButton from '../buttons/AddContribution';
 import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
+
+import contributionImage from '../../assets/images/add-contribution.svg';
 
 import styles from '../../styles/pages/home.module.scss';
 
@@ -18,7 +20,8 @@ function HomePage() {
     const [addContributionOpened, setAddContributionOpened] = useState(false);
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
-    const troncons = useTroncons();
+    const { troncons = null, contributions = null } = useData() || {};
+    const addContribution = useAddContribution();
 
     const lines = useMemo(() => {
         if (troncons !== null) {
@@ -27,6 +30,19 @@ function HomePage() {
             return null;
         }
     }, [troncons]);
+
+    const markers = useMemo(() => {
+        if (contributions !== null) {
+            return [
+                {
+                    coords: contributions.map(({ coords }) => coords),
+                    src: contributionImage,
+                },
+            ];
+        } else {
+            return null;
+        }
+    }, [contributions]);
 
     const openMenu = useCallback(() => {
         setMenuOpened(true);
@@ -65,12 +81,13 @@ function HomePage() {
         (contribution) => {
             setContributionSubmitted(true);
             closeAddContribution();
+            addContribution(contribution);
             setTimeout(() => {
                 setContributionSubmitted(false);
                 setContributionKey(uuid());
             }, 1000);
         },
-        [setContributionSubmitted, closeAddContribution],
+        [setContributionSubmitted, closeAddContribution, addContribution],
     );
 
     return (
@@ -88,6 +105,7 @@ function HomePage() {
             <Map
                 className={styles.map}
                 lines={lines}
+                markers={markers}
                 onCenterChanged={storeCenter}
                 onZoomChanged={storeZoom}
                 mapCenter={mapCenter}
