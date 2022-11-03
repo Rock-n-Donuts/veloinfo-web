@@ -4,17 +4,11 @@
 .container {
     position: relative;
     background-color: white;
-    transform: translateX(-100%);
-    transition: transform .25s ease;
 
     .closeButton {
         position: absolute;
         top: 0;
         right: 0;
         padding: 10px;
-    }
-
-    &.opened {
-        transform: translateX(0);
-    }
+    }    
 }

@@ -5,9 +5,9 @@
     display: flex;
     flex-direction: column;
     
-    // .content {
-        
-    // }
+    .content {
+        transition: opacity 0.2s ease;
+    }
 
     .mapContainer {
         position: relative;
@@ -20,9 +20,58 @@
     .mapMarker {
         position: absolute;
         bottom: 50%;
-        left: 50%;
-        width: 100px;
-        transform: translateX(-50%);
+        left: 50%;        
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-25%);
+        transition: opacity .2s ease, transform .2s ease;
+
+        .icon {
+            width: 100px;
+            transform: translateX(-50%);
+        }
+    }
+
+    .quality {
+        label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        input {
+            position: relative;
+            appearance: none;
+            background-color: #fff;
+            margin: 0 5px 0 0;
+            width: 1.15em;
+            height: 1.15em;
+            border: 1px solid #a5a5a5;
+            border-radius: 5px;
+            cursor: pointer;
+
+            &::before {
+                content: '';
+                @extend %fullscreen;
+                border-radius: 50%;
+                background-color: black;
+                transform: scale(0);
+                transition: .2s transform ease;
+            }
+
+            &:checked {
+                &::before {
+                    transform: scale(0.6);
+                }
+            }
+        }
+    }
+
+    .errors {
+        margin-top: auto;
+        color: red;
+        min-height: 1em;
     }
 
     .actions {
@@ -42,6 +91,26 @@
         }
         .submitButton {
             margin-left: auto;
+        }
+    }
+
+    &.loading {
+        .content {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+
+    &.success {
+        .content {
+            opacity: 0;
+        }
+    }
+
+    &.showMarker {
+        .mapMarker {
+            transform: translateY(0);
+            opacity: 1;
         }
     }
 }

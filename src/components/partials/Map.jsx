@@ -38,6 +38,7 @@ const propTypes = {
     ),
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
+    onPositionRefused: PropTypes.func,
 };
 
 const defaultProps = {
@@ -49,6 +50,7 @@ const defaultProps = {
     markers: null,
     onCenterChanged: null,
     onZoomChanged: null,
+    onPositionRefused: null,
 };
 
 function Map({
@@ -60,6 +62,7 @@ function Map({
     markers,
     onCenterChanged,
     onZoomChanged,
+    onPositionRefused,
 }) {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
@@ -201,17 +204,26 @@ function Map({
                 );
         };
 
+        const onNoPosition = () => {
+            if (onPositionRefused !== null) {
+                onPositionRefused();
+            }
+        }
+
         const error = () => {
             setLoadingUserPosition(false);
+            onPositionRefused();
         };
 
         if (askForPosition && ready) {
             if (navigator.geolocation) {
                 setLoadingUserPosition(true);
                 navigator.geolocation.getCurrentPosition(success, error);
+            } else {
+                onPositionRefused();
             }
         }
-    }, [askForPosition, ready]);
+    }, [askForPosition, ready, onPositionRefused]);
 
     useEffect(() => {
         let layers = null;

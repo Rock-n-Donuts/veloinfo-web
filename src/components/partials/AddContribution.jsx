@@ -9,17 +9,17 @@ import styles from '../../styles/partials/add-contribution.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    opened: PropTypes.bool,
     onClose: PropTypes.func,
+    onContributionAdded: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
-    opened: false,
     onClose: null,
+    onContributionAdded: null,
 };
 
-function AddContribution({ className, opened, onClose }) {
+function AddContribution({ className, onClose, onContributionAdded }) {
     const [contributionTypeSelected, setContributionTypeSelected] = useState(null);
     const [formActive, setFormActive] = useState(false);
 
@@ -50,13 +50,19 @@ function AddContribution({ className, opened, onClose }) {
         }, 300);
     }, [setFormActive, setTransitioningToBack]);
 
+    const onContributionSubmitted = useCallback( (contribution) => {
+        if (onContributionAdded !== null) {
+            setContributionTypeSelected(null);
+            onContributionAdded(contribution);
+        }        
+    }, [setContributionTypeSelected]);
+
     return (
         <div
             className={classNames([
                 styles.container,
                 {
                     [className]: className !== null,
-                    [styles.opened]: opened,
                     [styles.formActive]: formActive,
                     [styles.transitioningToBack]: transitioningToBack,
                     [styles.transitioningToNext]: transitioningToNext,
@@ -79,6 +85,7 @@ function AddContribution({ className, opened, onClose }) {
                         className={styles.contributionForm}
                         contributionType={contributionTypeSelected}
                         onBack={hideForm}
+                        onSuccess={onContributionSubmitted}
                     />
                 </div>
             </div>

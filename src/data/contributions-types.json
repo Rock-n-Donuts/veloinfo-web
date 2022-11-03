@@ -6,6 +6,7 @@
         },
         "icon": "snow",
         "color": "#367c99",
+        "quality": true,
         "contributions": [
             {
                 "id": "1",
@@ -42,14 +43,13 @@
             "en": "Information pour la ville"
         },
         "icon": "warning",
-        "color": "#f8d849",
-        "hidden": true,
+        "color": "#f8d849",       
         "contributions": [
             {
                 "id": "4",
                 "label" : {
-                    "fr": "Rack à vélo",
-                    "en": "Bike rack"
+                    "fr": "Demande pour rack à vélo",
+                    "en": "Bike rack demand"
                 }
             },
             {
@@ -57,7 +57,8 @@
                 "label" : {
                     "fr": "Nid de poule",
                     "en": "Pothole"
-                }
+                },
+                "hidden": true
             },
             {
                 "id": "6",

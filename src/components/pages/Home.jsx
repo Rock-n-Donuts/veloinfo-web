@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
+import { v1 as uuid } from 'uuid';
 
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
@@ -14,6 +15,8 @@ import { useTroncons } from '../../contexts/DataContext';
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
     const [addContributionOpened, setAddContributionOpened] = useState(false);
+    const [contributionSubmited, setContributionSubmitted] = useState(false);
+    const [contributionKey, setContributionKey] = useState(uuid());
     const troncons = useTroncons();
 
     const lines = useMemo(() => {
@@ -40,11 +43,11 @@ function HomePage() {
         setAddContributionOpened(false);
     }, [setAddContributionOpened]);
 
-    const mapCenter = useMemo( () => {
+    const mapCenter = useMemo(() => {
         const cookieCenter = Cookie.get('mapCenter') || null;
-        return cookieCenter !== null ? JSON.parse(cookieCenter) : [-73.561668, 45.508888]        
+        return cookieCenter !== null ? JSON.parse(cookieCenter) : [-73.561668, 45.508888];
     }, []);
-    const mapZoom = useMemo( () => {
+    const mapZoom = useMemo(() => {
         const cookieZoom = Cookie.get('mapZoom') || null;
         return cookieZoom !== null ? parseFloat(cookieZoom) : 15;
     }, []);
@@ -57,8 +60,29 @@ function HomePage() {
         Cookie.set('mapZoom', zoom, { expires: 3650 });
     }, []);
 
+    const onContributionAdded = useCallback(
+        (contribution) => {
+            setContributionSubmitted(true);
+            closeAddContribution();
+            setTimeout(() => {
+                setContributionSubmitted(false);
+                setContributionKey(uuid());
+            }, 1000);
+        },
+        [setContributionSubmitted, closeAddContribution],
+    );
+
     return (
-        <div className={classNames([styles.container])}>
+        <div
+            className={classNames([
+                styles.container,
+                {
+                    [styles.menuOpened]: menuOpened,
+                    [styles.addContributionOpened]: addContributionOpened,
+                    [styles.contributionSubmited]: contributionSubmited,
+                },
+            ])}
+        >
             <MapHeader className={styles.mapHeader} onTogglerClick={openMenu} />
             <Map
                 className={styles.map}
@@ -72,11 +96,12 @@ function HomePage() {
                 className={styles.addContributionButton}
                 onClick={openAddContribution}
             />
-            <HomeMenu className={styles.homeMenu} opened={menuOpened} onClose={closeMenu} />
+            <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
             <AddContribution
+                key={contributionKey}
                 className={styles.addContribution}
-                opened={addContributionOpened}
                 onClose={closeAddContribution}
+                onContributionAdded={onContributionAdded}
             />
         </div>
     );

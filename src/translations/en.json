@@ -9,5 +9,14 @@
     "continue": "Continue",
     "publish": "Publish",
     "position-info": "Position info",
-    "loading": "Loading"
+    "loading": "Loading",
+    "pavement-condition": "Pavement condition",
+    "positive": "Positive",
+    "neutral": "Neutral",
+    "negative": "Negative",
+    "name": "Name",
+    "comment": "Comment",
+    "photo": "Photo",
+    "error-server": "Server error :/",
+    "error-coords": "Please specify a point on the map"
 }

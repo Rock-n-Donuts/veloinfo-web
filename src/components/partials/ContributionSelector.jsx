@@ -80,12 +80,13 @@ function ContributionSelector({ className, selected, onSelect, onNext }) {
             <div className={styles.selectedCategoryContributions}>
                 <div className={styles.contributions}>
                     {(contributions || []).map((contribution, contributionIndex) => {
-                        const { label, icon, color } = selectedCategory;
+                        const { label, icon, color, quality } = selectedCategory;
                         const {
                             id,
                             label: finalLabel = label,
                             icon: finalIcon = icon,
                             color: finalColor = color,
+                            quality: finalQuality = quality,
                         } = contribution || {};
 
                         return (
@@ -105,6 +106,7 @@ function ContributionSelector({ className, selected, onSelect, onNext }) {
                                         label: finalLabel,
                                         icon: finalIcon,
                                         color: finalColor,
+                                        quality: finalQuality,
                                     });
                                 }}
                             >

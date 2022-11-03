@@ -9,5 +9,14 @@
     "continue": "Continuer",
     "publish": "Publier",
     "position-info": "Positionner l'information",
-    "loading": "Chargement"
+    "loading": "Chargement",
+    "pavement-condition": "État de la chaussée",
+    "positive": "Positive",
+    "neutral": "Neutre",
+    "negative": "Négative",
+    "name": "Nom",
+    "comment": "Commentaire",
+    "photo": "Photo",
+    "error-server": "Erreur avec le serveur :/",
+    "error-coords": "Veuillez spécifier un point sur la carte"
 }
