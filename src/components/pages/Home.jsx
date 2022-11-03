@@ -27,7 +27,6 @@ function HomePage() {
 
     const lines = useMemo(() => {
         if (troncons !== null) {
-
             const unknownPaths = troncons.filter(
                 ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
             );
@@ -57,34 +56,34 @@ function HomePage() {
             console.log(
                 troncons.length,
                 unknownPaths.length +
-                clearedPaths.length +
-                snowyPaths.length + 
-                panifiedPaths.length +
-                inProgressPaths.length
+                    clearedPaths.length +
+                    snowyPaths.length +
+                    panifiedPaths.length +
+                    inProgressPaths.length,
+                `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
             );
-            
+
             return [
                 {
                     coords: unknownPaths.map(({ coords }) => coords),
-                    color: 'gray'
+                    color: '#666666',
                 },
                 {
                     coords: clearedPaths.map(({ coords }) => coords),
-                    color: '#4fae77'
+                    color: '#4fae77',
                 },
                 {
                     coords: snowyPaths.map(({ coords }) => coords),
-                    color: '#367c98'
+                    color: '#367c98',
                 },
                 {
                     coords: panifiedPaths.map(({ coords }) => coords),
-                    color: '#f09035'
+                    color: '#f09035',
                 },
                 {
                     coords: inProgressPaths.map(({ coords }) => coords),
-                    color: '#8962c7'
+                    color: '#8962c7',
                 },
-
             ];
         } else {
             return null;
