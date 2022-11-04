@@ -4,6 +4,8 @@
 .container {
     position: relative;
     background-color: white;
+    display: flex;
+    flex-direction: column;
 
     .closeButton {
         position: absolute;
@@ -13,66 +15,107 @@
     }
 
     .content {
-        
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
     }
 
     .title {
-
+        font-size: 32px;
+        font-weight: bold;
+        margin: 30px 0;
     }
 
     .legend {
-        .label {
+        border-top: 1px solid #A5A5A5;
+        border-bottom: 1px solid #A5A5A5;
+        padding: 20px;
 
+        .legendLabel {
+            font-weight: bold;
+            margin-bottom: 20px;
         }
     }
 
     .contributionTypes {
-
+        margin-bottom: 20px;
     }
 
     .contributionType {
-        .icon {
+        display: flex;
+        align-items: center;
 
+        .icon {
+            margin-right: 20px;
         }
 
         .label {
-
+            margin-bottom: 10px;
         }
     }
 
     .pathsStatusContainer {
-        .label {
 
+        .pathsStatusLabel {
+            font-weight: bold;
         }
 
         .note {
-            
+            margin-bottom: 20px;
         }
     }
 
     .pathsStatus {
-        .line {
+        
+    }
 
+    .pathStatus {
+        display: flex;
+        align-items: center;
+        padding: 12px 0;
+
+        .line {
+            transform: rotate(-20deg);
+            width: 50px;
+            height: 5px;
+            border-radius: 5px;
         }
 
         .label {
-
+            margin-left: 20px;
         }
     }
 
     .notifyCity {
-        .label {
+        padding: 20px;        
+        border-bottom: 1px solid #A5A5A5;
 
+        .label {
+            font-weight: bold;
+            margin-bottom: 20px;
         }
 
         .links {
+            padding: 0 20px;
             a {
+                display: block;
+                color: inherit;
+                text-decoration: none;
+                padding: 20px 0;
 
+                &::after {
+                    content: '>';
+                    display: inline-block;
+                    margin-left: 10px;
+                    font-weight: bold;
+                }
             }
         }
     }
 
     .footer {
-        
+        padding: 20px;
+        margin-top: auto;
     }
 }

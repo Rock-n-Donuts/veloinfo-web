@@ -35,7 +35,7 @@ function HomeMenu({ className, opened, onClose }) {
             <div className={styles.content}>
                 <h1 className={styles.title}>Info vélo</h1>
                 <div className={styles.legend}>
-                    <div className={styles.label}>
+                    <div className={styles.legendLabel}>
                         <FormattedMessage id="legend" />
                     </div>
                     <div className={styles.contributionTypes}>
@@ -54,7 +54,7 @@ function HomeMenu({ className, opened, onClose }) {
                         ))}
                     </div>
                     <div className={styles.pathsStatusContainer}>
-                        <div className={styles.label}>
+                        <div className={styles.pathsStatusLabel}>
                             <FormattedMessage id="paths-status" />
                         </div>
                         <div className={styles.note}>
@@ -91,36 +91,34 @@ function HomeMenu({ className, opened, onClose }) {
                             </div>
                         </div>
                     </div>
-                    <div className={styles.notifyCity}>
-                        <div className={styles.label}>Informer la ville</div>
-                        <div className={styles.links}>
-                            <a
-                                href="https://montreal.ca/demarches/demander-linstallation-dun-support-velo"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                Demander l'ajout d'un rack à vélo
-                            </a>
-                            <a
-                                href="https://montreal.ca/requetes311/signaler-nid-poule/emplacement"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                Signaler un nid de poule
-                            </a>
-                            <a
-                                href="https://montreal.ca/demarches/signaler-un-probleme-de-deneigement"
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                Signaler un déneigement manquant
-                            </a>
-                        </div>
-                    </div>
-                    <div className={styles.footer}>
-                        Rock n Donuts 🍩
+                </div>
+                <div className={styles.notifyCity}>
+                    <div className={styles.label}>Informer la ville</div>
+                    <div className={styles.links}>
+                        <a
+                            href="https://montreal.ca/demarches/demander-linstallation-dun-support-velo"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Demander l'ajout d'un rack à vélo
+                        </a>
+                        <a
+                            href="https://montreal.ca/requetes311/signaler-nid-poule/emplacement"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Signaler un nid de poule
+                        </a>
+                        <a
+                            href="https://montreal.ca/demarches/signaler-un-probleme-de-deneigement"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Signaler un déneigement manquant
+                        </a>
                     </div>
                 </div>
+                <div className={styles.footer}>Rock n Donuts 🍩</div>
             </div>
             <CloseButton className={styles.closeButton} onClick={onClose} />
         </div>
