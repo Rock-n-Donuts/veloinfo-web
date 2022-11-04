@@ -13,7 +13,7 @@ import ContributionIcon from '../../icons/Contribution';
 
 import successImage from '../../assets/images/success.svg';
 
-import styles from '../../styles/forms/form.module.scss';
+import styles from '../../styles/forms/contribution.module.scss';
 
 const propTypes = {
     active: PropTypes.bool,

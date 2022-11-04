@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
@@ -13,6 +13,7 @@ import Loading from '../partials/Loading';
 import ContributionDetails from '../partials/ContributionDetails';
 
 import styles from '../../styles/pages/home.module.scss';
+import useOnClickOutside from '../../hooks/useOnClickOutside';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -31,7 +32,7 @@ function HomePage() {
             ? contributions.find(({ id }) => parseInt(id) === selectedContributionId) || null
             : null;
 
-    const addContribution = useAddContribution();    
+    const addContribution = useAddContribution();
 
     const openMenu = useCallback(() => {
         setMenuOpened(true);
@@ -90,6 +91,11 @@ function HomePage() {
         setSelectedContributionId(null);
     }, [setSelectedContributionId]);
 
+    const modalRef = useRef(null);
+    useOnClickOutside(modalRef, () => {
+        setSelectedContributionId(null);
+    });
+
     return (
         <div
             className={classNames([
@@ -125,11 +131,12 @@ function HomePage() {
                 onContributionAdded={onContributionAdded}
             />
             <div className={styles.contributionDetailsContainer}>
-                <ContributionDetails
-                    className={styles.contributionDetails}
-                    contribution={contributionSelected}
-                    onClose={unselectContribution}
-                />
+                <div className={styles.contributionDetails} ref={modalRef}>
+                    <ContributionDetails
+                        contribution={contributionSelected}
+                        onClose={unselectContribution}
+                    />
+                </div>
             </div>
             <Loading loading={data === null} />
         </div>

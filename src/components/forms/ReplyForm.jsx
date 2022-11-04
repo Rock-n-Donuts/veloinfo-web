@@ -10,7 +10,7 @@ import FormGroup from '../partials/FormGroup';
 
 import successImage from '../../assets/images/success.svg';
 
-import styles from '../../styles/forms/form.module.scss';
+import styles from '../../styles/forms/reply.module.scss';
 
 const propTypes = {
     contributionId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

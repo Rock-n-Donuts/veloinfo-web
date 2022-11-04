@@ -29,7 +29,7 @@ function MapHeader({ className, onTogglerClick }) {
                 <button type="button" className={styles.dateRangeInner}>
                     <img src={snowIcon} alt="Snow" />
                     <span className={styles.label}>Depuis 5 jours</span>
-                    <img src={chevronIcon} alt="Chevron" />
+                    <img className={styles.chevron} src={chevronIcon} alt="Chevron" />
                 </button>
             </div>
             <div className={styles.right}></div>
