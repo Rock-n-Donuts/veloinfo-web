@@ -11,9 +11,9 @@ import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
 import ContributionDetails from '../partials/ContributionDetails';
+import useOnClickOutside from '../../hooks/useOnClickOutside';
 
 import styles from '../../styles/pages/home.module.scss';
-import useOnClickOutside from '../../hooks/useOnClickOutside';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);

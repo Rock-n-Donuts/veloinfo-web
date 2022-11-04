@@ -1,0 +1,178 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    display: flex;
+    flex-direction: column;
+
+    .form {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        transition: opacity 0.2s ease;
+    }
+
+    // .content {
+
+    // }
+
+    .mapContainer {
+        position: relative;
+    }
+
+    .map {
+        height: 200px;
+
+        @media only screen and (min-width: 800px) {
+            height: 400px;
+        }
+    }
+
+    .mapMarker {
+        position: absolute;
+        bottom: 50%;
+        left: 50%;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-25%);
+        transition: opacity 0.2s ease, transform 0.2s ease;
+
+        .icon {
+            width: 60px;
+            transform: translateX(-50%);
+        }
+    }
+
+    .quality {
+        label {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 20px;
+            cursor: pointer;
+        }
+
+        input {
+            position: relative;
+            margin: 0 5px 0 0;
+            width: 1.15em;
+            height: 1.15em;
+            cursor: pointer;
+
+            &::before {
+                content: '';
+                @extend %fullscreen;
+                border-radius: 50%;
+                background-color: black;
+                transform: scale(0);
+                transition: 0.2s transform ease;
+            }
+
+            &:checked {
+                &::before {
+                    transform: scale(0.6);
+                }
+            }
+        }
+    }
+
+    .name,
+    .comment {
+        margin-bottom: 20px;
+
+        input, textarea {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+    }
+
+    .photo {
+        margin-bottom: 20px;
+    }
+
+    .captchaContainer {
+        text-align: right;
+    }
+
+    .captcha {
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    .errors {
+        text-align: right;
+        margin-top: auto;
+        color: red;
+        min-height: 1em;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        margin-top: auto;
+        padding: 20px 0;
+
+        button {
+            color: $color-white;
+            background-color: $color-blue;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .backButton {
+            margin-right: auto;
+        }
+        .submitButton {
+            margin-left: auto;
+        }
+    }
+
+    .success {
+        @extend %fullscreen;
+
+        position: fixed;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: block;
+            margin: 0 auto;
+            width: 40%;
+            transform: translate(-50%, -50%);
+        }
+
+        pointer-events: none;
+    }
+
+    &.loading {
+        .form {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+
+    &.success {
+        .form {
+            opacity: 0;
+        }
+
+        .success {
+            opacity: 0.25;
+        }
+    }
+
+    &.showMarker {
+        .mapMarker {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+}
