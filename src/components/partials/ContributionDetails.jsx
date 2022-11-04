@@ -130,6 +130,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
 
     useEffect(() => {
         if (id !== null) {
+            setCanVote(false);
             axios.get(`/contribution/${id}`).then((res) => {
                 const { data } = res || {};
                 const { can_vote = false } = data || {};
