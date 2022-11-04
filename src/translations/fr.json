@@ -16,6 +16,8 @@
     "negative": "Négative",
     "name": "Nom",
     "comment": "Commentaire",
+    "name-placeholder": "Votre nom",
+    "comment-placeholder": "Écrire un commentaire...",
     "photo": "Photo",
     "upload-photo": "Télécharger une photo",
     "error-server": "Erreur avec le serveur :/",

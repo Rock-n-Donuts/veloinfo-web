@@ -1,12 +1,13 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 import styles from '../styles/icons/contribution.module.scss';
 
 import contributions from './contributions';
 
 const propTypes = {
-    icon: PropTypes.oneOf(['snow', 'warning']),
+    icon: PropTypes.oneOf(['snow', 'warning', 'parking', 'heart', 'repair']),
     color: PropTypes.string,
     className: PropTypes.string,
 };
@@ -17,7 +18,7 @@ const defaultProps = {
     className: null,
 };
 
-function ContributionIcon({ icon, color, className }) {
+function ContributionIcon({ svgRef, icon, color, className }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
             <svg
@@ -31,6 +32,7 @@ function ContributionIcon({ icon, color, className }) {
                 height={51}
                 viewBox="0 0 42 51"
                 fill="none"
+                ref={svgRef}
             >
                 <mask id="path-1-inside-1_333_1482" fill="white">
                     <path
@@ -63,4 +65,4 @@ function ContributionIcon({ icon, color, className }) {
 ContributionIcon.propTypes = propTypes;
 ContributionIcon.defaultProps = defaultProps;
 
-export default ContributionIcon;
+export default React.forwardRef((props, ref) => <ContributionIcon {...props} svgRef={ref} />);

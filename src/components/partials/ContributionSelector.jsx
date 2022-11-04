@@ -1,5 +1,4 @@
-import { useCallback, useState } from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ContributionIcon from '../../icons/Contribution';
@@ -8,39 +7,37 @@ import styles from '../../styles/partials/contribution-selector.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    categoryIndexSelected: PropTypes.number,
     selected: PropTypes.shape({}),
     onSelect: PropTypes.func,
-    onNext: PropTypes.func,
+    onSelectCategory: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
+    categoryIndexSelected: null,
     selected: null,
     onSelect: null,
-    onNext: null,
+    onSelectCategory: null,
 };
 
-function ContributionSelector({ className, selected, onSelect, onNext }) {
-    const [categoryIndexSelected, setCategoryIndexSelected] = useState(null);
+function ContributionSelector({
+    className,
+    selected,
+    categoryIndexSelected,
+    onSelect,
+    onSelectCategory,
+}) {
     const selectedCategory =
         categoryIndexSelected !== null ? categories[categoryIndexSelected] : null;
 
-    const { hidden: categoryHidden, contributions } = selectedCategory || {};
+    const { contributions } = selectedCategory || {};
 
     const { id: selectedId = null } = selected || {};
-    const { hidden: finalHidden = categoryHidden } = selected || {};
 
     const intl = useIntl();
     const { locale } = intl;
     const shortLocale = locale.substring(0, 2);
-
-    const selectCategory = useCallback(
-        (categoryIndex) => {
-            setCategoryIndexSelected(categoryIndex);
-            onSelect(null);
-        },
-        [setCategoryIndexSelected, onSelect],
-    );
 
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
@@ -57,7 +54,7 @@ function ContributionSelector({ className, selected, onSelect, onNext }) {
                                 },
                             ])}
                             onClick={() => {
-                                selectCategory(categoryIndex);
+                                onSelectCategory(categoryIndex);
                             }}
                         >
                             <span
@@ -127,21 +124,6 @@ function ContributionSelector({ className, selected, onSelect, onNext }) {
                         );
                     })}
                 </div>
-            </div>
-            <div className={classNames([styles.hiddenWarning, { [styles.active]: finalHidden }])}>
-                <FormattedMessage id="contribution-hidden-warning" />
-            </div>
-            <div className={styles.actions}>
-                <button
-                    className={styles.nextButton}
-                    disabled={selectedId === null}
-                    type="button"
-                    onClick={() => {
-                        onNext();
-                    }}
-                >
-                    <FormattedMessage id="next" />
-                </button>
             </div>
         </div>
     );

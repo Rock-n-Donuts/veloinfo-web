@@ -38,6 +38,8 @@ const propTypes = {
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
     onPositionRefused: PropTypes.func,
+    onMarkerClick: PropTypes.func,
+    onLineClick: PropTypes.func,
 };
 
 const defaultProps = {
@@ -50,6 +52,8 @@ const defaultProps = {
     onCenterChanged: null,
     onZoomChanged: null,
     onPositionRefused: null,
+    onMarkerClick: null,
+    onLineClick: null,
 };
 
 function Map({
@@ -62,12 +66,18 @@ function Map({
     onCenterChanged,
     onZoomChanged,
     onPositionRefused,
+    onMarkerClick,
+    onLineClick,
 }) {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
+    const [isHover, setIsHover] = useState(false);
 
     const [ready, setReady] = useState(false);
     const [loadingUserPosition, setLoadingUserPosition] = useState(false);
+
+    const linesLayers = useRef([]);
+    const markerLayers = useRef([]);
 
     const onChangeCenter = useCallback(() => {
         if (onCenterChanged !== null) {
@@ -90,7 +100,7 @@ function Map({
                 zoom,
             });
 
-            mapRef.current = new OlMap({
+            const map = (mapRef.current = new OlMap({
                 target,
                 view,
                 layers: [
@@ -98,24 +108,76 @@ function Map({
                         source: new OSM(),
                     }),
                 ],
+            }));
+            map.getView().on('change:center', onChangeCenter);
+            map.getView().on('change:resolution', onChangeZoom);
+
+            const getFeatureUnderPixel = (container, pixel, cb) => {
+                let found = false;
+
+                container.forEach((vectorLayer) => {
+                    if (!found) {
+                        vectorLayer.getFeatures(pixel).then(function (features) {
+                            const feature = features.length ? features[0] : null;
+
+                            if (feature !== null && feature.get('attributes').clickable && !found) {
+                                found = true;
+                                if (cb) {
+                                    cb(feature);
+                                }
+                            }
+                        });
+                    }
+                });
+                setIsHover(found);
+            };
+            map.on('pointermove', (e) => {
+                if (e.dragging) {
+                    return;
+                }
+                const pixel = map.getEventPixel(e.originalEvent);
+                setIsHover(false);
+                getFeatureUnderPixel(
+                    [...linesLayers.current, ...markerLayers.current],
+                    pixel,
+                    () => {
+                        setIsHover(true);
+                    },
+                );
             });
-            mapRef.current.getView().on('change:center', onChangeCenter);
-            mapRef.current.getView().on('change:resolution', onChangeZoom);
+
+            map.on('click', (e) => {
+                if (e.dragging) {
+                    return;
+                }
+                const pixel = map.getEventPixel(e.originalEvent);
+                getFeatureUnderPixel(linesLayers.current, pixel, (feature) => {
+                    if (onLineClick !== null) {
+                        onLineClick(feature.get('attributes'));
+                    }
+                });
+                getFeatureUnderPixel(markerLayers.current, pixel, (feature) => {
+                    if (onMarkerClick !== null) {
+                        onMarkerClick(feature.get('attributes'));
+                    }
+                });
+            });
             setReady(true);
         },
-        [mapCenter, zoom, onChangeCenter, onChangeZoom, setReady],
+        [mapCenter, zoom, onChangeCenter, onChangeZoom, setReady, onMarkerClick, onLineClick],
     );
 
     const drawLines = useCallback((lines) => {
         const vectorLayer = new Vector({});
 
-        const { coords: lineString = null, color = '#0000FF', width = 5 } = lines || {};
+        const { features, color = '#0000FF', width = 5 } = lines || {};
 
-        lineString.forEach((coords) => {
+        features.forEach(({ coords, data = null, clickable = false }) => {
             const points = coords.map((coord) => transform(coord, 'EPSG:4326', 'EPSG:3857'));
             vectorLayer.addFeature(
                 new Feature({
                     geometry: new LineString(points),
+                    attributes: { ...data, clickable },
                 }),
             );
         });
@@ -127,18 +189,20 @@ function Map({
         });
 
         mapRef.current.addLayer(vectorLineLayer);
+        linesLayers.current.push(vectorLineLayer);
         return vectorLineLayer;
     }, []);
 
     const addMarkers = useCallback((markers) => {
-        const { coords, src } = markers || {};
+        const { features, src, image } = markers || {};
 
         const vectorLayer = new Vector({});
 
-        coords.forEach((point) => {
+        features.forEach(({ coords, data = null, clickable = false }) => {
             vectorLayer.addFeature(
                 new Feature({
-                    geometry: new Point(fromLonLat(point)),
+                    geometry: new Point(fromLonLat(coords)),
+                    attributes: { ...data, clickable },
                 }),
             );
         });
@@ -151,11 +215,13 @@ function Map({
                     anchorXUnits: 'fraction',
                     anchorYUnits: 'fraction',
                     src,
+                    image,
                 }),
             }),
         });
 
         mapRef.current.addLayer(vectorIcon);
+        markerLayers.current.push(vectorIcon);
         return vectorIcon;
     }, []);
 
@@ -206,7 +272,7 @@ function Map({
             if (onPositionRefused !== null) {
                 onPositionRefused();
             }
-        }
+        };
 
         const error = () => {
             setLoadingUserPosition(false);
@@ -233,6 +299,7 @@ function Map({
             if (layers !== null && mapRef.current !== null) {
                 layers.forEach((layer) => {
                     mapRef.current.removeLayer(layer);
+                    linesLayers.current = [];
                 });
             }
         };
@@ -248,6 +315,7 @@ function Map({
             if (layers !== null && mapRef.current !== null) {
                 layers.forEach((layer) => {
                     mapRef.current.removeLayer(layer);
+                    markerLayers.current = [];
                 });
             }
         };
@@ -257,7 +325,7 @@ function Map({
         <div
             className={classNames([
                 styles.container,
-                { [className]: className !== null },
+                { [className]: className !== null, [styles.isHover]: isHover },
             ])}
         >
             <div ref={mapContainerRef} className={styles.map} />

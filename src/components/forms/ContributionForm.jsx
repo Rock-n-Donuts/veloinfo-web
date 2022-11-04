@@ -35,14 +35,16 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
         id: contributionTypeId,
         icon: contributionTypeIcon,
         color: contributionTypeColor,
-        quality: contributionTypeQuality,
+        quality: contributionTypeQuality = null,
     } = contributionType || {};
 
     const intl = useIntl();
+    const { locale } = intl;
+    const shortLocale = locale.substring(0, 2);
     const captchaRef = useRef();
 
     const [coords, setCoords] = useState(null);
-    const [quality, setQuality] = useState(null);
+    const [quality, setQuality] = useState(0);
     const [name, setName] = useState('');
     const [comment, setComment] = useState('');
     const [photo, setPhoto] = useState(null);
@@ -59,7 +61,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
 
     const resetForm = useCallback(() => {
         captchaRef.current.reset();
-        setQuality(null);
+        setQuality(0);
         setName('');
         setComment('');
         setPhoto(null);
@@ -91,7 +93,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
             const formData = new FormData();
             formData.append('issue_id', contributionTypeId);
             formData.append('coords[]', coords);
-            if (quality !== null && quality <= 1 && quality >= -1) {
+            if (contributionTypeQuality && quality !== null && quality <= 1 && quality >= -1) {
                 formData.append('quality', quality);
             }
             if (name.length > 0) {
@@ -135,6 +137,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
         },
         [
             contributionTypeId,
+            contributionTypeQuality,
             coords,
             quality,
             name,
@@ -146,6 +149,12 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
             intl,
         ],
     );
+
+    const currentQuality =
+        contributionTypeQuality !== null
+            ? contributionTypeQuality.find(({ value }) => parseInt(value) === parseInt(quality))
+            : null;
+    const { color: iconColor = contributionTypeColor } = currentQuality || {};
 
     return (
         <div
@@ -175,65 +184,53 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                             <ContributionIcon
                                 className={styles.icon}
                                 icon={contributionTypeIcon}
-                                color={contributionTypeColor}
+                                color={iconColor}
                             />
                         </div>
                     </FormGroup>
-                    {contributionTypeQuality ? (
+                    {contributionTypeQuality !== null ? (
                         <FormGroup
                             className={styles.quality}
                             label={intl.formatMessage({ id: 'pavement-condition' })}
                         >
-                            <label>
-                                <input
-                                    type="radio"
-                                    value="1"
-                                    name="quality"
-                                    onChange={setQualityValue}
-                                    checked={quality === 1}
-                                    required
-                                />
-                                <span className={styles.label}>
-                                    <FormattedMessage id="positive" />
-                                </span>
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    value="0"
-                                    name="quality"
-                                    onChange={setQualityValue}
-                                    checked={quality === 0}
-                                />
-                                <span className={styles.label}>
-                                    <FormattedMessage id="neutral" />
-                                </span>
-                            </label>
-                            <label>
-                                <input
-                                    type="radio"
-                                    value="-1"
-                                    name="quality"
-                                    onChange={setQualityValue}
-                                    checked={quality === -1}
-                                />
-                                <span className={styles.label}>
-                                    <FormattedMessage id="negative" />
-                                </span>
-                            </label>
+                            {contributionTypeQuality.map(({ value, label }, qualityIndex) => (
+                                <label key={`quality-${qualityIndex}`}>
+                                    <input
+                                        type="radio"
+                                        value={value}
+                                        name="quality"
+                                        onChange={setQualityValue}
+                                        checked={quality === value}
+                                        required
+                                    />
+                                    <span className={styles.label}>{label[shortLocale]}</span>
+                                </label>
+                            ))}
                         </FormGroup>
                     ) : null}
                     <FormGroup className={styles.name} label={intl.formatMessage({ id: 'name' })}>
-                        <input type="text" value={name} onChange={setNameValue} />
+                        <input
+                            type="text"
+                            value={name}
+                            placeholder={intl.formatMessage({ id: 'name-placeholder' })}
+                            onChange={setNameValue}
+                        />
                     </FormGroup>
                     <FormGroup
                         className={styles.comment}
                         label={intl.formatMessage({ id: 'comment' })}
                     >
-                        <textarea value={comment} onChange={setCommentValue} />
+                        <textarea
+                            value={comment}
+                            placeholder={intl.formatMessage({ id: 'comment-placeholder' })}
+                            onChange={setCommentValue}
+                        />
                     </FormGroup>
                     <FormGroup className={styles.photo} label={intl.formatMessage({ id: 'photo' })}>
-                        <ImageUpload onChange={setPhotoValue} label={intl.formatMessage({ id: 'upload-photo'})} />
+                        <ImageUpload
+                            onChange={setPhotoValue}
+                            label={intl.formatMessage({ id: 'upload-photo' })}
+                        />
                     </FormGroup>
                     <div className={styles.captchaContainer}>
                         <div className={styles.captcha}>

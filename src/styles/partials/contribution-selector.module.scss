@@ -81,29 +81,4 @@
             margin-left: auto;
         }
     }
-
-    .hiddenWarning {
-        font-size: 24px;
-        text-align: center;
-        font-weight: bold;
-        opacity: 0;
-        transition: opacity 0.25s ease;
-
-        &.active {
-            opacity: 1;
-        }
-    }
-
-    .actions {
-        margin-top: auto;
-        padding: 20px 0 40px;
-        text-align: right;
-    }
-
-    .nextButton {
-        color: $color-white;
-        background-color: $color-blue;
-        padding: 10px 15px;
-        border-radius: 5px;
-    }
 }

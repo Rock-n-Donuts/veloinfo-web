@@ -11,7 +11,8 @@ import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
 
-import contributionImage from '../../assets/images/add-contribution.svg';
+import contributionTypes from '../../data/contributions-types.json';
+import getContributionSvg from '../../icons/contributionSvg';
 
 import styles from '../../styles/pages/home.module.scss';
 
@@ -65,23 +66,38 @@ function HomePage() {
 
             return [
                 {
-                    coords: unknownPaths.map(({ coords }) => coords),
+                    features: unknownPaths.map(({ coords, ...troncon }) => ({
+                        coords,
+                        data: troncon,
+                    })),
                     color: '#666666',
                 },
                 {
-                    coords: clearedPaths.map(({ coords }) => coords),
+                    features: clearedPaths.map(({ coords, ...troncon }) => ({
+                        coords,
+                        data: troncon,
+                    })),
                     color: '#4fae77',
                 },
                 {
-                    coords: snowyPaths.map(({ coords }) => coords),
+                    features: snowyPaths.map(({ coords, ...troncon }) => ({
+                        coords,
+                        data: troncon,
+                    })),
                     color: '#367c98',
                 },
                 {
-                    coords: panifiedPaths.map(({ coords }) => coords),
+                    features: panifiedPaths.map(({ coords, ...troncon }) => ({
+                        coords,
+                        data: troncon,
+                    })),
                     color: '#f09035',
                 },
                 {
-                    coords: inProgressPaths.map(({ coords }) => coords),
+                    features: inProgressPaths.map(({ coords, ...troncon }) => ({
+                        coords,
+                        data: troncon,
+                    })),
                     color: '#8962c7',
                 },
             ];
@@ -92,12 +108,34 @@ function HomePage() {
 
     const markers = useMemo(() => {
         if (contributions !== null) {
-            return [
-                {
-                    coords: contributions.map(({ coords }) => coords),
-                    src: contributionImage,
-                },
-            ];
+            const icons = contributionTypes.reduce((all, curr) => {
+                const { quality = null, id, icon } = curr;
+                if (quality !== null) {
+                    return [
+                        ...all,
+                        ...quality.map((quality) => ({ ...quality, quality: true, id, icon })),
+                    ];
+                } else {
+                    return [...all, curr];
+                }
+            }, []);
+
+            return icons.map(({ id, icon, color, quality, value }) => ({
+                features: contributions
+                    .filter(({ issue_id, quality: contributionQuality }) =>
+                        quality
+                            ? contributionQuality === value
+                            : parseInt(issue_id) === parseInt(id),
+                    )
+                    .map(({ coords, ...contribution }) => ({
+                        coords,
+                        data: contribution,
+                        clickable: true,
+                    })),
+                src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+                    getContributionSvg({ icon, color }),
+                )}`,
+            }));
         } else {
             return null;
         }
@@ -149,6 +187,10 @@ function HomePage() {
         [setContributionSubmitted, closeAddContribution, addContribution],
     );
 
+    const selectContribution = useCallback( (contribution) => {
+        console.log(contribution)
+    }, []);
+
     return (
         <div
             className={classNames([
@@ -165,10 +207,11 @@ function HomePage() {
                 className={styles.map}
                 lines={lines}
                 markers={markers}
-                onCenterChanged={storeCenter}
-                onZoomChanged={storeZoom}
                 mapCenter={mapCenter}
                 zoom={mapZoom}
+                onCenterChanged={storeCenter}
+                onZoomChanged={storeZoom}
+                onMarkerClick={selectContribution}
             />
             <AddContributionButton
                 className={styles.addContributionButton}

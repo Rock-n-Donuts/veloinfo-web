@@ -82,9 +82,8 @@
         input, textarea {
             display: block;
             width: 100%;
-            padding: 20px;
+            padding: 10px;
             font-size: 18px;
-            font-weight: bold;
         }
 
         textarea {
@@ -114,7 +113,7 @@
         display: flex;
         align-items: center;
         margin-top: auto;
-        padding: 20px 0 40px;
+        padding: 20px 0;
 
         button {
             color: $color-white;

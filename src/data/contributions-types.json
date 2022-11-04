@@ -1,72 +1,63 @@
 [
     {
+        "id": "1",
         "label": {
             "fr": "Passibilité de la piste",
             "en": "Cycle path passability"
         },
         "icon": "snow",
-        "color": "#367c99",
-        "quality": true,
-        "contributions": [
+        "quality": [
             {
-                "id": "1",
-                "label" : {
-                    "fr": "Neige",
-                    "en": "Snow"
+                "label": {
+                    "fr": "Positive",
+                    "en": "Positive"
                 },
-                "icon": "snow",
-                "color": "#367c99"
+                "color": "#439666",
+                "value": -1
             },
             {
-                "id": "2",
-                "label" : {
-                    "fr": "Glace",
-                    "en": "Ice"
+                "label": {
+                    "fr": "Neutre",
+                    "en": "Neutral"
                 },
-                "icon": "snow",
-                "color": "#367c99"
+                "color": "#367c99",
+                "value": 0
             },
             {
-                "id": "3",
-                "label" : {
-                    "fr": "Autre",
-                    "en": "Other"
+                "label": {
+                    "fr": "Négative",
+                    "en": "Negative"
                 },
-                "icon": "snow",
-                "color": "#367c99"
+                "color": "#f09035",
+                "value": 1
             }
         ]
     },
     {
+        "id": "2",
         "label": {
-            "fr": "Information pour la ville",
-            "en": "City request"
+            "fr": "Présence d'un rack à vélo",
+            "en": "Bike rack available"
         },
-        "icon": "warning",
-        "color": "#f8d849",       
-        "contributions": [
-            {
-                "id": "4",
-                "label" : {
-                    "fr": "Demande pour rack à vélo",
-                    "en": "Bike rack demand"
-                }
-            },
-            {
-                "id": "5",
-                "label" : {
-                    "fr": "Nid de poule",
-                    "en": "Pothole"
-                },
-                "hidden": true
-            },
-            {
-                "id": "6",
-                "label" : {
-                    "fr": "Déneigement manquant",
-                    "en": "Snow missclear"
-                }
-            }
-        ]
+        "icon": "parking",
+        "color": "#439667"
+    },
+    {
+        "id": "3",
+        "label": {
+            "fr": "Borne de réparation",
+            "en": "Repair stop"
+        },
+        "icon": "repair",
+        "color": "#439667"
+    },
+    {
+        "id": "4",
+        "label": {
+            "fr": "Boutique vélo",
+            "en": "Bike shop"
+        },
+        "icon": "heart",
+        "color": "#439667"
     }
 ]
