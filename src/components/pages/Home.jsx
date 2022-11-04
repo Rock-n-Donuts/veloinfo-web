@@ -1,9 +1,9 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 
-import { useAddContribution, useData } from '../../contexts/DataContext';
+import { useAddContribution, useData, useLines, useMarkers } from '../../contexts/DataContext';
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContributionButton from '../buttons/AddContribution';
@@ -11,9 +11,6 @@ import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
 import ContributionDetails from '../partials/ContributionDetails';
-
-import contributionTypes from '../../data/contributions-types.json';
-import getContributionSvg from '../../icons/contributionSvg';
 
 import styles from '../../styles/pages/home.module.scss';
 
@@ -26,129 +23,15 @@ function HomePage() {
 
     const isContributionSelected = selectedContributionId !== null;
     const data = useData();
-    const { troncons = null, contributions = null } = data || {};
-
+    const lines = useLines();
+    const markers = useMarkers();
+    const { contributions = null } = data || {};
     const contributionSelected =
         contributions !== null
             ? contributions.find(({ id }) => parseInt(id) === selectedContributionId) || null
             : null;
 
-    const addContribution = useAddContribution();
-
-    const lines = useMemo(() => {
-        if (troncons !== null) {
-            const unknownPaths = troncons.filter(
-                ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
-            );
-
-            const clearedPaths = troncons.filter(
-                ({ side_one_state: s1, side_two_state: s2 }) => s1 === 1 && s2 === 1,
-            );
-            const snowyPaths = troncons.filter(
-                ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
-            );
-            const panifiedPaths = troncons.filter(
-                ({ side_one_state: s1, side_two_state: s2 }) =>
-                    s1 === 2 ||
-                    s1 === 3 ||
-                    s1 === 4 ||
-                    s1 === 10 ||
-                    s2 === 2 ||
-                    s2 === 3 ||
-                    s2 === 4 ||
-                    s2 === 10,
-            );
-
-            const inProgressPaths = troncons.filter(
-                ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
-            );
-
-            // console.log(
-            //     troncons.length,
-            //     unknownPaths.length +
-            //         clearedPaths.length +
-            //         snowyPaths.length +
-            //         panifiedPaths.length +
-            //         inProgressPaths.length,
-            //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
-            // );
-
-            return [
-                {
-                    features: unknownPaths.map(({ coords, ...troncon }) => ({
-                        coords,
-                        data: troncon,
-                    })),
-                    color: '#666666',
-                },
-                {
-                    features: clearedPaths.map(({ coords, ...troncon }) => ({
-                        coords,
-                        data: troncon,
-                    })),
-                    color: '#4fae77',
-                },
-                {
-                    features: snowyPaths.map(({ coords, ...troncon }) => ({
-                        coords,
-                        data: troncon,
-                    })),
-                    color: '#367c98',
-                },
-                {
-                    features: panifiedPaths.map(({ coords, ...troncon }) => ({
-                        coords,
-                        data: troncon,
-                    })),
-                    color: '#f09035',
-                },
-                {
-                    features: inProgressPaths.map(({ coords, ...troncon }) => ({
-                        coords,
-                        data: troncon,
-                    })),
-                    color: '#8962c7',
-                },
-            ];
-        } else {
-            return null;
-        }
-    }, [troncons]);
-
-    const markers = useMemo(() => {
-        if (contributions !== null) {
-            const icons = contributionTypes.reduce((all, curr) => {
-                const { qualities = null, id, icon } = curr;
-                if (qualities !== null) {
-                    return [
-                        ...all,
-                        ...qualities.map((quality) => ({ ...quality, quality: true, id, icon })),
-                    ];
-                } else {
-                    return [...all, curr];
-                }
-            }, []);
-
-            return icons.map(({ id, icon, color, quality, value }) => ({
-                features: contributions
-                    .filter(({ issue_id, quality: contributionQuality }) =>
-                        quality
-                            ? contributionQuality === value
-                            : parseInt(issue_id) === parseInt(id),
-                    )
-                    .map(({ coords, ...contribution }) => ({
-                        coords,
-                        data: contribution,
-                        clickable: true,
-                    })),
-                src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-                    getContributionSvg({ icon, color }),
-                )}`,
-            }));
-        } else {
-            return null;
-        }
-    }, [contributions]);
+    const addContribution = useAddContribution();    
 
     const openMenu = useCallback(() => {
         setMenuOpened(true);
@@ -207,12 +90,6 @@ function HomePage() {
         setSelectedContributionId(null);
     }, [setSelectedContributionId]);
 
-    const mapRef = useRef(null);
-    const onMapReady = useCallback((map) => {
-        mapRef.current = map;
-        // console.log('ready', map);
-    }, []);
-
     return (
         <div
             className={classNames([
@@ -235,7 +112,6 @@ function HomePage() {
                 onCenterChanged={storeCenter}
                 onZoomChanged={storeZoom}
                 onMarkerClick={selectContribution}
-                onReady={onMapReady}
             />
             <AddContributionButton
                 className={styles.addContributionButton}

@@ -3,6 +3,9 @@ import axios from 'axios';
 import { useUser } from './AuthContext';
 import useInterval from '../hooks/useInterval';
 
+import contributionTypes from '../data/contributions-types.json';
+import getContributionSvg from '../icons/contributionSvg';
+
 const DataContext = createContext();
 const pollingDelay = 15; // seconds
 
@@ -28,34 +31,44 @@ export const DataProvider = ({ children }) => {
                     const { data: newData = null } = res || {};
                     // console.log('Data received.', newData);
                     if (date !== null) {
-                        
                         setData((old) => {
                             const { troncons, contributions } = old || {};
-                            const { troncons: updatedTroncons, contributions: updatedContributions, date: updatedDate } = newData || {};
+                            const {
+                                troncons: updatedTroncons,
+                                contributions: updatedContributions,
+                                date: updatedDate,
+                            } = newData || {};
                             const newTroncons = [...troncons];
                             const newContributions = [...contributions];
-                            updatedTroncons.forEach(troncon => {
-                                const foundIndex = troncons.findIndex(({ id }) => id === troncon.id);
+                            updatedTroncons.forEach((troncon) => {
+                                const foundIndex = troncons.findIndex(
+                                    ({ id }) => id === troncon.id,
+                                );
                                 if (foundIndex >= 0) {
                                     newTroncons[foundIndex] = troncon;
                                 } else {
                                     newTroncons.push(troncon);
                                 }
                             });
-                            updatedContributions.forEach(contribution => {
-                                const foundIndex = contributions.findIndex(({ id }) => id === contribution.id);
+                            updatedContributions.forEach((contribution) => {
+                                const foundIndex = contributions.findIndex(
+                                    ({ id }) => id === contribution.id,
+                                );
                                 if (foundIndex >= 0) {
                                     newContributions[foundIndex] = contribution;
                                 } else {
                                     newContributions.push(contribution);
                                 }
                             });
-                            return { contributions: newContributions, troncons: newTroncons, date: updatedDate };
-                        })
+                            return {
+                                contributions: newContributions,
+                                troncons: newTroncons,
+                                date: updatedDate,
+                            };
+                        });
                     } else {
                         setData(newData);
                     }
-                    
                 })
                 .catch((err) => setError(err))
                 .finally(() => setLoading(false));
@@ -115,6 +128,124 @@ export const useDataDate = () => {
     const data = useData();
     const { date = null } = data || {};
     return date;
+};
+
+export const useLines = () => {
+    const troncons = useTroncons();
+    if (troncons !== null) {
+        const unknownPaths = troncons.filter(
+            ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
+        );
+
+        const clearedPaths = troncons.filter(
+            ({ side_one_state: s1, side_two_state: s2 }) => s1 === 1 && s2 === 1,
+        );
+        const snowyPaths = troncons.filter(
+            ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
+        );
+        const panifiedPaths = troncons.filter(
+            ({ side_one_state: s1, side_two_state: s2 }) =>
+                s1 === 2 ||
+                s1 === 3 ||
+                s1 === 4 ||
+                s1 === 10 ||
+                s2 === 2 ||
+                s2 === 3 ||
+                s2 === 4 ||
+                s2 === 10,
+        );
+
+        const inProgressPaths = troncons.filter(
+            ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
+        );
+
+        // console.log(
+        //     troncons.length,
+        //     unknownPaths.length +
+        //         clearedPaths.length +
+        //         snowyPaths.length +
+        //         panifiedPaths.length +
+        //         inProgressPaths.length,
+        //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
+        // );
+
+        return [
+            {
+                features: unknownPaths.map(({ coords, ...troncon }) => ({
+                    coords,
+                    data: troncon,
+                })),
+                color: '#666666',
+            },
+            {
+                features: clearedPaths.map(({ coords, ...troncon }) => ({
+                    coords,
+                    data: troncon,
+                })),
+                color: '#4fae77',
+            },
+            {
+                features: snowyPaths.map(({ coords, ...troncon }) => ({
+                    coords,
+                    data: troncon,
+                })),
+                color: '#367c98',
+            },
+            {
+                features: panifiedPaths.map(({ coords, ...troncon }) => ({
+                    coords,
+                    data: troncon,
+                })),
+                color: '#f09035',
+            },
+            {
+                features: inProgressPaths.map(({ coords, ...troncon }) => ({
+                    coords,
+                    data: troncon,
+                })),
+                color: '#8962c7',
+            },
+        ];
+    } else {
+        return null;
+    }
+};
+
+export const useMarkers = () => {
+    const contributions = useContributions();
+
+    if (contributions !== null) {
+        const icons = contributionTypes.reduce((all, curr) => {
+            const { qualities = null, id, icon } = curr;
+            if (qualities !== null) {
+                return [
+                    ...all,
+                    ...qualities.map((quality) => ({ ...quality, quality: true, id, icon })),
+                ];
+            } else {
+                return [...all, curr];
+            }
+        }, []);
+
+        return icons.map(({ id, icon, color, quality, value }) => ({
+            features: contributions
+                .filter(({ issue_id, quality: contributionQuality }) =>
+                    quality
+                        ? contributionQuality === value
+                        : parseInt(issue_id) === parseInt(id),
+                )
+                .map(({ coords, ...contribution }) => ({
+                    coords,
+                    data: contribution,
+                    clickable: true,
+                })),
+            src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+                getContributionSvg({ icon, color }),
+            )}`,
+        }));
+    } else {
+        return null;
+    }
 };
 
 export const useAddContribution = () => {
