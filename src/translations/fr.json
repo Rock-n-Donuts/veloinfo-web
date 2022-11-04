@@ -24,5 +24,8 @@
     "error-coords": "Veuillez spécifier un point sur la carte",
     "error-captcha": "Veuillez vérifier le CAPTCHA",
     "vote-positive": "Oui",
-    "vote-negative": "Non"
+    "vote-negative": "Non",
+    "legend": "Légende",
+    "paths-status": "Statut des rues",
+    "paths-status-note": "*Données Planif-Neige"
 }

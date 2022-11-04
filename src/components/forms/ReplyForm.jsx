@@ -79,15 +79,14 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                 .post(`/contribution/${contributionId}/reply`, formData)
                 .then((res) => {
                     const { data } = res || {};
-                    const { success = false, contribution = null } = data || {};
+                    const { success = false, reply = null } = data || {};
                     if (success) {
                         Cookies.set('name', name, { expires: 3650 });
                         setSuccess(true);
                         setTimeout(() => {
                             resetForm();
-                            console.log(data);
                             if (onSuccess !== null) {
-                                onSuccess(contribution);
+                                onSuccess(reply);
                             }
                         }, 1000);
                     } else {

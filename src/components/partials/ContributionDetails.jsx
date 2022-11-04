@@ -89,16 +89,14 @@ function ContributionDetails({ className, contribution, children, onClose }) {
 
     const vote = useCallback(
         (score) => {
-            const formData = new FormData();
-            formData.append('score', score);
             setVoteLoading(true);
             axios
-                .post(`/contribution/${id}/vote`, formData)
+                .post(`/contribution/${id}/vote`, { score })
                 .then((res) => {
                     const { data } = res || {};
                     const { success = false } = data || {};
-
                     if (success) {
+                        //@TODO refresh data
                         setCanVote(false);
                     } else {
                         console.log(data);
@@ -131,6 +129,11 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                 }
             })
     }, [id]);
+
+    const onReplySuccess = useCallback( () => {
+
+        //@TODO refresh data
+    }, []);
 
     return (
         <div
@@ -232,7 +235,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                             ),
                         )}
                     </div>
-                    <ReplyForm key={id} className={styles.replyForm} contributionId={id} />
+                    <ReplyForm key={id} className={styles.replyForm} contributionId={id} onSuccess={onReplySuccess} />
                 </div>
             ) : null}
             {children}

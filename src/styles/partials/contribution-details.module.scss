@@ -69,7 +69,15 @@
     }
 
     .repliesCount {
+        display: flex;
+        align-items: center;
         margin: 20px 0;
+
+        span {
+            margin-left: 5px;
+            color: $color-blue;
+            font-weight: bold;
+        }
     }
 
     &.voteDisabled {

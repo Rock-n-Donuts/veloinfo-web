@@ -10,12 +10,12 @@ import AddContributionButton from '../buttons/AddContribution';
 import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
+import ContributionDetails from '../partials/ContributionDetails';
 
 import contributionTypes from '../../data/contributions-types.json';
 import getContributionSvg from '../../icons/contributionSvg';
 
 import styles from '../../styles/pages/home.module.scss';
-import ContributionDetails from '../partials/ContributionDetails';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);

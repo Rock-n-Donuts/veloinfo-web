@@ -6,6 +6,7 @@
             "en": "Cycle path passability"
         },
         "icon": "snow",
+        "color": "#367c99",
         "votes": {
             "positive": {
                 "color": "#f09035",

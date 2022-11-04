@@ -24,5 +24,8 @@
     "error-coords": "Please specify a point on the map",
     "error-captcha": "Please verify the CAPTCHA",
     "vote-positive": "Yes",
-    "vote-negative": "No"
+    "vote-negative": "No",
+    "legend": "Legend",
+    "paths-status": "Paths status",
+    "paths-status-note": "*Data from Planif-Neige"
 }
