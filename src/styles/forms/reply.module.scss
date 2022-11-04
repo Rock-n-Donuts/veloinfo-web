@@ -97,11 +97,11 @@
 
     &.success {
         .form {
-            opacity: 0;
+            opacity: 0.25;
         }
 
         .success {
-            opacity: 0.25;
+            // opacity: 0.25;
         }
     }
 }
