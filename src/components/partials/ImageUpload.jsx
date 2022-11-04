@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -21,6 +21,7 @@ const defaultProps = {
 function ImageUpload({ className, label, onChange }) {
     const [blob, setBlob] = useState(null);
     const hasFile = blob !== null;
+    const fileUploadRef = useRef(null);
 
     const onChangePrivate = useCallback(
         (e) => {
@@ -36,6 +37,7 @@ function ImageUpload({ className, label, onChange }) {
 
     const onCloseClick = useCallback( () => {
         setBlob(null);
+        fileUploadRef.current.value = '';
         if (onChange !== null) {
             onChange(null);
         }
@@ -50,7 +52,7 @@ function ImageUpload({ className, label, onChange }) {
         >
             <span className={styles.label}>{label}</span>
             <img className={styles.selectedImage} src={blob} alt="preview" />
-            <input type="file" accept="image/*" onChange={onChangePrivate} />
+            <input ref={fileUploadRef} type="file" accept="image/*" onChange={onChangePrivate} />
             <button type="button" className={styles.close} onClick={onCloseClick}>
                 <img src={trashImage} alt="Remove" />
             </button>

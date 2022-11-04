@@ -139,6 +139,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     ) : null}
                     <FormGroup className={styles.comment}>
                         <textarea
+                            required
                             value={comment}
                             placeholder={intl.formatMessage({ id: 'comment-placeholder' })}
                             onChange={setCommentValue}
@@ -161,7 +162,6 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     <button
                         className={styles.submitButton}
                         type="submit"
-                        disabled={comment.length === 0}
                     >
                         <FormattedMessage id="publish" />
                     </button>
