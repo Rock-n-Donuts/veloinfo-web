@@ -2,6 +2,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import menuIcon from '../../assets/images/menu-icon.svg';
+import chevronIcon from '../../assets/images/chevron-bottom.svg';
+import snowIcon from '../../icons/contributions/snow.svg';
 
 import styles from '../../styles/partials/map-header.module.scss';
 
@@ -18,11 +20,19 @@ const defaultProps = {
 function MapHeader({ className, onTogglerClick }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
-            <button type="button" className={styles.menuToggler} onClick={onTogglerClick}>
-                <img src={menuIcon} alt="Hambuger" />
-            </button>
-            <div className={styles.dateRange}>DateRange</div>
-            <div className={styles.meteo}></div>
+            <div className={styles.left}>
+                <button type="button" className={styles.menuToggler} onClick={onTogglerClick}>
+                    <img src={menuIcon} alt="Hambuger" />
+                </button>
+            </div>
+            <div className={styles.center}>
+                <button type="button" className={styles.dateRangeInner}>
+                    <img src={snowIcon} alt="Snow" />
+                    <span className={styles.label}>Depuis 5 jours</span>
+                    <img src={chevronIcon} alt="Chevron" />
+                </button>
+            </div>
+            <div className={styles.right}></div>
         </div>
     );
 }

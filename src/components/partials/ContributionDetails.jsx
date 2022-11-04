@@ -63,8 +63,6 @@ function ContributionDetails({ className, contribution, children, onClose }) {
         }
     }, null);
 
-    console.log(contributionType);
-
     const {
         label: contributionTypeLabel,
         votes: contributionTypeVotes,
