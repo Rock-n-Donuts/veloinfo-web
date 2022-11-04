@@ -63,15 +63,15 @@ function HomePage() {
                 ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
             );
 
-            console.log(
-                troncons.length,
-                unknownPaths.length +
-                    clearedPaths.length +
-                    snowyPaths.length +
-                    panifiedPaths.length +
-                    inProgressPaths.length,
-                `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
-            );
+            // console.log(
+            //     troncons.length,
+            //     unknownPaths.length +
+            //         clearedPaths.length +
+            //         snowyPaths.length +
+            //         panifiedPaths.length +
+            //         inProgressPaths.length,
+            //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
+            // );
 
             return [
                 {
@@ -210,7 +210,7 @@ function HomePage() {
     const mapRef = useRef(null);
     const onMapReady = useCallback((map) => {
         mapRef.current = map;
-        console.log('ready', map);
+        // console.log('ready', map);
     }, []);
 
     return (

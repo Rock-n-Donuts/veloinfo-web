@@ -4,7 +4,7 @@ import { useUser } from './AuthContext';
 import useInterval from '../hooks/useInterval';
 
 const DataContext = createContext();
-const pollingDelay = 120; // seconds
+const pollingDelay = 15; // seconds
 
 export const DataProvider = ({ children }) => {
     const [data, setData] = useState(null);
@@ -21,13 +21,41 @@ export const DataProvider = ({ children }) => {
                     url: '/update',
                     method: 'get',
                     params: {
-                        date,
+                        from: date,
                     },
                 })
                 .then((res) => {
-                    const { data = null } = res || {};
-                    console.log('Data received.', data);
-                    setData(data);
+                    const { data: newData = null } = res || {};
+                    // console.log('Data received.', newData);
+                    if (date !== null) {
+                        
+                        setData((old) => {
+                            const { troncons, contributions } = old || {};
+                            const { troncons: updatedTroncons, contributions: updatedContributions, date: updatedDate } = newData || {};
+                            const newTroncons = [...troncons];
+                            const newContributions = [...contributions];
+                            updatedTroncons.forEach(troncon => {
+                                const foundIndex = troncons.findIndex(({ id }) => id === troncon.id);
+                                if (foundIndex >= 0) {
+                                    newTroncons[foundIndex] = troncon;
+                                } else {
+                                    newTroncons.push(troncon);
+                                }
+                            });
+                            updatedContributions.forEach(contribution => {
+                                const foundIndex = contributions.findIndex(({ id }) => id === contribution.id);
+                                if (foundIndex >= 0) {
+                                    newContributions[foundIndex] = contribution;
+                                } else {
+                                    newContributions.push(contribution);
+                                }
+                            });
+                            return { contributions: newContributions, troncons: newTroncons, date: updatedDate };
+                        })
+                    } else {
+                        setData(newData);
+                    }
+                    
                 })
                 .catch((err) => setError(err))
                 .finally(() => setLoading(false));
@@ -37,19 +65,17 @@ export const DataProvider = ({ children }) => {
 
     useEffect(() => {
         if (user !== null) {
-            console.log('Getting initial data...');
+            // console.log('Getting initial data...');
             getData();
         }
     }, [getData, user]);
 
-    const pollData = useCallback(() => {
+    useInterval(() => {
         if (user !== null) {
-            console.log('Updating data...');
+            // console.log('Updating data...');
             getData(date);
         }
-    }, [getData, date, user]);
-
-    // useInterval(pollData, pollingDelay * 1000);
+    }, pollingDelay * 1000);
 
     return (
         <DataContext.Provider value={{ data, loading, error, setData }}>

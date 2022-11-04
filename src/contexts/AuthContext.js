@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        console.log('Getting user...');
+        // console.log('Getting user...');
         axios
             .request({
                 url: '/auth',
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
                 const { data = null } = res || {};
                 const { token = null } = data || {};
                 axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
-                console.log('Got user.', data);
+                // console.log('Got user.', data);
                 setUser(data);
             })
             .catch((err) => setError(err))

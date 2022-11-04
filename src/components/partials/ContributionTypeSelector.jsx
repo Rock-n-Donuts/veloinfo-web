@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import ContributionIcon from '../../icons/Contribution';
 import categories from '../../data/contributions-types.json';
-import styles from '../../styles/partials/contribution-selector.module.scss';
+import styles from '../../styles/partials/contribution-type-selector.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
@@ -68,7 +68,9 @@ function ContributionTypeSelector({
                                     icon={icon}
                                     color={color}
                                 />
-                                <span className={styles.label}>{label[shortLocale]}</span>
+                                <span className={styles.labelContainer}>
+                                    <span className={styles.label}>{label[shortLocale]}</span>
+                                </span>
                             </span>
                         </button>
                     );

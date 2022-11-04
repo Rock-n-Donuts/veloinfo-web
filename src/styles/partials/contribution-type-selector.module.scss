@@ -49,9 +49,15 @@
             max-width: 300px;
         }
 
+        .labelContainer {
+            display: flex;
+            min-height: 2em;
+        }
+
         .label {
             display: block;
-            font-weight: bold;
+            font-weight: bold;            
+            margin: auto;
         }
     }
 
