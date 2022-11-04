@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import CloseButton from '../buttons/Close';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useCallback, useEffect, useState } from 'react';
+import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import CommentsIcon from '../../icons/Comments';
 import usePrevious from '../../hooks/usePrevious';
@@ -11,6 +12,7 @@ import ReplyForm from '../forms/ReplyForm';
 
 import contributionsTypes from '../../data/contributions-types.json';
 import styles from '../../styles/partials/contribution-details.module.scss';
+import { useUpdateContribution } from '../../contexts/DataContext';
 
 const propTypes = {
     className: PropTypes.string,
@@ -80,12 +82,19 @@ function ContributionDetails({ className, contribution, children, onClose }) {
     const { label: negativeVoteLabel = null, color: negativeVoteColor = null } =
         contributionTypeNegative || {};
 
-    const { positive = 0, negative = 0, lastVote = null } = score || {};
-    console.log(lastVote)
+    const {
+        positive = 0,
+        negative = 0,
+        // lastVote = null
+    } = score || {};
+    // console.log(lastVote)
     // const totalVote = positive + negative;
 
     const [canVote, setCanVote] = useState(false);
     const [voteLoading, setVoteLoading] = useState(false);
+    const [formKey, setFormKey] = useState(id);
+
+    const updateContribution = useUpdateContribution();
 
     const vote = useCallback(
         (score) => {
@@ -94,10 +103,10 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                 .post(`/contribution/${id}/vote`, { score })
                 .then((res) => {
                     const { data } = res || {};
-                    const { success = false } = data || {};
-                    if (success) {
-                        //@TODO refresh data
+                    const { success = false, contribution = null } = data || {};
+                    if (success && contribution !== null) {
                         setCanVote(false);
+                        updateContribution(contribution);
                     } else {
                         console.log(data);
                     }
@@ -109,7 +118,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                     setVoteLoading(false);
                 });
         },
-        [id, setCanVote, setVoteLoading],
+        [id, setCanVote, setVoteLoading, updateContribution],
     );
 
     const onVotePositive = useCallback(() => {
@@ -131,9 +140,13 @@ function ContributionDetails({ className, contribution, children, onClose }) {
         }
     }, [id]);
 
-    const onReplySuccess = useCallback(() => {
-        //@TODO refresh data
-    }, []);
+    const onReplySuccess = useCallback(
+        (contribution) => {
+            setFormKey(`${id}-${uuid()}`);
+            updateContribution(contribution);
+        },
+        [id, updateContribution, setFormKey],
+    );
 
     return (
         <div
@@ -236,7 +249,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                         )}
                     </div>
                     <ReplyForm
-                        key={id}
+                        key={formKey}
                         className={styles.replyForm}
                         contributionId={id}
                         onSuccess={onReplySuccess}

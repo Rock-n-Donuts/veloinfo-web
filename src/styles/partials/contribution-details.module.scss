@@ -80,6 +80,24 @@
         }
     }
 
+    .replies {
+        .reply {
+            margin-bottom: 20px;
+        }
+
+        .replyDate {
+            font-size: 14px;
+        }
+
+        // .replyName {
+
+        // }
+
+        .replyMessage {
+            margin-top: 5px;
+        }
+    }
+
     &.voteDisabled {
         .voteContainer {
             opacity: 0.5;

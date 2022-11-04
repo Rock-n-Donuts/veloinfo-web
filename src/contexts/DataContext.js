@@ -107,4 +107,29 @@ export const useAddContribution = () => {
     return addContribution;
 };
 
+export const useUpdateContribution = () => {
+    const ctx = useDataContext(DataContext);
+    const { setData } = ctx || {};
+
+    const updateContribution = useCallback(
+        (updatedContribution) => {
+            setData((old) => {
+                const { id: updatedContributionId } = updatedContribution;
+                const { contributions } = old || {};
+                const foundContributionIndex = contributions.findIndex(({ id }) => {
+                    return parseInt(id) === parseInt(updatedContributionId);
+                });
+                const newContributions = [...contributions];
+                if (foundContributionIndex >= 0) {
+                    newContributions[foundContributionIndex] = updatedContribution;
+                    return { ...old, contributions: newContributions };
+                }
+                return old;
+            });
+        },
+        [setData],
+    );
+    return updateContribution;
+};
+
 export default DataContext;

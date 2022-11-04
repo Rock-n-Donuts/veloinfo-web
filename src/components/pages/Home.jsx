@@ -20,13 +20,18 @@ import styles from '../../styles/pages/home.module.scss';
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
     const [addContributionOpened, setAddContributionOpened] = useState(false);
-    const [contributionSelected, setContributionSelected] = useState(null);
+    const [selectedContributionId, setSelectedContributionId] = useState(null);
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
 
-    const isContributionSelected = contributionSelected !== null;
+    const isContributionSelected = selectedContributionId !== null;
     const data = useData();
     const { troncons = null, contributions = null } = data || {};
+
+    const contributionSelected =
+        contributions !== null
+            ? contributions.find(({ id }) => parseInt(id) === selectedContributionId) || null
+            : null;
 
     const addContribution = useAddContribution();
 
@@ -191,18 +196,21 @@ function HomePage() {
         [setContributionSubmitted, closeAddContribution, addContribution],
     );
 
-    const selectContribution = useCallback( (contribution) => {
-        setContributionSelected(contribution);
-    }, [setContributionSelected]);
+    const selectContribution = useCallback(
+        ({ id }) => {
+            setSelectedContributionId(id);
+        },
+        [setSelectedContributionId],
+    );
 
-    const unselectContribution = useCallback( (contribution) => {
-        setContributionSelected(null);
-    }, [setContributionSelected]);
+    const unselectContribution = useCallback(() => {
+        setSelectedContributionId(null);
+    }, [setSelectedContributionId]);
 
     const mapRef = useRef(null);
     const onMapReady = useCallback((map) => {
         mapRef.current = map;
-        console.log('ready', map)
+        console.log('ready', map);
     }, []);
 
     return (
