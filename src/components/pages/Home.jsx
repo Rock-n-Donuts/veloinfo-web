@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
@@ -15,12 +15,16 @@ import contributionTypes from '../../data/contributions-types.json';
 import getContributionSvg from '../../icons/contributionSvg';
 
 import styles from '../../styles/pages/home.module.scss';
+import ContributionDetails from '../partials/ContributionDetails';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
     const [addContributionOpened, setAddContributionOpened] = useState(false);
+    const [contributionSelected, setContributionSelected] = useState(null);
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
+
+    const isContributionSelected = contributionSelected !== null;
     const data = useData();
     const { troncons = null, contributions = null } = data || {};
 
@@ -109,11 +113,11 @@ function HomePage() {
     const markers = useMemo(() => {
         if (contributions !== null) {
             const icons = contributionTypes.reduce((all, curr) => {
-                const { quality = null, id, icon } = curr;
-                if (quality !== null) {
+                const { qualities = null, id, icon } = curr;
+                if (qualities !== null) {
                     return [
                         ...all,
-                        ...quality.map((quality) => ({ ...quality, quality: true, id, icon })),
+                        ...qualities.map((quality) => ({ ...quality, quality: true, id, icon })),
                     ];
                 } else {
                     return [...all, curr];
@@ -188,7 +192,17 @@ function HomePage() {
     );
 
     const selectContribution = useCallback( (contribution) => {
-        console.log(contribution)
+        setContributionSelected(contribution);
+    }, [setContributionSelected]);
+
+    const unselectContribution = useCallback( (contribution) => {
+        setContributionSelected(null);
+    }, [setContributionSelected]);
+
+    const mapRef = useRef(null);
+    const onMapReady = useCallback((map) => {
+        mapRef.current = map;
+        console.log('ready', map)
     }, []);
 
     return (
@@ -197,6 +211,7 @@ function HomePage() {
                 styles.container,
                 {
                     [styles.menuOpened]: menuOpened,
+                    [styles.contributionSelected]: isContributionSelected,
                     [styles.addContributionOpened]: addContributionOpened,
                     [styles.contributionSubmited]: contributionSubmited,
                 },
@@ -212,6 +227,7 @@ function HomePage() {
                 onCenterChanged={storeCenter}
                 onZoomChanged={storeZoom}
                 onMarkerClick={selectContribution}
+                onReady={onMapReady}
             />
             <AddContributionButton
                 className={styles.addContributionButton}
@@ -224,6 +240,13 @@ function HomePage() {
                 onClose={closeAddContribution}
                 onContributionAdded={onContributionAdded}
             />
+            <div className={styles.contributionDetailsContainer}>
+                <ContributionDetails
+                    className={styles.contributionDetails}
+                    contribution={contributionSelected}
+                    onClose={unselectContribution}
+                />
+            </div>
             <Loading loading={data === null} />
         </div>
     );

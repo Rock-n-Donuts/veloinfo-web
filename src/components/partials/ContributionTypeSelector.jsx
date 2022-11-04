@@ -21,7 +21,7 @@ const defaultProps = {
     onSelectCategory: null,
 };
 
-function ContributionSelector({
+function ContributionTypeSelector({
     className,
     selected,
     categoryIndexSelected,
@@ -77,13 +77,13 @@ function ContributionSelector({
             <div className={styles.selectedCategoryContributions}>
                 <div className={styles.contributions}>
                     {(contributions || []).map((contribution, contributionIndex) => {
-                        const { label, icon, color, quality } = selectedCategory;
+                        const { label, icon, color, qualities } = selectedCategory;
                         const {
                             id,
                             label: finalLabel = label,
                             icon: finalIcon = icon,
                             color: finalColor = color,
-                            quality: finalQuality = quality,
+                            qualities: finalQualities = qualities,
                         } = contribution || {};
 
                         return (
@@ -103,7 +103,7 @@ function ContributionSelector({
                                         label: finalLabel,
                                         icon: finalIcon,
                                         color: finalColor,
-                                        quality: finalQuality,
+                                        qualities: finalQualities,
                                     });
                                 }}
                             >
@@ -129,7 +129,7 @@ function ContributionSelector({
     );
 }
 
-ContributionSelector.propTypes = propTypes;
-ContributionSelector.defaultProps = defaultProps;
+ContributionTypeSelector.propTypes = propTypes;
+ContributionTypeSelector.defaultProps = defaultProps;
 
-export default ContributionSelector;
+export default ContributionTypeSelector;

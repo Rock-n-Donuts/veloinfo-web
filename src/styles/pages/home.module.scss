@@ -18,9 +18,8 @@
 
     .addContributionButton {
         position: absolute;
-        bottom: 0;
-        right: 0;
-        padding: 10px;
+        bottom: 20px;
+        right: 20px;
     }
     
     .homeMenu {
@@ -38,6 +37,27 @@
         transition: transform 0.25s ease;
     }
 
+    .contributionDetailsContainer {
+        @extend %fullscreen;
+
+        display: flex;
+        pointer-events: none;
+        overflow: auto;        
+        padding: 60px 0;
+        opacity: 0;
+        transition: opacity .2s ease;
+    }
+
+    .contributionDetails {
+        position: relative;
+        margin: auto;
+        width: 100%;
+        max-width: 600px;
+        transform: scale(0.75);
+        transition: transform .2s ease;
+        
+    }
+
     &.menuOpened {
         .homeMenu {
             transform: translateX(0);
@@ -47,6 +67,17 @@
     &.addContributionOpened {
         .addContribution {
             transform: translateY(0);
+        }
+    }
+
+    &.contributionSelected {
+        .contributionDetailsContainer {
+            pointer-events: auto;
+            opacity: 1;
+        }
+
+        .contributionDetails {
+            transform: scale(1);
         }
     }
 

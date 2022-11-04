@@ -40,6 +40,7 @@ const propTypes = {
     onPositionRefused: PropTypes.func,
     onMarkerClick: PropTypes.func,
     onLineClick: PropTypes.func,
+    onReady: PropTypes.func,
 };
 
 const defaultProps = {
@@ -54,6 +55,7 @@ const defaultProps = {
     onPositionRefused: null,
     onMarkerClick: null,
     onLineClick: null,
+    onReady: null,
 };
 
 function Map({
@@ -68,6 +70,7 @@ function Map({
     onPositionRefused,
     onMarkerClick,
     onLineClick,
+    onReady,
 }) {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
@@ -320,6 +323,14 @@ function Map({
             }
         };
     }, [ready, markers, addMarkers]);
+
+    useEffect(() => {
+        if (ready) {
+            if (onReady !== null) {
+                onReady(mapRef.current);
+            }
+        }
+    }, [ready, onReady]);
 
     return (
         <div

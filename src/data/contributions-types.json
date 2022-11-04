@@ -6,7 +6,23 @@
             "en": "Cycle path passability"
         },
         "icon": "snow",
-        "quality": [
+        "votes": {
+            "positive": {
+                "color": "#f09035",
+                "label": {
+                    "fr": "Encore là",
+                    "en": "Still there"
+                }                
+            },
+            "negative": {
+                "color": "#a5a5a5",
+                "label": {
+                    "fr": "Périmé",
+                    "en": "Outdated"
+                }                
+            }
+        },
+        "qualities": [
             {
                 "label": {
                     "fr": "Positive",

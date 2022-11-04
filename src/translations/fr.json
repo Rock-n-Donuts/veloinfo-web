@@ -1,7 +1,7 @@
 {
+    "add": "Ajouter",
     "add-contribution": "Ajouter une contribution",
     "add-contribution-title": "Ajouter une contribution à la carte",
-    "contribution-hidden-warning": "Cette contribution ne sera pas affiché sur la carte, mais la ville en sera informé.",
     "close": "Fermer",
     "previous": "Précédent",
     "next": "Suivant",
@@ -22,5 +22,7 @@
     "upload-photo": "Télécharger une photo",
     "error-server": "Erreur avec le serveur :/",
     "error-coords": "Veuillez spécifier un point sur la carte",
-    "error-captcha": "Veuillez vérifier le CAPTCHA"
+    "error-captcha": "Veuillez vérifier le CAPTCHA",
+    "vote-positive": "Oui",
+    "vote-negative": "Non"
 }

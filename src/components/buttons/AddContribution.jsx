@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useIntl } from 'react-intl';
-
-import addContributionImage from '../../assets/images/add-contribution.svg';
+import { FormattedMessage } from 'react-intl';
 
 import styles from '../../styles/buttons/add-contribution.module.scss';
 
@@ -17,19 +15,13 @@ const defaultProps = {
 };
 
 function AddContributionButton({ className, onClick }) {
-    const intl = useIntl();
     return (
         <button
             type="button"
             className={classNames([styles.container, { [className]: className !== null }])}
             onClick={onClick}
         >
-            <img
-                src={addContributionImage}
-                alt={intl.formatMessage({
-                    id: 'add-contribution',
-                })}
-            />
+            <FormattedMessage id="add" />
         </button>
     );
 }

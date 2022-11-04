@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
-import ContributionSelector from './ContributionSelector';
+import ContributionTypeSelector from './ContributionTypeSelector';
 import CloseButton from '../buttons/Close';
 import ContributionForm from '../forms/ContributionForm';
 import categories from '../../data/contributions-types.json';
@@ -40,13 +40,13 @@ function AddContribution({ className, onClose, onContributionAdded }) {
         (categoryIndex) => {
             const category = categories[categoryIndex];
             const { id = null, contributions = null } = category || {};
-            
+
             if (id !== null && contributions === null) {
                 selectContributionType(category);
             } else {
                 setCategoryIndexSelected(categoryIndex);
                 selectContributionType(null);
-            }            
+            }
         },
         [setCategoryIndexSelected, selectContributionType],
     );
@@ -54,8 +54,8 @@ function AddContribution({ className, onClose, onContributionAdded }) {
     const hideForm = useCallback(() => {
         setFormActive(false);
         setCategoryIndexSelected(null);
-        setTimeout( () => {
-            setContributionTypeSelected(null);            
+        setTimeout(() => {
+            setContributionTypeSelected(null);
         }, 250);
     }, [setFormActive]);
 
@@ -80,12 +80,14 @@ function AddContribution({ className, onClose, onContributionAdded }) {
             ])}
         >
             <div className={styles.content}>
-                <div className={styles.title}>
-                    <FormattedMessage id="add-contribution-title" />
+                <div className={styles.titleContainer}>
+                    <div className={styles.title}>
+                        <FormattedMessage id="add-contribution-title" />
+                    </div>
                 </div>
                 <div className={styles.pages}>
-                    <div className={classNames([styles.page, styles.contributionSelector])}>
-                        <ContributionSelector
+                    <div className={classNames([styles.page, styles.contributionTypeSelector])}>
+                        <ContributionTypeSelector
                             className={styles.pageContent}
                             categoryIndexSelected={categoryIndexSelected}
                             selected={contributionTypeSelected}

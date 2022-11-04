@@ -3,6 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from '../partials/FormGroup';
@@ -12,7 +13,7 @@ import ContributionIcon from '../../icons/Contribution';
 
 import successImage from '../../assets/images/success.svg';
 
-import styles from '../../styles/forms/contribution.module.scss';
+import styles from '../../styles/forms/form.module.scss';
 
 const propTypes = {
     active: PropTypes.bool,
@@ -35,7 +36,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
         id: contributionTypeId,
         icon: contributionTypeIcon,
         color: contributionTypeColor,
-        quality: contributionTypeQuality = null,
+        qualities: contributionTypeQualities = null,
     } = contributionType || {};
 
     const intl = useIntl();
@@ -43,9 +44,10 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
     const shortLocale = locale.substring(0, 2);
     const captchaRef = useRef();
 
+    const nameCookie = Cookies.get('name') || '';
     const [coords, setCoords] = useState(null);
     const [quality, setQuality] = useState(0);
-    const [name, setName] = useState('');
+    const [name, setName] = useState(nameCookie);
     const [comment, setComment] = useState('');
     const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -93,7 +95,12 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
             const formData = new FormData();
             formData.append('issue_id', contributionTypeId);
             formData.append('coords[]', coords);
-            if (contributionTypeQuality && quality !== null && quality <= 1 && quality >= -1) {
+            if (
+                contributionTypeQualities !== null &&
+                quality !== null &&
+                quality <= 1 &&
+                quality >= -1
+            ) {
                 formData.append('quality', quality);
             }
             if (name.length > 0) {
@@ -115,6 +122,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                     const { data } = res || {};
                     const { success = false, contribution = null } = data || {};
                     if (success) {
+                        Cookies.set('name', name, { expires: 3650 });
                         setSuccess(true);
                         setTimeout(() => {
                             resetForm();
@@ -137,7 +145,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
         },
         [
             contributionTypeId,
-            contributionTypeQuality,
+            contributionTypeQualities,
             coords,
             quality,
             name,
@@ -151,8 +159,8 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
     );
 
     const currentQuality =
-        contributionTypeQuality !== null
-            ? contributionTypeQuality.find(({ value }) => parseInt(value) === parseInt(quality))
+        contributionTypeQualities !== null
+            ? contributionTypeQualities.find(({ value }) => parseInt(value) === parseInt(quality))
             : null;
     const { color: iconColor = contributionTypeColor } = currentQuality || {};
 
@@ -188,12 +196,12 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                             />
                         </div>
                     </FormGroup>
-                    {contributionTypeQuality !== null ? (
+                    {contributionTypeQualities !== null ? (
                         <FormGroup
                             className={styles.quality}
                             label={intl.formatMessage({ id: 'pavement-condition' })}
                         >
-                            {contributionTypeQuality.map(({ value, label }, qualityIndex) => (
+                            {contributionTypeQualities.map(({ value, label }, qualityIndex) => (
                                 <label key={`quality-${qualityIndex}`}>
                                     <input
                                         type="radio"
@@ -208,14 +216,19 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                             ))}
                         </FormGroup>
                     ) : null}
-                    <FormGroup className={styles.name} label={intl.formatMessage({ id: 'name' })}>
-                        <input
-                            type="text"
-                            value={name}
-                            placeholder={intl.formatMessage({ id: 'name-placeholder' })}
-                            onChange={setNameValue}
-                        />
-                    </FormGroup>
+                    {nameCookie.length === 0 ? (
+                        <FormGroup
+                            className={styles.name}
+                            label={intl.formatMessage({ id: 'name' })}
+                        >
+                            <input
+                                type="text"
+                                value={name}
+                                placeholder={intl.formatMessage({ id: 'name-placeholder' })}
+                                onChange={setNameValue}
+                            />
+                        </FormGroup>
+                    ) : null}
                     <FormGroup
                         className={styles.comment}
                         label={intl.formatMessage({ id: 'comment' })}

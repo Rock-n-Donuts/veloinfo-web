@@ -2,7 +2,9 @@
 @import '../placeholders';
 
 .container {
-    img {
-        width: 60px;
-    }
+    padding: 10px;
+    min-width: 100px;
+    color: $color-white;
+    background-color: $color-blue-background;
+    border-radius: 5px;
 }

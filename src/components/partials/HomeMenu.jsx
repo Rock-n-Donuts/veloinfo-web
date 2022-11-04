@@ -19,7 +19,6 @@ const defaultProps = {
 function HomeMenu({ className, opened, onClose }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null, [styles.opened]: opened }])}>
-            Menu
             <CloseButton className={styles.closeButton} onClick={onClose} />
         </div>
     );

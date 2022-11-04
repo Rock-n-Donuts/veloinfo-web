@@ -87,7 +87,7 @@
         }
 
         textarea {
-            height: 200px;
+            height: 100px;
         }
     }
 
@@ -101,9 +101,11 @@
 
     .captcha {
         display: inline-block;
+        margin-bottom: 20px;
     }
 
     .errors {
+        text-align: right;
         margin-top: auto;
         color: red;
         min-height: 1em;
