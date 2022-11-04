@@ -14,7 +14,6 @@ import ContributionIcon from '../../icons/Contribution';
 import successImage from '../../assets/images/success.svg';
 
 import styles from '../../styles/forms/form.module.scss';
-import { useLines, useMarkers } from '../../contexts/DataContext';
 
 const propTypes = {
     active: PropTypes.bool,
@@ -44,9 +43,6 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
     const { locale } = intl;
     const shortLocale = locale.substring(0, 2);
     const captchaRef = useRef();
-
-    const lines = useLines();
-    const markers = useMarkers();
 
     const nameCookie = Cookies.get('name') || '';
     const [coords, setCoords] = useState(null);
@@ -191,8 +187,6 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                             onCenterChanged={setCoordsValue}
                             askForPosition={active}
                             onPositionRefused={onPositionRefused}
-                            lines={lines}
-                            markers={markers}
                         />
                         <div className={styles.mapMarker}>
                             <ContributionIcon
