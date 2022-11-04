@@ -31,8 +31,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
     const finalContribution = contribution || previousContribution;
 
     const {
-        // last_vote,// contient le dernier score pour indiquer l'état et couleur gris
-        id,
+        id = null,
         issue_id,
         quality,
         comment,
@@ -81,7 +80,8 @@ function ContributionDetails({ className, contribution, children, onClose }) {
     const { label: negativeVoteLabel = null, color: negativeVoteColor = null } =
         contributionTypeNegative || {};
 
-    const { positive = 0, negative = 0 } = score || {};
+    const { positive = 0, negative = 0, lastVote = null } = score || {};
+    console.log(lastVote)
     // const totalVote = positive + negative;
 
     const [canVote, setCanVote] = useState(false);
@@ -118,20 +118,20 @@ function ContributionDetails({ className, contribution, children, onClose }) {
     const onVoteNegative = useCallback(() => {
         vote(-1);
     }, [vote]);
-    
-    useEffect( () => {
-        axios.get(`/contribution/${id}`)
-            .then((res) => {
+
+    useEffect(() => {
+        if (id !== null) {
+            axios.get(`/contribution/${id}`).then((res) => {
                 const { data } = res || {};
                 const { can_vote = false } = data || {};
                 if (can_vote) {
                     setCanVote(true);
                 }
-            })
+            });
+        }
     }, [id]);
 
-    const onReplySuccess = useCallback( () => {
-
+    const onReplySuccess = useCallback(() => {
         //@TODO refresh data
     }, []);
 
@@ -235,7 +235,12 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                             ),
                         )}
                     </div>
-                    <ReplyForm key={id} className={styles.replyForm} contributionId={id} onSuccess={onReplySuccess} />
+                    <ReplyForm
+                        key={id}
+                        className={styles.replyForm}
+                        contributionId={id}
+                        onSuccess={onReplySuccess}
+                    />
                 </div>
             ) : null}
             {children}
