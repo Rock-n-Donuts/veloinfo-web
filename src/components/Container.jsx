@@ -9,9 +9,9 @@ import { DataProvider } from '../contexts/DataContext';
 import App from './App';
 import axios from 'axios';
 
-import api from '../data/api.json';
-
-axios.defaults.baseURL = `${api.proxy}${api.baseUrl}`;
+const apiUrl = process.env.REACT_APP_API_URL || 'api';
+const apiProxyUrl = process.env.REACT_APP_API_PROXY_URL || '';
+axios.defaults.baseURL = `${apiProxyUrl}${apiUrl}`;
 
 const messages = {
     fr: messagesFr,
