@@ -16,6 +16,9 @@ export function getRelativeTime(locale, d1) {
     let newString;
     for (let u in units) {
         if (Math.abs(elapsed) > units[u] || u === 'second') {
+            console.log(elapsed);
+            console.log(u);
+            console.log(Math.round(elapsed / units[u]), u);
             newString = rtf.format(Math.round(elapsed / units[u]), u);
             break;
         }
