@@ -260,16 +260,23 @@ export const useMarkers = (opts) => {
         const icons = contributionTypes.reduce((all, curr) => {
             const { qualities = null, id, icon } = curr;
             if (qualities !== null) {
+                const qualityIcons = qualities.map((quality) => ({ ...quality, quality: true, id, icon }));
+                // const grayQualityIcons = qualityIcons.map((icon) => ({...icon, gray: true}));
                 return [
                     ...all,
-                    ...qualities.map((quality) => ({ ...quality, quality: true, id, icon })),
+                    ...qualityIcons,
+                    // grayQualityIcons[0]
                 ];
             } else {
-                return [...all, curr];
+                return [
+                    ...all,
+                    curr,
+                    // {...curr, gray: true}
+                ];
             }
         }, []).reverse();
 
-        return icons.map(({ id, icon, color, quality, value }) => ({
+        const groupedMarkers = icons.map(({ id, icon, color, quality, value, gray = false }) => ({
             features: contributions
                 .filter(({ issue_id, quality: contributionQuality }) =>
                     quality ? contributionQuality === value : parseInt(issue_id) === parseInt(id),
@@ -280,10 +287,14 @@ export const useMarkers = (opts) => {
                     clickable: true,
                 })),
             src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-                getContributionSvg({ icon, color }),
+                getContributionSvg({ icon, color: gray ? '#000' : color }),
             )}`,
             scale: parseInt(id) === 1 ? 1 : 0.5,
         }));
+
+        console.log(icons)
+
+        return groupedMarkers;
     } else {
         return null;
     }
