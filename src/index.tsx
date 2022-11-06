@@ -1,5 +1,3 @@
-import React from 'react';
-import './polyfills';
 import ReactDOM from 'react-dom/client';
 import './styles/index.scss';
 import Container from './components/Container';

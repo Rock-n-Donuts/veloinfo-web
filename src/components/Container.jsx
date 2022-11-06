@@ -4,10 +4,17 @@ import { BrowserRouter } from 'react-router-dom';
 import messagesFr from '../translations/fr.json';
 import messagesEn from '../translations/en.json';
 
+import RelativeTimeFormat from 'relative-time-format';
+import fr from 'relative-time-format/locale/fr';
+import en from 'relative-time-format/locale/en';
+
 import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataContext';
 import App from './App';
 import axios from 'axios';
+
+RelativeTimeFormat.addLocale(fr);
+RelativeTimeFormat.addLocale(en);
 
 const apiUrl = process.env.REACT_APP_API_URL || 'api';
 const apiProxyUrl = process.env.REACT_APP_API_PROXY_URL || '';
