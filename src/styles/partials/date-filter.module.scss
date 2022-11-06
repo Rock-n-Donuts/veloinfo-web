@@ -17,10 +17,6 @@
         white-space: nowrap;
     }
 
-    // .chevron {
-
-    // }
-
     .popupSafe {
         position: fixed;
         top: 0;
@@ -38,7 +34,6 @@
         position: absolute;
         top: 100%;
         left: 50%;
-        margin-top: -10px;
         transform: translateX(-50%);
         pointer-events: none;
     }
@@ -80,6 +75,15 @@
             min-width: 240px;
             width: 100%;
             padding: 12px;
+            border-bottom: 1px solid rgba($color-white, 0.1);
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: rgba($color-white, 0.05);
+            }
 
             &.selected {
                 background-color: rgba($color-white, 0.15);
@@ -89,7 +93,7 @@
 
     &.opened {
         .popupSafe {
-            opacity: 1;
+            // opacity: 1;
             pointer-events: auto;
         }
 
@@ -103,11 +107,6 @@
 
         .choices {
             opacity: 1;
-            transition-delay: 0.15s;
-
-            button {
-                border-bottom: 1px solid rgba($color-white, 0.1);
-            }
-        }
+            transition-delay: 0.15s;       }
     }
 }

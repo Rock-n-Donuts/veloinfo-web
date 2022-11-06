@@ -120,15 +120,27 @@ export const useTroncons = ({ filters = null } = {}) => {
 };
 
 export const useContributions = ({ filters = null } = {}) => {
-    const { fromDays = null } = filters || {};
+    const { fromDays = null, contributionTypes = null } = filters || {};
     const data = useData();
     const { contributions = null } = data || {};
 
-    if (contributions !== null && fromDays !== null) {
-        return contributions.filter(
-            ({ issue_id, created_at }) =>
-                issue_id !== 1 || addDays(new Date(), -fromDays) < parseISO(created_at),
-        );
+    if (contributions !== null) {
+        let filteredContributions = [...contributions];
+
+        if (fromDays !== null) {
+            filteredContributions = filteredContributions.filter(
+                ({ issue_id, created_at }) =>
+                    issue_id !== 1 || addDays(new Date(), -fromDays) < parseISO(created_at),
+            );
+        }
+
+        if (contributionTypes !== null) {
+            filteredContributions = filteredContributions.filter(({ issue_id }) =>
+                contributionTypes.indexOf(parseInt(issue_id)) > -1,
+            );
+        }
+
+        return filteredContributions;
     }
     return contributions;
 };
@@ -249,6 +261,7 @@ export const useMarkers = (opts) => {
             src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
                 getContributionSvg({ icon, color }),
             )}`,
+            scale: parseInt(id) === 1 ? 1 : 0.5
         }));
     } else {
         return null;

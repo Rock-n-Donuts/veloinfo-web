@@ -1,6 +1,6 @@
 [
     {
-        "id": "1",
+        "id": 1,
         "label": {
             "fr": "Passibilité de la piste",
             "en": "Cycle path passability"
@@ -51,16 +51,16 @@
         ]
     },
     {
-        "id": "2",
+        "id": 2,
         "label": {
-            "fr": "Présence d'un rack à vélo",
-            "en": "Bike rack available"
+            "fr": "Rack à vélo",
+            "en": "Bike rack"
         },
         "icon": "parking",
         "color": "#439667"
     },
     {
-        "id": "3",
+        "id": 3,
         "label": {
             "fr": "Borne de réparation",
             "en": "Repair stop"
@@ -69,7 +69,7 @@
         "color": "#439667"
     },
     {
-        "id": "4",
+        "id": 4,
         "label": {
             "fr": "Boutique vélo",
             "en": "Bike shop"

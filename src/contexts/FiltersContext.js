@@ -4,7 +4,7 @@ const FiltersContext = createContext();
 
 export const FiltersProvider = ({ children }) => {
     const [fromDays, setFromDays] = useState(5);
-    const [contributionTypes, setContributionTypes] = useState([]);
+    const [contributionTypes, setContributionTypes] = useState([1, 2, 3, 4]);
     const [tronconsTypes, setTronconsTypes] = useState([]);
 
     return (

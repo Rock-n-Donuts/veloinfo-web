@@ -15,7 +15,6 @@ import ContributionDetails from '../partials/ContributionDetails';
 import AddContributionButton from '../buttons/AddContribution';
 
 import styles from '../../styles/pages/home.module.scss';
-import MenuButton from '../buttons/Menu';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -26,9 +25,9 @@ function HomePage() {
 
     const isContributionSelected = selectedContributionId !== null;
     const data = useData();
-    const { fromDays } = useFilters();
+    const { fromDays, contributionTypes } = useFilters();
     const lines = useLines();
-    const markers = useMarkers({ filters: { fromDays } });
+    const markers = useMarkers({ filters: { fromDays, contributionTypes } });
     const { contributions = null } = data || {};
     const contributionSelected =
         contributions !== null
@@ -39,6 +38,10 @@ function HomePage() {
 
     const openMenu = useCallback(() => {
         setMenuOpened(true);
+    }, [setMenuOpened]);
+
+    const closeMenu = useCallback(() => {
+        setMenuOpened(false);
     }, [setMenuOpened]);
 
     const toggleMenu = useCallback(() => {
@@ -111,7 +114,7 @@ function HomePage() {
                 },
             ])}
         >
-            <MapHeader className={styles.mapHeader} onTogglerClick={openMenu} />
+            <MapHeader className={styles.mapHeader} onTogglerClick={toggleMenu} />
             <Map
                 className={styles.map}
                 lines={lines}
@@ -126,8 +129,7 @@ function HomePage() {
                 className={styles.addContributionButton}
                 onClick={openAddContribution}
             />
-            <HomeMenu className={styles.homeMenu} />
-            <MenuButton className={styles.menuButton} opened={menuOpened} onClick={toggleMenu} />
+            <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
             <AddContribution
                 key={contributionKey}
                 className={styles.addContribution}

@@ -1,8 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-import chevronIcon from '../../assets/images/chevron-bottom.svg';
 import snowIcon from '../../icons/contributions/snow.svg';
 
 import styles from '../../styles/partials/date-filter.module.scss';
@@ -95,7 +93,6 @@ function DateFilter({ className, choices }) {
             >
                 <img src={snowIcon} alt="Snow" />
                 <span className={styles.label}><FormattedMessage id={`date-filter-${currentLabelKey}`} /></span>
-                <img className={styles.chevron} src={chevronIcon} alt="Chevron" />
             </button>
             <button
                 type="button"

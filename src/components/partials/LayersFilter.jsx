@@ -1,11 +1,14 @@
-import { useCallback, useMemo, useState } from 'react';
-import { FormattedMessage } from 'react-intl';
+import { useCallback, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import ContributionIcon from '../../icons/Contribution';
+import contributionsTypes from '../../data/contributions-types.json';
 
 import layersIcon from '../../assets/images/layers.svg';
 
 import styles from '../../styles/partials/layers-filter.module.scss';
+import { useFilters } from '../../contexts/FiltersContext';
 const propTypes = {
     className: PropTypes.string,
     choices: PropTypes.arrayOf(
@@ -51,6 +54,11 @@ const defaultProps = {
 };
 
 function LayersFilter({ className, choices }) {
+    const intl = useIntl();
+    const { locale } = intl;
+    const shortLocale = locale.substring(0, 2);
+    const { contributionTypes: selectedContributionTypes, setContributionTypes } = useFilters();
+
     const [opened, setOpened] = useState(false);
 
     // const open = useCallback(() => {
@@ -67,9 +75,22 @@ function LayersFilter({ className, choices }) {
 
     // const currentChoice = useMemo( () => choices.find(({ days }) => days === fromDays),[choices, fromDays]);
     // const { labelKey: currentLabelKey = 'all' } = currentChoice || {};
-    const setTroncons = useCallback((days) => {
-        // setOpened(false);
-    }, []);
+    const toggleContributionType = useCallback(
+        (type) => {
+            setContributionTypes((old) => {
+                const newTypes = [...old];
+                var index = newTypes.findIndex((typeId) => parseInt(typeId) === parseInt(type));
+
+                if (index === -1) {
+                    newTypes.push(type);
+                } else {
+                    newTypes.splice(index, 1);
+                }
+                return newTypes;
+            });
+        },
+        [setContributionTypes],
+    );
 
     return (
         <div
@@ -80,25 +101,45 @@ function LayersFilter({ className, choices }) {
         >
             <button
                 type="button"
-                className={styles.dateRangeInner}
+                className={styles.toggler}
                 onClick={() => {
                     toggle();
                 }}
             >
                 <img src={layersIcon} alt="Layers" />
             </button>
-            <button
-                type="button"
-                onClick={() => {
-                    close();
-                }}
-                className={styles.popupSafe}
-            />
             <div className={styles.popupContainer}>
-                <div className={styles.popup}>
-                    <div className={styles.arrow} />
-                    <div className={styles.content}>
-
+                <div className={styles.content}>
+                    <div className={styles.contributionTypes}>
+                        {contributionsTypes.map(({ id, label, icon, color }, typeIndex) => {
+                            const selected = selectedContributionTypes.indexOf(id) > -1;
+                            return (
+                                <button
+                                    className={classNames([
+                                        styles.contributionType,
+                                        { [styles.selected]: selected },
+                                    ])}
+                                    type="button"
+                                    key={`type-${typeIndex}`}
+                                    onClick={() => {
+                                        toggleContributionType(id);
+                                    }}
+                                >
+                                    <input
+                                        className={styles.checkbox}
+                                        type="checkbox"
+                                        checked={selected}
+                                        readOnly
+                                    />
+                                    <span className={styles.label}>{label[shortLocale]}</span>
+                                    <ContributionIcon
+                                        className={styles.icon}
+                                        icon={icon}
+                                        color={color}
+                                    />
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             </div>

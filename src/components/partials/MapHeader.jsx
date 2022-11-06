@@ -5,6 +5,7 @@ import DateFilter from './DateFilter';
 import LayersFilter from './LayersFilter';
 
 import styles from '../../styles/partials/map-header.module.scss';
+import MenuButton from '../buttons/Menu';
 
 const propTypes = {
     className: PropTypes.string,
@@ -16,16 +17,17 @@ const defaultProps = {
     onTogglerClick: null,
 };
 
-function MapHeader({ className }) {
+function MapHeader({ className, onTogglerClick }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
             <div className={styles.left}>
+                <MenuButton className={styles.menuButton} onClick={onTogglerClick} />
             </div>
             <div className={styles.center}>
-                <DateFilter />
+                <DateFilter className={styles.dateFilter} />
             </div>
             <div className={styles.right}>
-                <LayersFilter />
+                <LayersFilter className={styles.layersFilter} />
             </div>
         </div>
     );

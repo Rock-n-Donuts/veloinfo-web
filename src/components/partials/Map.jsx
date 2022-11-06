@@ -4,9 +4,10 @@ import classNames from 'classnames';
 
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { Tile, Vector as LayerVector } from 'ol/layer';
-import { OSM, Vector } from 'ol/source';
+import { Tile as TileLayer, Vector as LayerVector } from 'ol/layer';
+import { Cluster, OSM, Vector as VectorSource } from 'ol/source';
 import { Style, Stroke, Icon } from 'ol/style';
+import { boundingExtent } from 'ol/extent';
 import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
@@ -107,7 +108,7 @@ function Map({
                 target,
                 view,
                 layers: [
-                    new Tile({
+                    new TileLayer({
                         source: new OSM(),
                     }),
                 ],
@@ -115,54 +116,40 @@ function Map({
             map.getView().on('change:center', onChangeCenter);
             map.getView().on('change:resolution', onChangeZoom);
 
-            const getFeatureUnderPixel = (container, pixel, cb) => {
-                let found = false;
-
-                container.forEach((vectorLayer) => {
-                    if (!found) {
-                        vectorLayer.getFeatures(pixel).then(function (features) {
-                            const feature = features.length ? features[0] : null;
-
-                            if (feature !== null && feature.get('attributes').clickable && !found) {
-                                found = true;
-                                if (cb) {
-                                    cb(feature);
+            map.on('click', (e) => {
+                linesLayers.current.forEach((layer) => {
+                    layer.getFeatures(e.pixel).then((clickedFeatures) => {
+                        if (clickedFeatures.length) {
+                            const clickedFeature = clickedFeatures[0];
+                            const featureAttributes = clickedFeature.get('attributes');
+                            if (onLineClick !== null && featureAttributes.clickable) {                                
+                                onLineClick(featureAttributes);
+                            }
+                        }
+                    });
+                });
+                markerLayers.current.forEach((layer) => {
+                    layer.getFeatures(e.pixel).then((clickedFeatures) => {
+                        if (clickedFeatures.length) {
+                            const clickedFeature = clickedFeatures[0];
+                            const features = clickedFeature.get('features');
+                            if (features.length > 1) {
+                                const extent = boundingExtent(
+                                    features.map((r) => r.getGeometry().getCoordinates()),
+                                );
+                                map.getView().fit(extent, {
+                                    duration: 1000,
+                                    padding: [100, 100, 100, 100],
+                                });
+                            } else {
+                                const feature = features[0];
+                                const featureAttributes = feature.get('attributes');
+                                if (onMarkerClick !== null && featureAttributes.clickable) {
+                                    onMarkerClick(featureAttributes);
                                 }
                             }
-                        });
-                    }
-                });
-                setIsHover(found);
-            };
-            map.on('pointermove', (e) => {
-                if (e.dragging) {
-                    return;
-                }
-                const pixel = map.getEventPixel(e.originalEvent);
-                setIsHover(false);
-                getFeatureUnderPixel(
-                    [...linesLayers.current, ...markerLayers.current],
-                    pixel,
-                    () => {
-                        setIsHover(true);
-                    },
-                );
-            });
-
-            map.on('click', (e) => {
-                if (e.dragging) {
-                    return;
-                }
-                const pixel = map.getEventPixel(e.originalEvent);
-                getFeatureUnderPixel(linesLayers.current, pixel, (feature) => {
-                    if (onLineClick !== null) {
-                        onLineClick(feature.get('attributes'));
-                    }
-                });
-                getFeatureUnderPixel(markerLayers.current, pixel, (feature) => {
-                    if (onMarkerClick !== null) {
-                        onMarkerClick(feature.get('attributes'));
-                    }
+                        }
+                    });
                 });
             });
             setReady(true);
@@ -171,13 +158,13 @@ function Map({
     );
 
     const drawLines = useCallback((lines) => {
-        const vectorLayer = new Vector({});
+        const vectorSource = new VectorSource({});
 
         const { features, color = '#0000FF', width = 5 } = lines || {};
 
         features.forEach(({ coords, data = null, clickable = false }) => {
             const points = coords.map((coord) => transform(coord, 'EPSG:4326', 'EPSG:3857'));
-            vectorLayer.addFeature(
+            vectorSource.addFeature(
                 new Feature({
                     geometry: new LineString(points),
                     attributes: { ...data, clickable },
@@ -185,7 +172,7 @@ function Map({
             );
         });
         const vectorLineLayer = new LayerVector({
-            source: vectorLayer,
+            source: vectorSource,
             style: new Style({
                 stroke: new Stroke({ color, width }),
             }),
@@ -197,12 +184,12 @@ function Map({
     }, []);
 
     const addMarkers = useCallback((markers) => {
-        const { features, src, image } = markers || {};
+        const { features, src, image, scale } = markers || {};
 
-        const vectorLayer = new Vector({});
+        const vectorSource = new VectorSource({});
 
         features.forEach(({ coords, data = null, clickable = false }) => {
-            vectorLayer.addFeature(
+            vectorSource.addFeature(
                 new Feature({
                     geometry: new Point(fromLonLat(coords)),
                     attributes: { ...data, clickable },
@@ -210,22 +197,38 @@ function Map({
             );
         });
 
-        const vectorIcon = new LayerVector({
-            source: vectorLayer,
-            style: new Style({
-                image: new Icon({
-                    anchor: [0.5, 1],
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'fraction',
-                    src,
-                    image,
-                }),
-            }),
+        const clusterSource = new Cluster({
+            distance: 40,
+            minDistance: 5,
+            source: vectorSource,
         });
 
-        mapRef.current.addLayer(vectorIcon);
-        markerLayers.current.push(vectorIcon);
-        return vectorIcon;
+        const styleCache = {};
+        const clusters = new LayerVector({
+            source: clusterSource,
+            style: function (feature) {
+                const size = feature.get('features').length;
+                let style = styleCache[size];
+                if (!style) {
+                    style = new Style({
+                        image: new Icon({
+                            anchor: [0.5, 1],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'fraction',
+                            src,
+                            image,
+                            scale,
+                        }),
+                    });
+                    styleCache[size] = style;
+                }
+                return style;
+            },
+        });
+
+        mapRef.current.addLayer(clusters);
+        markerLayers.current.push(clusters);
+        return clusters;
     }, []);
 
     useEffect(() => {

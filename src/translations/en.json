@@ -35,5 +35,6 @@
     "date-filter-7days": "Last week",
     "date-filter-14days": "Last 2 weeks",
     "date-filter-30days": "Last month",
-    "date-filter-all": "Always"
+    "date-filter-all": "Always",
+    "menu": "Menu"
 }

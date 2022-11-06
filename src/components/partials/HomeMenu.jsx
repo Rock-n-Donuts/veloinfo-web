@@ -2,6 +2,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import CloseButton from '../buttons/Close';
 
 import contributionTypes from '../../data/contributions-types.json';
 import ContributionIcon from '../../icons/Contribution';
@@ -10,14 +11,16 @@ import styles from '../../styles/partials/home-menu.module.scss';
 const propTypes = {
     className: PropTypes.string,
     opened: PropTypes.bool,
+    onClose: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
     opened: false,
+    onClose: null,
 };
 
-function HomeMenu({ className, opened }) {
+function HomeMenu({ className, opened, onClose }) {
     const intl = useIntl();
     const { locale } = intl;
     const shortLocale = locale.substring(0, 2);
@@ -117,6 +120,7 @@ function HomeMenu({ className, opened }) {
                 </div>
                 <div className={styles.footer}>Rock n Donuts 🍩</div>
             </div>
+            <CloseButton className={styles.closeButton} onClick={onClose} />
         </div>
     );
 }
