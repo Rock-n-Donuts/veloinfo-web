@@ -29,7 +29,7 @@
         cursor: pointer;
         opacity: 0;
         pointer-events: none;
-        transition: opacity .2s ease;
+        transition: opacity 0.2s ease;
     }
 
     .popupContainer {
@@ -44,7 +44,7 @@
     .popup {
         transform: scale(0);
         transform-origin: top center;
-        transition: transform .2s ease;
+        transition: transform 0.2s ease;
     }
 
     .arrow {
@@ -70,12 +70,12 @@
     }
 
     .choices {
-        
         opacity: 0;
-        transition: opacity .2s ease;
+        transition: opacity 0.2s ease;
 
         button {
             min-width: 240px;
+            width: 100%;
             padding: 12px;
 
             &.selected {
@@ -90,10 +90,10 @@
             pointer-events: auto;
         }
 
-        .popupContainer{
+        .popupContainer {
             pointer-events: auto;
         }
-        
+
         .popup {
             transform: scale(1);
         }
