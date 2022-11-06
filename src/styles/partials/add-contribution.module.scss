@@ -2,6 +2,7 @@
 @import '../placeholders';
 
 .container {
+    position: relative;
     background-color: $color-white;
 
     .closeButton {
@@ -12,7 +13,8 @@
     }
 
     .content {
-        min-height: 100vh;
+        @extend %fullscreen;
+
         display: flex;
         flex-direction: column;
     }
