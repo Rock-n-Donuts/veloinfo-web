@@ -2,94 +2,64 @@ import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import { useFilters } from '../../contexts/FiltersContext';
 import ContributionIcon from '../../icons/Contribution';
 import contributionsTypes from '../../data/contributions-types.json';
-
 import layersIcon from '../../assets/images/layers.svg';
 
 import styles from '../../styles/partials/layers-filter.module.scss';
-import { useFilters } from '../../contexts/FiltersContext';
+
 const propTypes = {
     className: PropTypes.string,
-    choices: PropTypes.arrayOf(
-        PropTypes.shape({
-            labelKey: PropTypes.string,
-            days: PropTypes.number,
-        }),
-    ),
+    tronconTypes: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
     className: null,
-    choices: [
-        {
-            labelKey: '1day',
-            days: 1,
-        },
-        {
-            labelKey: '2days',
-            days: 2,
-        },
-        {
-            labelKey: '3days',
-            days: 3,
-        },
-        {
-            labelKey: '5days',
-            days: 5,
-        },
-        {
-            labelKey: '7days',
-            days: 7,
-        },
-        {
-            labelKey: '14days',
-            days: 14,
-        },
-        {
-            labelKey: '30days',
-            days: 30,
-        },
-    ],
+    tronconTypes: ['winter-protected', 'winter', 'uncleared'],
 };
 
-function LayersFilter({ className, choices }) {
+function LayersFilter({ className, tronconTypes }) {
     const intl = useIntl();
     const { locale } = intl;
     const shortLocale = locale.substring(0, 2);
-    const { contributionTypes: selectedContributionTypes, setContributionTypes } = useFilters();
+    const {
+        contributionTypes: selectedContributionTypes,
+        setContributionTypes,
+        tronconTypes: selectedTronconTypes,
+        setTronconTypes,
+    } = useFilters();
 
     const [opened, setOpened] = useState(false);
-
-    // const open = useCallback(() => {
-    //     setOpened(true);
-    // }, [setOpened]);
-
-    const close = useCallback(() => {
-        setOpened(false);
-    }, [setOpened]);
 
     const toggle = useCallback(() => {
         setOpened((old) => !old);
     }, [setOpened]);
 
-    // const currentChoice = useMemo( () => choices.find(({ days }) => days === fromDays),[choices, fromDays]);
-    // const { labelKey: currentLabelKey = 'all' } = currentChoice || {};
+    const toggleInArray = useCallback((old, item) => {
+        const newTypes = [...old];
+        var index = newTypes.findIndex((typeId) => `${typeId}` === `${item}`);
+
+        if (index === -1) {
+            newTypes.push(item);
+        } else {
+            newTypes.splice(index, 1);
+        }
+        return newTypes;
+    }, []);
+
     const toggleContributionType = useCallback(
         (type) => {
-            setContributionTypes((old) => {
-                const newTypes = [...old];
-                var index = newTypes.findIndex((typeId) => parseInt(typeId) === parseInt(type));
-
-                if (index === -1) {
-                    newTypes.push(type);
-                } else {
-                    newTypes.splice(index, 1);
-                }
-                return newTypes;
-            });
+            setContributionTypes((old) => toggleInArray(old, type));
         },
-        [setContributionTypes],
+        [setContributionTypes, toggleInArray],
+    );
+
+    const toggleTronconType = useCallback(
+        (type) => {
+            setTronconTypes((old) => toggleInArray(old, type));
+        },
+        [setTronconTypes, toggleInArray],
     );
 
     return (
@@ -109,37 +79,67 @@ function LayersFilter({ className, choices }) {
                 <img src={layersIcon} alt="Layers" />
             </button>
             <div className={styles.popupContainer}>
-                <div className={styles.content}>
-                    <div className={styles.contributionTypes}>
-                        {contributionsTypes.map(({ id, label, icon, color }, typeIndex) => {
-                            const selected = selectedContributionTypes.indexOf(id) > -1;
-                            return (
-                                <button
-                                    className={classNames([
-                                        styles.contributionType,
-                                        { [styles.selected]: selected },
-                                    ])}
-                                    type="button"
-                                    key={`type-${typeIndex}`}
-                                    onClick={() => {
-                                        toggleContributionType(id);
-                                    }}
-                                >
-                                    <input
-                                        className={styles.checkbox}
-                                        type="checkbox"
-                                        checked={selected}
-                                        readOnly
-                                    />
-                                    <span className={styles.label}>{label[shortLocale]}</span>
-                                    <ContributionIcon
-                                        className={styles.icon}
-                                        icon={icon}
-                                        color={color}
-                                    />
-                                </button>
-                            );
-                        })}
+                <div className={styles.popup}>
+                    <div className={styles.content}>
+                        <div className={styles.contributionTypes}>
+                            {contributionsTypes.map(({ id, label, icon, color }, typeIndex) => {
+                                const selected = selectedContributionTypes.indexOf(id) > -1;
+                                return (
+                                    <button
+                                        className={classNames([
+                                            styles.contributionType,
+                                            { [styles.selected]: selected },
+                                        ])}
+                                        type="button"
+                                        key={`type-${typeIndex}`}
+                                        onClick={() => {
+                                            toggleContributionType(id);
+                                        }}
+                                    >
+                                        <input
+                                            className={styles.checkbox}
+                                            type="checkbox"
+                                            checked={selected}
+                                            readOnly
+                                        />
+                                        <span className={styles.label}>{label[shortLocale]}</span>
+                                        <ContributionIcon
+                                            className={styles.icon}
+                                            icon={icon}
+                                            color={color}
+                                        />
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        <div className={styles.tronconTypes}>
+                            {tronconTypes.map((type, typeIndex) => {
+                                const selected = selectedTronconTypes.indexOf(type) > -1;
+                                return (
+                                    <button
+                                        className={classNames([
+                                            styles.contributionType,
+                                            { [styles.selected]: selected },
+                                        ])}
+                                        type="button"
+                                        key={`type-${typeIndex}`}
+                                        onClick={() => {
+                                            toggleTronconType(type);
+                                        }}
+                                    >
+                                        <input
+                                            className={styles.checkbox}
+                                            type="checkbox"
+                                            checked={selected}
+                                            readOnly
+                                        />
+                                        <span className={styles.label}>
+                                            <FormattedMessage id={`troncon-filter-${type}`} />
+                                        </span>
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
                 </div>
             </div>

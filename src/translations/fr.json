@@ -36,5 +36,8 @@
     "date-filter-14days": "2 dernières semaines",
     "date-filter-30days": "Mois dernier",
     "date-filter-all": "Depuis toujours",
+    "troncon-filter-winter-protected": "Tronçons 4 saisons protégés",
+    "troncon-filter-winter": "Tronçons 4 saisons",
+    "troncon-filter-uncleared": "Tronçons non déblayés",
     "menu": "Menu"
 }

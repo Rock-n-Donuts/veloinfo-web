@@ -75,7 +75,7 @@ function Map({
 }) {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
-    const [isHover, setIsHover] = useState(false);
+    // const [isHover, setIsHover] = useState(false);
 
     const [ready, setReady] = useState(false);
     const [loadingUserPosition, setLoadingUserPosition] = useState(false);
@@ -122,7 +122,7 @@ function Map({
                         if (clickedFeatures.length) {
                             const clickedFeature = clickedFeatures[0];
                             const featureAttributes = clickedFeature.get('attributes');
-                            if (onLineClick !== null && featureAttributes.clickable) {                                
+                            if (onLineClick !== null && featureAttributes.clickable) {
                                 onLineClick(featureAttributes);
                             }
                         }
@@ -339,7 +339,10 @@ function Map({
         <div
             className={classNames([
                 styles.container,
-                { [className]: className !== null, [styles.isHover]: isHover },
+                {
+                    [className]: className !== null,
+                    // [styles.isHover]: isHover
+                },
             ])}
         >
             <div ref={mapContainerRef} className={styles.map} />

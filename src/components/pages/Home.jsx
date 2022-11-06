@@ -25,8 +25,8 @@ function HomePage() {
 
     const isContributionSelected = selectedContributionId !== null;
     const data = useData();
-    const { fromDays, contributionTypes } = useFilters();
-    const lines = useLines();
+    const { fromDays, contributionTypes, tronconTypes } = useFilters();
+    const lines = useLines({ filters: { tronconTypes }});
     const markers = useMarkers({ filters: { fromDays, contributionTypes } });
     const { contributions = null } = data || {};
     const contributionSelected =
@@ -36,9 +36,9 @@ function HomePage() {
 
     const addContribution = useAddContribution();
 
-    const openMenu = useCallback(() => {
-        setMenuOpened(true);
-    }, [setMenuOpened]);
+    // const openMenu = useCallback(() => {
+    //     setMenuOpened(true);
+    // }, [setMenuOpened]);
 
     const closeMenu = useCallback(() => {
         setMenuOpened(false);

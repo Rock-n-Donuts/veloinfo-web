@@ -8,7 +8,7 @@ import contributionTypes from '../data/contributions-types.json';
 import getContributionSvg from '../icons/contributionSvg';
 
 const DataContext = createContext();
-const pollingDelay = 15; // seconds
+const pollingDelay = 5; // seconds
 
 export const DataProvider = ({ children }) => {
     const [data, setData] = useState(null);
@@ -114,13 +114,34 @@ export const useData = () => {
 };
 
 export const useTroncons = ({ filters = null } = {}) => {
+    const { tronconTypes = null } = filters || {};
+
     const data = useData();
     const { troncons = null } = data || {};
+
+    if (troncons !== null) {
+        let filteredTroncons = [...troncons];
+
+        if (tronconTypes !== null) {
+            filteredTroncons = filteredTroncons.filter(({ winter, winter_protected }) => {
+
+                const validWinterProtected = winter_protected === 1 && tronconTypes.indexOf('winter-protected') > -1;
+                const validWinter = winter === 1 && winter_protected === 0 && tronconTypes.indexOf('winter') > -1;
+                const validUncleared = winter === 0 && tronconTypes.indexOf('uncleared') > -1;
+
+                return validWinter || validUncleared || validWinterProtected;
+            });
+        }
+
+        return filteredTroncons;
+    }
+
     return troncons;
 };
 
 export const useContributions = ({ filters = null } = {}) => {
     const { fromDays = null, contributionTypes = null } = filters || {};
+
     const data = useData();
     const { contributions = null } = data || {};
 
@@ -135,8 +156,8 @@ export const useContributions = ({ filters = null } = {}) => {
         }
 
         if (contributionTypes !== null) {
-            filteredContributions = filteredContributions.filter(({ issue_id }) =>
-                contributionTypes.indexOf(parseInt(issue_id)) > -1,
+            filteredContributions = filteredContributions.filter(
+                ({ issue_id }) => contributionTypes.indexOf(parseInt(issue_id)) > -1,
             );
         }
 
@@ -246,7 +267,7 @@ export const useMarkers = (opts) => {
             } else {
                 return [...all, curr];
             }
-        }, []);
+        }, []).reverse();
 
         return icons.map(({ id, icon, color, quality, value }) => ({
             features: contributions
@@ -261,7 +282,7 @@ export const useMarkers = (opts) => {
             src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
                 getContributionSvg({ icon, color }),
             )}`,
-            scale: parseInt(id) === 1 ? 1 : 0.5
+            scale: parseInt(id) === 1 ? 1 : 0.5,
         }));
     } else {
         return null;
