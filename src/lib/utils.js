@@ -1,4 +1,5 @@
 import RelativeTimeFormat from 'relative-time-format';
+import { parseISO } from 'date-fns';
 
 export function getRelativeTime(locale, date) {
     const rtf = new RelativeTimeFormat(locale);
@@ -11,21 +12,18 @@ export function getRelativeTime(locale, date) {
         second: 1000,
     };
 
-    // ah noel
-    let dateString = date;
-    if (date.indexOf(' ') === 10) {
-        dateString = `${date.substr(0, 10)}T${date.substr(11)}`;
-    }
+    // Date from SQL needs to be converted to
+    // let dateString = date;
+    // if (date.indexOf(' ') === 10) {
+    //     dateString = `${date.substr(0, 10)}T${date.substr(11)}`;
+    // }
 
-    const parsedDate = new Date(dateString);
+    const parsedDate = parseISO(date);
     const elapsed = parsedDate - new Date();
 
     let newString;
     for (let u in units) {
         if (Math.abs(elapsed) > units[u] || u === 'second') {
-            console.log(elapsed);
-            console.log(u);
-            console.log(Math.round(elapsed / units[u]), u);
             newString = rtf.format(Math.round(elapsed / units[u]), u);
             break;
         }
