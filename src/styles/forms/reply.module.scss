@@ -68,40 +68,10 @@
         }
     }
 
-    .success {
-        @extend %fullscreen;
-
-        position: fixed;
-        opacity: 0;
-        transition: opacity 0.2s ease;
-
-        img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            display: block;
-            margin: 0 auto;
-            width: 40%;
-            transform: translate(-50%, -50%);
-        }
-
-        pointer-events: none;
-    }
-
     &.loading {
         .form {
             opacity: 0.5;
             pointer-events: none;
-        }
-    }
-
-    &.success {
-        .form {
-            opacity: 0.25;
-        }
-
-        .success {
-            // opacity: 0.25;
         }
     }
 }

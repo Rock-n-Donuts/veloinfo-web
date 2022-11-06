@@ -8,8 +8,6 @@ import Cookies from 'js-cookie';
 import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from '../partials/FormGroup';
 
-import successImage from '../../assets/images/success.svg';
-
 import styles from '../../styles/forms/reply.module.scss';
 
 const propTypes = {
@@ -33,7 +31,6 @@ function ReplyForm({ contributionId, className, onSuccess }) {
     // const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
-    const [success, setSuccess] = useState(false);
 
     const setNameValue = useCallback((e) => setName(e.target.value), [setName]);
     const setCommentValue = useCallback((e) => setComment(e.target.value), [setComment]);
@@ -82,13 +79,10 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     const { success = false, contribution = null } = data || {};
                     if (success && contribution !== null) {
                         Cookies.set('name', name, { expires: 3650 });
-                        setSuccess(true);
-                        setTimeout(() => {
-                            resetForm();
-                            if (onSuccess !== null) {
-                                onSuccess(contribution);
-                            }
-                        }, 750);
+                        resetForm();
+                        if (onSuccess !== null) {
+                            onSuccess(contribution);
+                        }
                     } else {
                         console.log(data);
                         setErrors(intl.formatMessage({ id: 'error-server' }));
@@ -121,7 +115,6 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                 {
                     [className]: className !== null,
                     [styles.loading]: loading,
-                    [styles.success]: success,
                 },
             ])}
         >
@@ -159,17 +152,11 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     <div className={styles.errors}>{errors}</div>
                 </div>
                 <div className={styles.actions}>
-                    <button
-                        className={styles.submitButton}
-                        type="submit"
-                    >
+                    <button className={styles.submitButton} type="submit">
                         <FormattedMessage id="publish" />
                     </button>
                 </div>
-            </form>
-            <div className={styles.success}>
-                <img src={successImage} alt="Success" />
-            </div>
+            </form>{' '}
         </div>
     );
 }

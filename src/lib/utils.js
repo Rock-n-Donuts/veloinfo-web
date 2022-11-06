@@ -12,12 +12,6 @@ export function getRelativeTime(locale, date) {
         second: 1000,
     };
 
-    // Date from SQL needs to be converted to
-    // let dateString = date;
-    // if (date.indexOf(' ') === 10) {
-    //     dateString = `${date.substr(0, 10)}T${date.substr(11)}`;
-    // }
-
     const parsedDate = parseISO(date);
     const elapsed = parsedDate - new Date();
 
