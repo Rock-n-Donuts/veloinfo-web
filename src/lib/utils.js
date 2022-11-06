@@ -11,10 +11,10 @@ export function getRelativeTime(locale, d1) {
         second: 1000,
     };
 
-    const parsedDate = new Date(d1).getTime();
-    const elapsed = parsedDate - new Date().getTime();
+    const parsedDate = new Date(d1);
+    const elapsed = parsedDate - new Date();
 
-    console.log(parsedDate, elapsed)
+    console.log(new Date(), new Date(d1), elapsed)
 
     let newString;
     for (let u in units) {
