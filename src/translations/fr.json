@@ -27,5 +27,13 @@
     "vote-negative": "Non",
     "legend": "Légende",
     "paths-status": "Statut des rues",
-    "paths-status-note": "*Données Planif-Neige"
+    "paths-status-note": "*Données Planif-Neige",
+    "date-filter-1day": "Dernier 24h",
+    "date-filter-2days": "2 derniers jours",
+    "date-filter-3days": "3 derniers jours",
+    "date-filter-5days": "5 derniers jours",
+    "date-filter-7days": "Semaine dernière",
+    "date-filter-14days": "2 dernières semaines",
+    "date-filter-30days": "Mois dernier",
+    "date-filter-all": "Depuis toujours"
 }

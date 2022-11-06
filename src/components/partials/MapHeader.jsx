@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import DateFilter from './DateFilter';
+
 import menuIcon from '../../assets/images/menu-icon.svg';
-import chevronIcon from '../../assets/images/chevron-bottom.svg';
-import snowIcon from '../../icons/contributions/snow.svg';
 
 import styles from '../../styles/partials/map-header.module.scss';
 
@@ -26,11 +26,7 @@ function MapHeader({ className, onTogglerClick }) {
                 </button>
             </div>
             <div className={styles.center}>
-                <button type="button" className={styles.dateRangeInner}>
-                    <img src={snowIcon} alt="Snow" />
-                    <span className={styles.label}>Depuis 5 jours</span>
-                    <img className={styles.chevron} src={chevronIcon} alt="Chevron" />
-                </button>
+                <DateFilter />
             </div>
             <div className={styles.right}></div>
         </div>

@@ -27,5 +27,13 @@
     "vote-negative": "No",
     "legend": "Legend",
     "paths-status": "Paths status",
-    "paths-status-note": "*Data from Planif-Neige"
+    "paths-status-note": "*Data from Planif-Neige",
+    "date-filter-1day": "Last 24h",
+    "date-filter-2days": "Last 2 days",
+    "date-filter-3days": "Last 3 days",
+    "date-filter-5days": "Last 5 days",
+    "date-filter-7days": "Last week",
+    "date-filter-14days": "Last 2 weeks",
+    "date-filter-30days": "Last month",
+    "date-filter-all": "Always"
 }

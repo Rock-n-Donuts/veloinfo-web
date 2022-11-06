@@ -1,8 +1,13 @@
 import './styles/index.scss';
+import axios from 'axios';
 import ReactDOM from 'react-dom/client';
 import Container from './components/Container';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
+
+const apiUrl = process.env.REACT_APP_API_URL || 'api';
+const apiProxyUrl = process.env.REACT_APP_API_PROXY_URL || '';
+axios.defaults.baseURL = `${apiProxyUrl}${apiUrl}`;
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(

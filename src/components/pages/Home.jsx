@@ -14,6 +14,7 @@ import ContributionDetails from '../partials/ContributionDetails';
 import useOnClickOutside from '../../hooks/useOnClickOutside';
 
 import styles from '../../styles/pages/home.module.scss';
+import { useFilters } from '../../contexts/FiltersContext';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -24,8 +25,10 @@ function HomePage() {
 
     const isContributionSelected = selectedContributionId !== null;
     const data = useData();
+    const { fromDays } = useFilters();
     const lines = useLines();
-    const markers = useMarkers();
+    const markers = useMarkers({ filters: { fromDays } });
+    console.log(markers)
     const { contributions = null } = data || {};
     const contributionSelected =
         contributions !== null

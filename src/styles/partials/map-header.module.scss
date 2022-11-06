@@ -26,20 +26,4 @@
     .menuToggler {
         padding: 0 20px;
     }
-
-    .dateRangeInner {
-        display: inline-flex;
-        align-items: center;
-        padding: 0 10px;
-        pointer-events: none;/* TMP */
-
-        .label {
-            margin: 0 0.5em;
-            white-space: nowrap;
-        }
-
-        .chevron {
-            display: none;/* TMP */
-        }
-    }
 }

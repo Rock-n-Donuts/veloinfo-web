@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import axios from 'axios';
 import { useUser } from './AuthContext';
 import useInterval from '../hooks/useInterval';
+import { parseISO, addDays } from 'date-fns';
 
 import contributionTypes from '../data/contributions-types.json';
 import getContributionSvg from '../icons/contributionSvg';
@@ -112,15 +113,23 @@ export const useData = () => {
     return data;
 };
 
-export const useTroncons = () => {
+export const useTroncons = ({ filters = null } = {}) => {
     const data = useData();
     const { troncons = null } = data || {};
     return troncons;
 };
 
-export const useContributions = () => {
+export const useContributions = ({ filters = null } = {}) => {
+    const { fromDays = null } = filters || {};
     const data = useData();
     const { contributions = null } = data || {};
+
+    if (contributions !== null && fromDays !== null) {
+        return contributions.filter(
+            ({ issue_id, created_at }) =>
+                issue_id !== 1 || addDays(new Date(), -fromDays) < parseISO(created_at),
+        );
+    }
     return contributions;
 };
 
@@ -130,8 +139,8 @@ export const useDataDate = () => {
     return date;
 };
 
-export const useLines = () => {
-    const troncons = useTroncons();
+export const useLines = (opts) => {
+    const troncons = useTroncons(opts);
     if (troncons !== null) {
         const unknownPaths = troncons.filter(
             ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
@@ -211,8 +220,8 @@ export const useLines = () => {
     }
 };
 
-export const useMarkers = () => {
-    const contributions = useContributions();
+export const useMarkers = (opts) => {
+    const contributions = useContributions(opts);
 
     if (contributions !== null) {
         const icons = contributionTypes.reduce((all, curr) => {
@@ -230,9 +239,7 @@ export const useMarkers = () => {
         return icons.map(({ id, icon, color, quality, value }) => ({
             features: contributions
                 .filter(({ issue_id, quality: contributionQuality }) =>
-                    quality
-                        ? contributionQuality === value
-                        : parseInt(issue_id) === parseInt(id),
+                    quality ? contributionQuality === value : parseInt(issue_id) === parseInt(id),
                 )
                 .map(({ coords, ...contribution }) => ({
                     coords,

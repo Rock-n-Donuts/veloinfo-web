@@ -1,24 +1,20 @@
 // import PropTypes from 'prop-types';
 import { IntlProvider } from 'react-intl';
 import { BrowserRouter } from 'react-router-dom';
-import messagesFr from '../translations/fr.json';
-import messagesEn from '../translations/en.json';
-
 import RelativeTimeFormat from 'relative-time-format';
 import fr from 'relative-time-format/locale/fr';
 import en from 'relative-time-format/locale/en';
 
 import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataContext';
+import { FiltersProvider } from '../contexts/FiltersContext';
 import App from './App';
-import axios from 'axios';
+
+import messagesFr from '../translations/fr.json';
+import messagesEn from '../translations/en.json';
 
 RelativeTimeFormat.addLocale(fr);
 RelativeTimeFormat.addLocale(en);
-
-const apiUrl = process.env.REACT_APP_API_URL || 'api';
-const apiProxyUrl = process.env.REACT_APP_API_PROXY_URL || '';
-axios.defaults.baseURL = `${apiProxyUrl}${apiUrl}`;
 
 const messages = {
     fr: messagesFr,
@@ -38,7 +34,9 @@ function Container() {
             <BrowserRouter>
                 <AuthProvider>
                     <DataProvider>
-                        <App />
+                        <FiltersProvider>
+                            <App />
+                        </FiltersProvider>
                     </DataProvider>
                 </AuthProvider>
             </BrowserRouter>
