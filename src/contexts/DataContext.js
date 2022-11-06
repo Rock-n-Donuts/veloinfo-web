@@ -292,8 +292,6 @@ export const useMarkers = (opts) => {
             scale: parseInt(id) === 1 ? 1 : 0.5,
         }));
 
-        console.log(icons)
-
         return groupedMarkers;
     } else {
         return null;
