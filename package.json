@@ -8,6 +8,9 @@
         "url": "https://juliencarignan.com"
     },
     "dependencies": {
+        "@formatjs/intl-locale": "^3.0.7",
+        "@formatjs/intl-pluralrules": "^5.1.4",
+        "@formatjs/intl-relativetimeformat": "^11.1.4",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
         "@testing-library/user-event": "^13.5.0",
