@@ -3,18 +3,19 @@ import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 
+import useOnClickOutside from '../../hooks/useOnClickOutside';
 import { useAddContribution, useData, useLines, useMarkers } from '../../contexts/DataContext';
+import { useFilters } from '../../contexts/FiltersContext';
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
-import AddContributionButton from '../buttons/AddContribution';
 import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
 import ContributionDetails from '../partials/ContributionDetails';
-import useOnClickOutside from '../../hooks/useOnClickOutside';
+import AddContributionButton from '../buttons/AddContribution';
 
 import styles from '../../styles/pages/home.module.scss';
-import { useFilters } from '../../contexts/FiltersContext';
+import MenuButton from '../buttons/Menu';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -28,7 +29,6 @@ function HomePage() {
     const { fromDays } = useFilters();
     const lines = useLines();
     const markers = useMarkers({ filters: { fromDays } });
-    console.log(markers)
     const { contributions = null } = data || {};
     const contributionSelected =
         contributions !== null
@@ -41,8 +41,8 @@ function HomePage() {
         setMenuOpened(true);
     }, [setMenuOpened]);
 
-    const closeMenu = useCallback(() => {
-        setMenuOpened(false);
+    const toggleMenu = useCallback(() => {
+        setMenuOpened(old => !old);
     }, [setMenuOpened]);
 
     const openAddContribution = useCallback(() => {
@@ -126,7 +126,8 @@ function HomePage() {
                 className={styles.addContributionButton}
                 onClick={openAddContribution}
             />
-            <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
+            <HomeMenu className={styles.homeMenu} />
+            <MenuButton className={styles.menuButton} opened={menuOpened} onClick={toggleMenu} />
             <AddContribution
                 key={contributionKey}
                 className={styles.addContribution}

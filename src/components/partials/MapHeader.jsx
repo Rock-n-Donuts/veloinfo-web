@@ -2,8 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import DateFilter from './DateFilter';
-
-import menuIcon from '../../assets/images/menu-icon.svg';
+import LayersFilter from './LayersFilter';
 
 import styles from '../../styles/partials/map-header.module.scss';
 
@@ -17,18 +16,17 @@ const defaultProps = {
     onTogglerClick: null,
 };
 
-function MapHeader({ className, onTogglerClick }) {
+function MapHeader({ className }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
             <div className={styles.left}>
-                <button type="button" className={styles.menuToggler} onClick={onTogglerClick}>
-                    <img src={menuIcon} alt="Hambuger" />
-                </button>
             </div>
             <div className={styles.center}>
                 <DateFilter />
             </div>
-            <div className={styles.right}></div>
+            <div className={styles.right}>
+                <LayersFilter />
+            </div>
         </div>
     );
 }

@@ -1,0 +1,35 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    span {
+        @extend %fullscreen;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }    
+
+    .close {
+        opacity: 0;
+    }
+
+    .menu,
+    .close {
+        transition: opacity .2s ease;
+    }
+
+    &.opened {
+        .menu {
+            opacity: 0;
+        }
+
+        .close {
+            opacity: 1;
+        }
+    }
+}
