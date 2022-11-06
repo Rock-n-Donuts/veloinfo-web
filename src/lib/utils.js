@@ -1,6 +1,6 @@
 import RelativeTimeFormat from 'relative-time-format';
 
-export function getRelativeTime(locale, d1) {
+export function getRelativeTime(locale, date) {
     const rtf = new RelativeTimeFormat(locale);
     const units = {
         year: 24 * 60 * 60 * 1000 * 365,
@@ -11,10 +11,14 @@ export function getRelativeTime(locale, d1) {
         second: 1000,
     };
 
-    const parsedDate = new Date(d1);
-    const elapsed = parsedDate - new Date();
+    // ah noel
+    let dateString = date;
+    if (date.indexOf(' ') === 10) {
+        dateString = `${date.substr(0, 10)}T${date.substr(11)}`;
+    }
 
-    console.log(new Date(), new Date(d1), elapsed)
+    const parsedDate = new Date(dateString);
+    const elapsed = parsedDate - new Date();
 
     let newString;
     for (let u in units) {
