@@ -2,10 +2,10 @@
 @import '../placeholders';
 
 .container {
-    position: relative;    
+    position: relative;
 
     .map {
-        height: 100%;
+        @extend %fullscreen;
     }
 
     &.isHover{
