@@ -11,8 +11,9 @@ export function getRelativeTime(locale, d1) {
         second: 1000,
     };
 
-    const parsedDate = new Date(d1);
-    const elapsed = parsedDate - new Date();
+    const parsedDate = new Date(d1).getTime();
+    const elapsed = parsedDate - new Date().getTime();
+
     let newString;
     for (let u in units) {
         if (Math.abs(elapsed) > units[u] || u === 'second') {
