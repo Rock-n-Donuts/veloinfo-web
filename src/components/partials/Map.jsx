@@ -170,6 +170,7 @@ function Map({
     const initMap = useCallback(
         (target) => {
             const view = new View({
+                enableRotation: false,
                 center: fromLonLat(mapCenter),
                 zoom,
             });
