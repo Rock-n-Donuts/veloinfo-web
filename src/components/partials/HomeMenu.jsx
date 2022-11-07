@@ -44,11 +44,11 @@ function HomeMenu({ className, opened, onClose }) {
                                 key={`contribution-type-${contributionTypeIndex}`}
                                 className={styles.contributionType}
                             >
-                                <ContributionIcon
+                                {/* <ContributionIcon
                                     className={styles.icon}
                                     icon={icon}
                                     color={color}
-                                />
+                                /> */}
                                 <span className={styles.label}>{label[shortLocale]}</span>
                             </div>
                         ))}
