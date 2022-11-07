@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useMemo, useState } from 'react';
 
 const FiltersContext = createContext();
 
@@ -11,10 +11,10 @@ export const FiltersProvider = ({ children }) => {
         <FiltersContext.Provider
             value={{
                 fromDays,
-                setFromDays,
                 contributionTypes,
-                setContributionTypes,
                 tronconTypes,
+                setFromDays,
+                setContributionTypes,
                 setTronconTypes,
             }}
         >
@@ -29,6 +29,24 @@ export const useFilters = () => {
         throw new Error('useFilters can only be used inside FiltersProvider');
     }
     return ctx || {};
+};
+
+export const useSelectedFilters = () => {
+    const { fromDays, contributionTypes, tronconTypes } = useFilters();
+    const filters = useMemo(
+        () => ({ fromDays, contributionTypes, tronconTypes }),
+        [fromDays, contributionTypes, tronconTypes],
+    );
+    return filters;
+};
+
+export const useSetFilters = () => {
+    const { setFromDays, setContributionTypes, setTronconTypes } = useFilters();
+    const setFilters = useMemo(
+        () => ({ setFromDays, setContributionTypes, setTronconTypes }),
+        [setFromDays, setContributionTypes, setTronconTypes],
+    );
+    return setFilters;
 };
 
 export default FiltersContext;

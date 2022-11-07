@@ -33,11 +33,11 @@ function Container() {
         <IntlProvider locale={locale} messages={messages[language]}>
             <BrowserRouter>
                 <AuthProvider>
-                    <DataProvider>
-                        <FiltersProvider>
+                    <FiltersProvider>
+                        <DataProvider>
                             <App />
-                        </FiltersProvider>
-                    </DataProvider>
+                        </DataProvider>
+                    </FiltersProvider>
                 </AuthProvider>
             </BrowserRouter>
         </IntlProvider>

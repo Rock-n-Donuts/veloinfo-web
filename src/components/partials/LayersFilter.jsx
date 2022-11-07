@@ -23,6 +23,7 @@ function LayersFilter({ className, tronconTypes }) {
     const intl = useIntl();
     const { locale } = intl;
     const shortLocale = locale.substring(0, 2);
+    
     const {
         contributionTypes: selectedContributionTypes,
         setContributionTypes,
@@ -102,12 +103,12 @@ function LayersFilter({ className, tronconTypes }) {
                                             checked={selected}
                                             readOnly
                                         />
-                                        <span className={styles.label}>{label[shortLocale]}</span>
                                         <ContributionIcon
                                             className={styles.icon}
                                             icon={icon}
                                             color={color}
                                         />
+                                        <span className={styles.label}>{label[shortLocale]}</span>
                                     </button>
                                 );
                             })}

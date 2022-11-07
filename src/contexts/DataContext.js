@@ -1,54 +1,64 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useUser } from './AuthContext';
 import useInterval from '../hooks/useInterval';
-import { parseISO, addDays } from 'date-fns';
-
-import contributionTypes from '../data/contributions-types.json';
-import getContributionSvg from '../icons/contributionSvg';
+import { useSelectedFilters } from './FiltersContext';
+import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';
+import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
 
 const DataContext = createContext();
 const pollingDelay = 60; // seconds
 
 export const DataProvider = ({ children }) => {
-    const [data, setData] = useState(null);
+    const [ready, setReady] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [data, setData] = useState(null);
+    const [filteredData, setFilteredData] = useState(data);
+    const [mapData, setMapData] = useState({ lines: [], markers: [] });
     const user = useUser();
+    const selectedFilters = useSelectedFilters();
 
     const { date = null } = data || {};
 
-    const getData = useCallback(
-        (date = null) => {
-            axios
-                .request({
-                    url: '/update',
-                    method: 'get',
-                    params: {
-                        from: date,
-                    },
-                })
-                .then((res) => {
-                    const { data: newData = null } = res || {};
-                    // console.log('Data received.', newData);
-                    if (date !== null) {
-                        setData((old) => {
-                            const { troncons, contributions } = old || {};
+    const getData = useCallback((date = null) => {
+        setLoading(true);
+        setError(null);
+        axios
+            .request({
+                url: '/update',
+                method: 'get',
+                params: {
+                    from: date,
+                },
+            })
+            .then((res) => {
+                const { data: newData = null } = res || {};
+                const { date: newDate = null, troncons = [], contributions = [] } = newData || {};
+                if (date === null) {
+                    // console.log('Initial data received', newData);
+                    setReady(true);
+                    setData(newData);
+                } else {
+                    // console.log('Updated data received.', newData);
+                    if (date !== newDate && (troncons.length > 0 || contributions.length > 0))
+                        setData((data) => {
+                            const { troncons, contributions } = data || {};
                             const {
                                 troncons: updatedTroncons,
                                 contributions: updatedContributions,
                                 date: updatedDate,
                             } = newData || {};
-                            const newTroncons = [...troncons];
-                            const newContributions = [...contributions];
+                            const mergedTroncons = [...troncons];
+                            const mergedContributions = [...contributions];
                             updatedTroncons.forEach((troncon) => {
                                 const foundIndex = troncons.findIndex(
                                     ({ id }) => id === troncon.id,
                                 );
                                 if (foundIndex >= 0) {
-                                    newTroncons[foundIndex] = troncon;
+                                    mergedTroncons[foundIndex] = troncon;
                                 } else {
-                                    newTroncons.push(troncon);
+                                    mergedTroncons.push(troncon);
                                 }
                             });
                             updatedContributions.forEach((contribution) => {
@@ -56,26 +66,23 @@ export const DataProvider = ({ children }) => {
                                     ({ id }) => id === contribution.id,
                                 );
                                 if (foundIndex >= 0) {
-                                    newContributions[foundIndex] = contribution;
+                                    mergedContributions[foundIndex] = contribution;
                                 } else {
-                                    newContributions.push(contribution);
+                                    mergedContributions.push(contribution);
                                 }
                             });
-                            return {
-                                contributions: newContributions,
-                                troncons: newTroncons,
+                            const mergedData = {
+                                contributions: mergedContributions,
+                                troncons: mergedTroncons,
                                 date: updatedDate,
                             };
+                            return mergedData;
                         });
-                    } else {
-                        setData(newData);
-                    }
-                })
-                .catch((err) => setError(err))
-                .finally(() => setLoading(false));
-        },
-        [setData, setError, setLoading],
-    );
+                }
+            })
+            .catch((err) => setError(err))
+            .finally(() => setLoading(false));
+    }, []);
 
     useEffect(() => {
         if (user !== null) {
@@ -91,8 +98,30 @@ export const DataProvider = ({ children }) => {
         }
     }, pollingDelay * 1000);
 
+    const filterData = useCallback((newData, newFilters) => {
+        const { troncons = null, contributions = null } = newData;
+
+        return {
+            ...newData,
+            troncons: getFilteredTroncons(troncons, newFilters),
+            contributions: getFilteredContributions(contributions, newFilters),
+        };
+    }, []);
+
+    useEffect(() => {
+        if (data !== null) {
+            const filteredData = filterData(data, selectedFilters);
+            const { troncons, contributions } = filteredData || {};
+            const lines = getLinesFromTroncons(troncons);
+            const markers = getMarkersFromContributions(contributions);
+
+            setFilteredData(filteredData);
+            setMapData({ lines, markers });
+        }
+    }, [data, selectedFilters, filterData]);
+
     return (
-        <DataContext.Provider value={{ data, loading, error, setData }}>
+        <DataContext.Provider value={{ data, filteredData, mapData, ready, loading, error }}>
             {children}
         </DataContext.Provider>
     );
@@ -113,189 +142,29 @@ export const useData = () => {
     return data;
 };
 
-export const useTroncons = ({ filters = null } = {}) => {
-    const { tronconTypes = null } = filters || {};
-
-    const data = useData();
-    const { troncons = null } = data || {};
-
-    if (troncons !== null) {
-        let filteredTroncons = [...troncons];
-
-        if (tronconTypes !== null) {
-            filteredTroncons = filteredTroncons.filter(({ winter, winter_protected }) => {
-
-                const validWinterProtected = winter_protected === 1 && tronconTypes.indexOf('winter-protected') > -1;
-                const validWinter = winter === 1 && winter_protected === 0 && tronconTypes.indexOf('winter') > -1;
-                const validUncleared = winter === 0 && tronconTypes.indexOf('uncleared') > -1;
-
-                return validWinter || validUncleared || validWinterProtected;
-            });
-        }
-
-        return filteredTroncons;
-    }
-
-    return troncons;
+export const useReady = () => {
+    const ctx = useDataContext(DataContext);
+    const { ready } = ctx || {};
+    return ready;
 };
 
-export const useContributions = ({ filters = null } = {}) => {
-    const { fromDays = null, contributionTypes = null } = filters || {};
+export const useContribution = (selectedId) => {
+    const { contributions = null } = useData() || {};
+    const contribution = useMemo(
+        () =>
+            contributions !== null
+                ? contributions.find(({ id }) => `${id}` === `${selectedId}`) || null
+                : null,
+        [contributions, selectedId],
+    );
 
-    const data = useData();
-    const { contributions = null } = data || {};
-
-    if (contributions !== null) {
-        let filteredContributions = [...contributions];
-
-        if (fromDays !== null) {
-            filteredContributions = filteredContributions.filter(
-                ({ issue_id, created_at }) =>
-                    issue_id !== 1 || addDays(new Date(), -fromDays) < parseISO(created_at),
-            );
-        }
-
-        if (contributionTypes !== null) {
-            filteredContributions = filteredContributions.filter(
-                ({ issue_id }) => contributionTypes.indexOf(parseInt(issue_id)) > -1,
-            );
-        }
-
-        return filteredContributions;
-    }
-    return contributions;
+    return contribution;
 };
 
-export const useDataDate = () => {
-    const data = useData();
-    const { date = null } = data || {};
-    return date;
-};
-
-export const useLines = (opts) => {
-    const troncons = useTroncons(opts);
-    if (troncons !== null) {
-        const unknownPaths = troncons.filter(
-            ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
-        );
-
-        const clearedPaths = troncons.filter(
-            ({ side_one_state: s1, side_two_state: s2 }) => s1 === 1 && s2 === 1,
-        );
-        const snowyPaths = troncons.filter(
-            ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
-        );
-        const panifiedPaths = troncons.filter(
-            ({ side_one_state: s1, side_two_state: s2 }) =>
-                s1 === 2 ||
-                s1 === 3 ||
-                s1 === 4 ||
-                s1 === 10 ||
-                s2 === 2 ||
-                s2 === 3 ||
-                s2 === 4 ||
-                s2 === 10,
-        );
-
-        const inProgressPaths = troncons.filter(
-            ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
-        );
-
-        // console.log(
-        //     troncons.length,
-        //     unknownPaths.length +
-        //         clearedPaths.length +
-        //         snowyPaths.length +
-        //         panifiedPaths.length +
-        //         inProgressPaths.length,
-        //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
-        // );
-
-        return [
-            {
-                features: unknownPaths.map(({ coords, ...troncon }) => ({
-                    coords,
-                    data: troncon,
-                })),
-                color: '#666666',
-            },
-            {
-                features: clearedPaths.map(({ coords, ...troncon }) => ({
-                    coords,
-                    data: troncon,
-                })),
-                color: '#4fae77',
-            },
-            {
-                features: snowyPaths.map(({ coords, ...troncon }) => ({
-                    coords,
-                    data: troncon,
-                })),
-                color: '#367c98',
-            },
-            {
-                features: panifiedPaths.map(({ coords, ...troncon }) => ({
-                    coords,
-                    data: troncon,
-                })),
-                color: '#f09035',
-            },
-            {
-                features: inProgressPaths.map(({ coords, ...troncon }) => ({
-                    coords,
-                    data: troncon,
-                })),
-                color: '#8962c7',
-            },
-        ];
-    } else {
-        return null;
-    }
-};
-
-export const useMarkers = (opts) => {
-    const contributions = useContributions(opts);
-
-    if (contributions !== null) {
-        const icons = contributionTypes.reduce((all, curr) => {
-            const { qualities = null, id, icon } = curr;
-            if (qualities !== null) {
-                const qualityIcons = qualities.map((quality) => ({ ...quality, quality: true, id, icon }));
-                // const grayQualityIcons = qualityIcons.map((icon) => ({...icon, gray: true}));
-                return [
-                    ...all,
-                    ...qualityIcons,
-                    // grayQualityIcons[0]
-                ];
-            } else {
-                return [
-                    ...all,
-                    curr,
-                    // {...curr, gray: true}
-                ];
-            }
-        }, []).reverse();
-
-        const groupedMarkers = icons.map(({ id, icon, color, quality, value, gray = false }) => ({
-            features: contributions
-                .filter(({ issue_id, quality: contributionQuality }) =>
-                    quality ? contributionQuality === value : parseInt(issue_id) === parseInt(id),
-                )
-                .map(({ coords, ...contribution }) => ({
-                    coords,
-                    data: contribution,
-                    clickable: true,
-                })),
-            src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-                getContributionSvg({ icon, color: gray ? '#000' : color }),
-            )}`,
-            scale: parseInt(id) === 1 ? 1 : 0.5,
-        }));
-
-        return groupedMarkers;
-    } else {
-        return null;
-    }
+export const useMapData = () => {
+    const ctx = useDataContext(DataContext);
+    const { mapData } = ctx || {};
+    return mapData;
 };
 
 export const useAddContribution = () => {

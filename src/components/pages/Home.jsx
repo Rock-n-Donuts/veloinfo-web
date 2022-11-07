@@ -4,8 +4,8 @@ import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 
 import useOnClickOutside from '../../hooks/useOnClickOutside';
-import { useAddContribution, useData, useLines, useMarkers } from '../../contexts/DataContext';
-import { useFilters } from '../../contexts/FiltersContext';
+import { useAddContribution, useContribution, useMapData, useReady } from '../../contexts/DataContext';
+
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContribution from '../partials/AddContribution';
@@ -24,16 +24,10 @@ function HomePage() {
     const [contributionKey, setContributionKey] = useState(uuid());
 
     const isContributionSelected = selectedContributionId !== null;
-    const data = useData();
-    const { fromDays, contributionTypes, tronconTypes } = useFilters();
-    const lines = useLines({ filters: { tronconTypes }});
-    const markers = useMarkers({ filters: { fromDays, contributionTypes } });
-    const { contributions = null } = data || {};
-    const contributionSelected =
-        contributions !== null
-            ? contributions.find(({ id }) => parseInt(id) === selectedContributionId) || null
-            : null;
-
+    const ready = useReady();
+    const contributionSelected = useContribution(selectedContributionId);
+    const { lines, markers } = useMapData();
+    
     const addContribution = useAddContribution();
 
     // const openMenu = useCallback(() => {
@@ -45,7 +39,7 @@ function HomePage() {
     }, [setMenuOpened]);
 
     const toggleMenu = useCallback(() => {
-        setMenuOpened(old => !old);
+        setMenuOpened((old) => !old);
     }, [setMenuOpened]);
 
     const openAddContribution = useCallback(() => {
@@ -144,7 +138,7 @@ function HomePage() {
                     />
                 </div>
             </div>
-            <Loading loading={data === null} />
+            <Loading loading={!ready} />
         </div>
     );
 }
