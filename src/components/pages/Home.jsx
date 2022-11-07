@@ -99,9 +99,17 @@ function HomePage() {
     }, [setSelectedContributionId]);
 
     const modalRef = useRef(null);
+    const [modalReady, setModalReady] = useState(false);
     useOnClickOutside(modalRef, () => {
-        setSelectedContributionId(null);
+        if (modalReady) {
+            setSelectedContributionId(null);
+            setModalReady(false);
+        }        
     });
+
+    const onModalReady = useCallback( (ready) => {
+        setModalReady(ready);
+    }, [])
 
     return (
         <div
@@ -149,6 +157,7 @@ function HomePage() {
                                 <ContributionDetails
                                     contribution={contributionSelected}
                                     onClose={unselectContribution}
+                                    onReady={onModalReady}
                                 />
                             </div>
                         </CSSTransition>

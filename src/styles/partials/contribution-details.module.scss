@@ -41,10 +41,6 @@
 
     .photo {
         width: 100%;
-        
-        &.waiting {
-            height: 100px;
-        }
     }
 
     .voteContainer {
@@ -103,14 +99,18 @@
         }
     }
 
+    .replyForm {
+        pointer-events: none;
+    }
+
+    &.ready {
+        pointer-events: auto;
+    }
+
     &.voteDisabled {
         .voteContainer {
             opacity: 0.5;
             pointer-events: none;
         }
-    }
-
-    &.voteLoading {
-        pointer-events: none;
     }
 }

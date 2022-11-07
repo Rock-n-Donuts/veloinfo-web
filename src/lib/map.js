@@ -117,7 +117,7 @@ export function getMarkersFromContributions(contributions) {
         src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
             getContributionSvg({ icon, color: gray ? '#000' : color }),
         )}`,
-        scale: parseInt(id) === 1 ? 1 : 0.5,
+        scale: parseInt(id) === 1 ? 1 : 0.75,
     }));
 
     return groupedMarkers;

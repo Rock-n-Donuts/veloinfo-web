@@ -18,6 +18,7 @@ const propTypes = {
     contribution: PropTypes.shape({}),
     children: PropTypes.node,
     onClose: PropTypes.func,
+    onReady: PropTypes.func,
 };
 
 const defaultProps = {
@@ -25,9 +26,10 @@ const defaultProps = {
     contribution: null,
     children: null,
     onClose: null,
+    onReady: null,
 };
 
-function ContributionDetails({ className, contribution, children, onClose }) {
+function ContributionDetails({ className, contribution, children, onClose, onReady }) {
     const {
         id = null,
         issue_id,
@@ -124,16 +126,28 @@ function ContributionDetails({ className, contribution, children, onClose }) {
         vote(-1);
     }, [vote]);
 
+    const [ready, setReady] = useState(false);
+    useEffect(() => {
+        if (onReady !== null) {
+            onReady(ready);
+        }
+    }, [ready, onReady]);
+
     useEffect(() => {
         if (id !== null) {
             setCanVote(false);
-            axios.get(`/contribution/${id}`).then((res) => {
-                const { data } = res || {};
-                const { can_vote = false } = data || {};
-                if (can_vote) {
-                    setCanVote(true);
-                }
-            });
+            axios
+                .get(`/contribution/${id}`)
+                .then((res) => {
+                    const { data } = res || {};
+                    const { can_vote = false } = data || {};
+                    if (can_vote) {
+                        setCanVote(true);
+                    }
+                })
+                .finally(() => {
+                    setReady(true);
+                });
         }
     }, [id]);
 
@@ -160,7 +174,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                 styles.container,
                 {
                     [className]: className !== null,
-                    [styles.loading]: voteLoading,
+                    [styles.ready]: ready,
                     [styles.voteDisabled]: !canVote || voteLoading,
                 },
             ])}
