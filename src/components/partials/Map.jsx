@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { Tile as TileLayer, Vector as LayerVector, VectorImage } from 'ol/layer';
+import { Tile as TileLayer, VectorImage } from 'ol/layer';
 import { Cluster, OSM, Vector as VectorSource } from 'ol/source';
 import { Style, Stroke, Icon } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
@@ -75,7 +75,7 @@ function Map({
 }) {
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
-    // const [isHover, setIsHover] = useState(false);
+    const [isHover, setIsHover] = useState(false);
 
     const [ready, setReady] = useState(false);
     const [loadingUserPosition, setLoadingUserPosition] = useState(false);
@@ -97,6 +97,76 @@ function Map({
         }
     }, [onZoomChanged]);
 
+    const onMapPointerMove = useCallback(
+        (e) => {
+            const pixel = mapRef.current.getEventPixel(e.originalEvent);
+            const feature =
+                mapRef.current.forEachFeatureAtPixel(pixel, function (feature) {
+                    return feature;
+                }) || null;
+            if (feature !== null) {
+                const propreties = feature.getProperties();
+                const { features = null } = propreties;
+                const currentFeature = features !== null ? features[0] : feature;
+                const attributes = currentFeature.get('attributes');
+                const { clickable = false } = attributes || {};
+                
+                if (clickable) {
+                    setIsHover(true);
+                } else {
+                    setIsHover(false);
+                }
+            } else {
+                setIsHover(false);
+            }
+        },
+        [setIsHover],
+    );
+
+    const onMapClick = useCallback(
+        (e) => {
+            const pixel = mapRef.current.getEventPixel(e.originalEvent);
+            const clickedFeature =
+                mapRef.current.forEachFeatureAtPixel(pixel, function (feature) {
+                    return feature;
+                }) || null;
+            if (clickedFeature !== null) {
+                const clickedFeaturePropreties = clickedFeature.getProperties();
+                const { geometry: clickedGeometry, features: clickedFeatures } =
+                    clickedFeaturePropreties;
+                const type = clickedGeometry.getType();
+
+                if (type === 'Point') {
+                    if (clickedFeatures.length) {
+                        if (clickedFeatures.length > 1) {
+                            const extent = boundingExtent(
+                                clickedFeatures.map((r) => r.getGeometry().getCoordinates()),
+                            );
+                            mapRef.current.getView().fit(extent, {
+                                duration: 1000,
+                                padding: [100, 100, 100, 100],
+                            });
+                        } else {
+                            const feature = clickedFeatures[0];
+                            const featureAttributes = feature.get('attributes');
+                            if (onMarkerClick !== null && featureAttributes.clickable) {
+                                onMarkerClick(featureAttributes);
+                            }
+                        }
+                    }
+                }
+
+                if (type === 'LineString') {
+                    const attributes = clickedFeature.get('attributes');
+                    if (onLineClick !== null && attributes.clickable) {
+                        onLineClick(attributes);
+                    }
+                }
+            }
+        },
+        [onMarkerClick, onLineClick],
+    );
+
     const initMap = useCallback(
         (target) => {
             const view = new View({
@@ -104,7 +174,7 @@ function Map({
                 zoom,
             });
 
-            const map = (mapRef.current = new OlMap({
+            mapRef.current = new OlMap({
                 target,
                 view,
                 layers: [
@@ -112,49 +182,11 @@ function Map({
                         source: new OSM(),
                     }),
                 ],
-            }));
-            map.getView().on('change:center', onChangeCenter);
-            map.getView().on('change:resolution', onChangeZoom);
-
-            map.on('click', (e) => {
-                linesLayers.current.forEach((layer) => {
-                    layer.getFeatures(e.pixel).then((clickedFeatures) => {
-                        if (clickedFeatures.length) {
-                            const clickedFeature = clickedFeatures[0];
-                            const featureAttributes = clickedFeature.get('attributes');
-                            if (onLineClick !== null && featureAttributes.clickable) {
-                                onLineClick(featureAttributes);
-                            }
-                        }
-                    });
-                });
-                markerLayers.current.forEach((layer) => {
-                    layer.getFeatures(e.pixel).then((clickedFeatures) => {
-                        if (clickedFeatures.length) {
-                            const clickedFeature = clickedFeatures[0];
-                            const features = clickedFeature.get('features');
-                            if (features.length > 1) {
-                                const extent = boundingExtent(
-                                    features.map((r) => r.getGeometry().getCoordinates()),
-                                );
-                                map.getView().fit(extent, {
-                                    duration: 1000,
-                                    padding: [100, 100, 100, 100],
-                                });
-                            } else {
-                                const feature = features[0];
-                                const featureAttributes = feature.get('attributes');
-                                if (onMarkerClick !== null && featureAttributes.clickable) {
-                                    onMarkerClick(featureAttributes);
-                                }
-                            }
-                        }
-                    });
-                });
             });
             setReady(true);
+            return mapRef.current;
         },
-        [mapCenter, zoom, onChangeCenter, onChangeZoom, setReady, onMarkerClick, onLineClick],
+        [mapCenter, zoom, setReady],
     );
 
     const drawLines = useCallback((lines) => {
@@ -204,7 +236,7 @@ function Map({
         });
 
         const styleCache = {};
-        const clusters = new LayerVector({
+        const clusters = new VectorImage({
             source: clusterSource,
             style: function (feature) {
                 const size = feature.get('features').length;
@@ -233,20 +265,28 @@ function Map({
 
     useEffect(() => {
         const { current: mapContainer = null } = mapContainerRef;
-        const { current: map = null } = mapRef;
 
-        if (mapContainer && map === null) {
-            initMap(mapContainer);
+        if (mapContainer && mapRef.current === null) {
+            const map = initMap(mapContainer);
+            map.getView().on('change:center', onChangeCenter);
+            map.getView().on('change:resolution', onChangeZoom);
+            map.on('click', onMapClick);
+            map.on('pointermove', onMapPointerMove);
         }
 
         return () => {
-            if (map) {
+            if (mapRef.current !== null) {
+                mapRef.current.getView().un('change:center', onChangeCenter);
+                mapRef.current.getView().un('change:resolution', onChangeZoom);
+                mapRef.current.un('click', onMapClick);
+                mapRef.current.un('pointermove', onMapPointerMove);
+
                 mapContainer.innerHTML = '';
                 mapRef.current = null;
                 setReady(false);
             }
         };
-    }, [initMap, setReady]);
+    }, [initMap, setReady, onMapClick, onMapPointerMove, onChangeCenter, onChangeZoom]);
 
     useEffect(() => {
         if (mapRef.current !== null && mapCenter !== null) {
@@ -341,7 +381,7 @@ function Map({
                 styles.container,
                 {
                     [className]: className !== null,
-                    // [styles.isHover]: isHover
+                    [styles.isHover]: isHover
                 },
             ])}
         >
