@@ -158,7 +158,7 @@ function Map({
     );
 
     const drawLines = useCallback((lines) => {
-        const vectorSource = new VectorSource({});
+        const vectorSource = new VectorSource();
 
         const { features, color = '#0000FF', width = 5 } = lines || {};
 
@@ -186,7 +186,7 @@ function Map({
     const addMarkers = useCallback((markers) => {
         const { features, src, image, scale } = markers || {};
 
-        const vectorSource = new VectorSource({});
+        const vectorSource = new VectorSource();
 
         features.forEach(({ coords, data = null, clickable = false }) => {
             vectorSource.addFeature(
@@ -204,7 +204,7 @@ function Map({
         });
 
         const styleCache = {};
-        const clusters = new VectorImage({
+        const clusters = new LayerVector({
             source: clusterSource,
             style: function (feature) {
                 const size = feature.get('features').length;
