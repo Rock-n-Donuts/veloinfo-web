@@ -121,7 +121,7 @@ export const DataProvider = ({ children }) => {
     }, [data, selectedFilters, filterData]);
 
     return (
-        <DataContext.Provider value={{ data, filteredData, mapData, ready, loading, error }}>
+        <DataContext.Provider value={{ data, filteredData, mapData, ready, loading, error, setData }}>
             {children}
         </DataContext.Provider>
     );
