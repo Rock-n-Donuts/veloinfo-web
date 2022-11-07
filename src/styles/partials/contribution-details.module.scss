@@ -109,4 +109,8 @@
             pointer-events: none;
         }
     }
+
+    &.voteLoading {
+        pointer-events: none;
+    }
 }

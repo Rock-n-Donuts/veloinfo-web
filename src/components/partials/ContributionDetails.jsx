@@ -160,6 +160,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                 styles.container,
                 {
                     [className]: className !== null,
+                    [styles.loading]: voteLoading,
                     [styles.voteDisabled]: !canVote || voteLoading,
                 },
             ])}
