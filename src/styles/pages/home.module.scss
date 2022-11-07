@@ -61,7 +61,7 @@
         pointer-events: none;
         overflow: auto;       
         opacity: 0;
-        transition: opacity 0.2s ease;
+        transition: opacity 0.25s ease;
         background-color: rgba($color-black, 0.5);
         cursor: pointer;
 
@@ -76,8 +76,12 @@
         width: 100%;
         max-width: 600px;
         transform: scale(0.75);
-        transition: transform 0.2s ease;
+        transition: transform 0.25s ease;
         cursor: auto;
+    }
+
+    .contributionDetailsInner {
+        position: relative;
     }
 
     &.menuOpened {

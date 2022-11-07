@@ -41,6 +41,10 @@
 
     .photo {
         width: 100%;
+        
+        &.waiting {
+            height: 100px;
+        }
     }
 
     .voteContainer {

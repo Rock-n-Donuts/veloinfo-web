@@ -3,8 +3,15 @@ import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+
 import useOnClickOutside from '../../hooks/useOnClickOutside';
-import { useAddContribution, useContribution, useMapData, useReady } from '../../contexts/DataContext';
+import {
+    useAddContribution,
+    useContribution,
+    useMapData,
+    useReady,
+} from '../../contexts/DataContext';
 
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
@@ -27,7 +34,7 @@ function HomePage() {
     const ready = useReady();
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
-    
+
     const addContribution = useAddContribution();
 
     // const openMenu = useCallback(() => {
@@ -131,12 +138,22 @@ function HomePage() {
                 onContributionAdded={onContributionAdded}
             />
             <div className={styles.contributionDetailsContainer}>
-                <div className={styles.contributionDetails} ref={modalRef}>
-                    <ContributionDetails
-                        contribution={contributionSelected}
-                        onClose={unselectContribution}
-                    />
-                </div>
+                <TransitionGroup className={styles.contributionDetails}>
+                    {contributionSelected !== null ? (
+                        <CSSTransition
+                            nodeRef={modalRef}
+                            key={contributionSelected.id}
+                            timeout={250}
+                        >
+                            <div className={styles.contributionDetailsInner} ref={modalRef}>
+                                <ContributionDetails
+                                    contribution={contributionSelected}
+                                    onClose={unselectContribution}
+                                />
+                            </div>
+                        </CSSTransition>
+                    ) : null}
+                </TransitionGroup>
             </div>
             <Loading loading={!ready} />
         </div>

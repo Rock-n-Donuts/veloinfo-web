@@ -18,8 +18,8 @@ const defaultProps = {
 function FormGroup({ className, label, children }) {
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
-            <div className={styles.label}>{label}</div>
-            { children }
+            {label !== null ? <div className={styles.label}>{label}</div> : null}
+            {children}
         </div>
     );
 }

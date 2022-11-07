@@ -6,7 +6,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import CommentsIcon from '../../icons/Comments';
-import usePrevious from '../../hooks/usePrevious';
 import { getRelativeTime } from '../../lib/utils';
 import ReplyForm from '../forms/ReplyForm';
 
@@ -29,9 +28,6 @@ const defaultProps = {
 };
 
 function ContributionDetails({ className, contribution, children, onClose }) {
-    const previousContribution = usePrevious(contribution) || null;
-    const finalContribution = contribution || previousContribution;
-
     const {
         id = null,
         issue_id,
@@ -43,7 +39,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
         replies = [],
         score,
         updated_at,
-    } = finalContribution || {};
+    } = contribution || {};
 
     const intl = useIntl();
     const { locale } = intl;
@@ -149,6 +145,15 @@ function ContributionDetails({ className, contribution, children, onClose }) {
         [id, updateContribution, setFormKey],
     );
 
+    const [finalPhotoPath, setFinalPhotoPath] = useState(null);
+    useEffect(() => {
+        if (photo_path !== null) {
+            setTimeout(() => {
+                setFinalPhotoPath(photo_path);
+            }, 250);
+        }
+    }, [photo_path]);
+
     return (
         <div
             className={classNames([
@@ -159,7 +164,7 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                 },
             ])}
         >
-            {finalContribution !== null ? (
+            {contribution !== null ? (
                 <div className={styles.content}>
                     <div className={styles.contributionType}>
                         <span>{contributionTypeLabel[shortLocale]}</span>
@@ -188,10 +193,10 @@ function ContributionDetails({ className, contribution, children, onClose }) {
                     {comment !== null && comment.length > 0 ? (
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
-                    {photo_path !== null && photo_path.length > 0 ? (
+                    {finalPhotoPath !== null && finalPhotoPath.length > 0 ? (
                         <img
                             className={styles.photo}
-                            src={photo_path}
+                            src={finalPhotoPath}
                             alt={intl.formatMessage({ id: 'photo' })}
                         />
                     ) : null}

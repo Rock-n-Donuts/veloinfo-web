@@ -144,7 +144,7 @@ function Map({
                             );
                             mapRef.current.getView().fit(extent, {
                                 duration: 1000,
-                                padding: [100, 100, 100, 100],
+                                padding: [200, 200, 200, 200],
                             });
                         } else {
                             const feature = clickedFeatures[0];
