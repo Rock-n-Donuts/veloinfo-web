@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { Tile as TileLayer, Vector as LayerVector } from 'ol/layer';
+import { Tile as TileLayer, Vector as LayerVector, VectorImage } from 'ol/layer';
 import { Cluster, OSM, Vector as VectorSource } from 'ol/source';
 import { Style, Stroke, Icon } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
@@ -171,7 +171,7 @@ function Map({
                 }),
             );
         });
-        const vectorLineLayer = new LayerVector({
+        const vectorLineLayer = new VectorImage({
             source: vectorSource,
             style: new Style({
                 stroke: new Stroke({ color, width }),
@@ -204,7 +204,7 @@ function Map({
         });
 
         const styleCache = {};
-        const clusters = new LayerVector({
+        const clusters = new VectorImage({
             source: clusterSource,
             style: function (feature) {
                 const size = feature.get('features').length;
