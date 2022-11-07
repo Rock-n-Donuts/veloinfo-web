@@ -37,6 +37,10 @@
         width: 50%;
         padding: 5px;
 
+        @media only screen and (min-width: 800px) {
+            width: 25%;
+        }
+
         .categoryContent {
             display: block;
             padding: 20px;
@@ -49,7 +53,7 @@
             max-width: 80px;
 
             @media only screen and (min-width: 800px) {
-                max-width: 300px;
+                max-width: 100px;
             }
         }
 

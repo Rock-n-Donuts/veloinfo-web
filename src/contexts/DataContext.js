@@ -8,7 +8,7 @@ import contributionTypes from '../data/contributions-types.json';
 import getContributionSvg from '../icons/contributionSvg';
 
 const DataContext = createContext();
-const pollingDelay = 5; // seconds
+const pollingDelay = 60; // seconds
 
 export const DataProvider = ({ children }) => {
     const [data, setData] = useState(null);
