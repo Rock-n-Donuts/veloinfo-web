@@ -6,7 +6,7 @@ import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';
 import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
 
 const DataContext = createContext();
-const pollingDelay = 10; // seconds
+const pollingDelay = 100; // seconds
 
 export const DataProvider = ({ children }) => {
     const [ready, setReady] = useState(false);
