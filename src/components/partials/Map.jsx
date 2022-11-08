@@ -272,10 +272,7 @@ function Map({
             map.getView().on('change:center', onChangeCenter);
             map.getView().on('change:resolution', onChangeZoom);
             map.on('click', onMapClick);
-            map.on('pointermove', onMapPointerMove);
-            map.on('moveend', () => {
-
-            });
+            // map.on('pointermove', onMapPointerMove);
         }
 
         return () => {
@@ -283,7 +280,7 @@ function Map({
                 mapRef.current.getView().un('change:center', onChangeCenter);
                 mapRef.current.getView().un('change:resolution', onChangeZoom);
                 mapRef.current.un('click', onMapClick);
-                mapRef.current.un('pointermove', onMapPointerMove);
+                // mapRef.current.un('pointermove', onMapPointerMove);
 
                 mapContainer.innerHTML = '';
                 mapRef.current = null;
