@@ -107,10 +107,6 @@ function HomePage() {
         }        
     });
 
-    const onModalReady = useCallback( (ready) => {
-        setModalReady(ready);
-    }, [])
-
     return (
         <div
             className={classNames([
@@ -152,12 +148,13 @@ function HomePage() {
                             nodeRef={modalRef}
                             key={contributionSelected.id}
                             timeout={250}
+                            onEntered={() => {setModalReady(true)}}
+                            onExited={() => {setModalReady(false)}}
                         >
                             <div className={styles.contributionDetailsInner} ref={modalRef}>
                                 <ContributionDetails
                                     contribution={contributionSelected}
                                     onClose={unselectContribution}
-                                    onReady={onModalReady}
                                 />
                             </div>
                         </CSSTransition>

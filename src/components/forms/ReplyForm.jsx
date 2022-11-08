@@ -149,7 +149,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                             <ReCAPTCHA ref={captchaRef} />
                         </div>
                     </div>
-                    <div className={styles.errors}>{errors}</div>
+                    {errors !== null ? <div className={styles.errors}>{errors}</div> : null}
                 </div>
                 <div className={styles.actions}>
                     <button className={styles.submitButton} type="submit">

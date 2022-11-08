@@ -3,9 +3,9 @@ import classNames from 'classnames';
 import { useIntl } from 'react-intl';
 
 import menuIcon from '../../assets/images/menu-icon.svg';
-import closeIcon from '../../assets/images/close-icon.svg';
 
 import styles from '../../styles/buttons/menu.module.scss';
+import CloseIcon from '../../icons/Close';
 
 const propTypes = {
     opened: PropTypes.bool,
@@ -39,15 +39,7 @@ function MenuButton({ className, opened, onClick }) {
                     })}
                 />
             </span>
-            <span>
-                <img
-                    className={styles.close}
-                    src={closeIcon}
-                    alt={intl.formatMessage({
-                        id: 'close',
-                    })}
-                />
-            </span>
+            <CloseIcon className={styles.close} />
         </button>
     );
 }

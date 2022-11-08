@@ -5,13 +5,14 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useCallback, useEffect, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
+import { useUpdateContribution } from '../../contexts/DataContext';
 import CommentsIcon from '../../icons/Comments';
+import contributionTypesIcons from '../../icons/contributions';
 import { getRelativeTime } from '../../lib/utils';
 import ReplyForm from '../forms/ReplyForm';
 
 import contributionsTypes from '../../data/contributions-types.json';
 import styles from '../../styles/partials/contribution-details.module.scss';
-import { useUpdateContribution } from '../../contexts/DataContext';
 
 const propTypes = {
     className: PropTypes.string,
@@ -64,6 +65,8 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const {
         label: contributionTypeLabel,
+        icon: contributionTypeIcon,
+        color: contributionTypeColor,
         votes: contributionTypeVotes,
         qualities: contributionTypeQualities = null,
     } = contributionType || {};
@@ -72,7 +75,15 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             ? contributionTypeQualities.find(({ value }) => parseInt(value) === parseInt(quality))
             : null;
 
-    const { label: contributionTypeQualityLabel = null } = contributionTypeQuality || {};
+    const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null } =
+        contributionTypeQuality || {};
+    const finalContributionIcon =
+        contributionTypeQualityIcon !== null ? contributionTypeQualityColor : contributionTypeIcon;
+    const finalContributionColor =
+        contributionTypeQualityColor !== null
+            ? contributionTypeQualityColor
+            : contributionTypeColor;
+
     const { positive: contributionTypePositive = null, negative: contributionTypeNegative = null } =
         contributionTypeVotes || {};
     const { label: positiveVoteLabel = null, color: positiveVoteColor = null } =
@@ -181,11 +192,16 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         >
             {contribution !== null ? (
                 <div className={styles.content}>
-                    <div className={styles.contributionType}>
-                        <span>{contributionTypeLabel[shortLocale]}</span>
-                        {contributionTypeQualityLabel !== null ? (
-                            <span> - {contributionTypeQualityLabel[shortLocale]}</span>
-                        ) : null}
+                    <div
+                        className={styles.contributionType}
+                        style={{ backgroundColor: finalContributionColor }}
+                    >
+                        <img
+                            className={styles.icon}
+                            src={contributionTypesIcons[finalContributionIcon]}
+                            alt={finalContributionIcon}
+                        />
+                        <span className={styles.label}>{contributionTypeLabel[shortLocale]}</span>
                     </div>
                     <div className={styles.dates}>
                         <div className={styles.createdDate}>
@@ -278,7 +294,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                 </div>
             ) : null}
             {children}
-            <CloseButton className={styles.close} onClick={onClose} />
+            <CloseButton className={styles.close} onClick={onClose} color="#FFF" />
         </div>
     );
 }

@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
     const deviceId = useMemo(() => {
         let id = Cookie.get('deviceId') || null;
         if (id === null) {
-            id = Cookie.set('deviceId', uuidv1(), { expires: 3650 });
+            id =  uuidv1();
+            Cookie.set('deviceId', id, { expires: 3650 });
         }
         return id;
     }, []);
