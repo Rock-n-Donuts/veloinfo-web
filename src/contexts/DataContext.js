@@ -174,6 +174,7 @@ export const useAddContribution = () => {
 
     const addContribution = useCallback(
         (contribution) => {
+            const { name = null } = contribution;
             setData((old) => {
                 const { contributions } = old || {};
                 return { ...old, contributions: [...contributions, contribution] };
@@ -190,6 +191,7 @@ export const useUpdateContribution = () => {
 
     const updateContribution = useCallback(
         (updatedContribution) => {
+            const { name = null } = updatedContribution;
             setData((old) => {
                 const { id: updatedContributionId } = updatedContribution;
                 const { contributions } = old || {};

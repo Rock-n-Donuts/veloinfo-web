@@ -14,11 +14,11 @@ export const getFilteredTroncons = (troncons, filters) => {
 };
 
 export const getFilteredContributions = (contributions, filters) => {
-    const { contributionTypes = [], fromDays = null } = filters || {};
+    const { contributionTypes = [], fromDays = 0 } = filters || {};
     return [...(contributions || [])]
         .filter(({ issue_id }) => contributionTypes.indexOf(parseInt(issue_id)) > -1)
         .filter(
             ({ issue_id, created_at }) =>
-                issue_id !== 1 || fromDays === null || addDays(new Date(), -fromDays) < parseISO(created_at),
+                issue_id !== 1 || fromDays === 0 || addDays(new Date(), -fromDays) < parseISO(created_at),
         );
 };

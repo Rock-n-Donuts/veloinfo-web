@@ -71,7 +71,7 @@ function DateFilter({ className, choices }) {
             if (days !== null) {
                 setFromDays(days);
             } else {
-                setFromDays(null);
+                setFromDays(0);
             }
             setOpened(false);
         },
@@ -122,9 +122,9 @@ function DateFilter({ className, choices }) {
                             ))}
                             <button
                                 type="button"
-                                className={classNames([{ [styles.selected]: fromDays === null }])}
+                                className={classNames([{ [styles.selected]: fromDays === 0 }])}
                                 onClick={() => {
-                                    setDateFilter(null);
+                                    setDateFilter(0);
                                 }}
                             >
                                 <FormattedMessage id={`date-filter-all`} />
