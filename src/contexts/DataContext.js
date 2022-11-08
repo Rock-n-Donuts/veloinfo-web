@@ -1,7 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
 import { useUser } from './AuthContext';
-import useInterval from '../hooks/useInterval';
 import { useSelectedFilters } from './FiltersContext';
 import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';
 import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
@@ -34,16 +33,16 @@ export const DataProvider = ({ children }) => {
             })
             .then((res) => {
                 const { data: newData = null } = res || {};
-                const { date: newDate = null, troncons = [], contributions = [] } = newData || {};
+                const { date: newDate = null } = newData || {};
                 if (date === null) {
                     // console.log('Initial data received', newData);
                     setReady(true);
                     setData(newData);
                 } else {
                     // console.log('Updated data received.', newData);
-                    if (date !== newDate && (troncons.length > 0 || contributions.length > 0))
-                        setData((data) => {
-                            const { troncons, contributions } = data || {};
+                    if (date !== newDate)
+                        setData((old) => {
+                            const { troncons, contributions } = old || {};
                             const {
                                 troncons: updatedTroncons,
                                 contributions: updatedContributions,
@@ -91,12 +90,14 @@ export const DataProvider = ({ children }) => {
         }
     }, [getData, user]);
 
-    useInterval(() => {
-        if (user !== null) {
+    useEffect(() => {
+        if (date !== null) {
             // console.log('Updating data...');
-            getData(date);
+            setTimeout(() => {
+                getData(date);
+            }, [pollingDelay * 1000]);
         }
-    }, pollingDelay * 1000);
+    }, [getData, date]);
 
     const filterData = useCallback((newData, newFilters) => {
         const { troncons = null, contributions = null } = newData;
