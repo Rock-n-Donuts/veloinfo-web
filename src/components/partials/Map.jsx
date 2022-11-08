@@ -273,6 +273,9 @@ function Map({
             map.getView().on('change:resolution', onChangeZoom);
             map.on('click', onMapClick);
             map.on('pointermove', onMapPointerMove);
+            map.on('moveend', () => {
+
+            });
         }
 
         return () => {
