@@ -6,7 +6,7 @@ import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';
 import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
 
 const DataContext = createContext();
-const pollingDelay = 100; // seconds
+const pollingDelay = 10; // seconds
 
 export const DataProvider = ({ children }) => {
     const [ready, setReady] = useState(false);
@@ -174,7 +174,6 @@ export const useAddContribution = () => {
 
     const addContribution = useCallback(
         (contribution) => {
-            const { name = null } = contribution;
             setData((old) => {
                 const { contributions } = old || {};
                 return { ...old, contributions: [...contributions, contribution] };
@@ -191,7 +190,6 @@ export const useUpdateContribution = () => {
 
     const updateContribution = useCallback(
         (updatedContribution) => {
-            const { name = null } = updatedContribution;
             setData((old) => {
                 const { id: updatedContributionId } = updatedContribution;
                 const { contributions } = old || {};
