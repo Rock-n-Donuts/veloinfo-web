@@ -19,7 +19,6 @@ import styles from '../../styles/partials/map.module.scss';
 const propTypes = {
     className: PropTypes.string,
     askForPosition: PropTypes.bool,
-    disableRotate: PropTypes.bool,
     mapCenter: PropTypes.arrayOf(PropTypes.number),
     zoom: PropTypes.number,
     lines: PropTypes.arrayOf(
@@ -50,7 +49,6 @@ const propTypes = {
 const defaultProps = {
     className: null,
     askForPosition: false,
-    disableRotate: false,
     mapCenter: [-73.561668, 45.508888],
     zoom: 15,
     lines: null,
@@ -68,7 +66,6 @@ const defaultProps = {
 function Map({
     className,
     askForPosition,
-    disableRotate,
     mapCenter,
     zoom,
     lines,
@@ -180,7 +177,7 @@ function Map({
     const initMap = useCallback(
         (target) => {
             const view = new View({
-                enableRotation: !disableRotate,
+                enableRotation: false,
                 center: fromLonLat(mapCenter),
                 zoom,
             });
@@ -197,7 +194,7 @@ function Map({
             setReady(true);
             return mapRef.current;
         },
-        [disableRotate, mapCenter, zoom, setReady],
+        [mapCenter, zoom, setReady],
     );
 
     const drawLines = useCallback((lines) => {
@@ -260,7 +257,6 @@ function Map({
                                 anchor: [0.5, 1],
                                 anchorXUnits: 'fraction',
                                 anchorYUnits: 'fraction',
-                                rotateWithView: true,
                                 src,
                                 img,
                                 imgSize,
@@ -270,7 +266,6 @@ function Map({
                                 length > 1
                                     ? new Text({
                                           text: length.toString(),
-                                          rotateWithView: true,
                                           offsetX: 6,
                                           offsetY: -3,
                                           scale: scale * 2,
