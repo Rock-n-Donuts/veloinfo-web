@@ -33,7 +33,7 @@
     "vote-negative": "No",
     "legend": "Legend",
     "troncons-status-title": "Paths status*",
-    "troncons-status-note": "*Data from Planif-Neige",
+    "troncons-status-note": "*Data from Planif-Neige (simulated)",
     "date-filter-1day": "Last 24h",
     "date-filter-2days": "Last 2 days",
     "date-filter-3days": "Last 3 days",
@@ -45,5 +45,6 @@
     "troncon-filter-winter-protected": "Protected 4 seasons sections",
     "troncon-filter-winter": "4 seasons sections",
     "troncon-filter-uncleared": "Uncleared sections",
-    "menu": "Menu"
+    "menu": "Menu",
+    "no-comments": "No comments"
 }

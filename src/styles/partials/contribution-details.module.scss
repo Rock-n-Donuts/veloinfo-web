@@ -88,11 +88,15 @@
         display: flex;
         align-items: center;
         margin: 20px 0;
+        color: $color-gray;
 
         span {
             margin-left: 5px;
-            color: $color-blue;
             font-weight: bold;
+        }
+
+        &.hasComments {
+            color: $color-blue;
         }
     }
 
@@ -114,9 +118,7 @@
         }
     }
 
-    .replyForm {
-        pointer-events: none;
-    }
+    pointer-events: none;
 
     &.ready {
         pointer-events: auto;

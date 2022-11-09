@@ -33,7 +33,7 @@
     "vote-negative": "Non",
     "legend": "Légende",
     "troncons-status-title": "Statut des rues*",
-    "troncons-status-note": "*Données Planif-Neige",
+    "troncons-status-note": "*Données Planif-Neige (simulé)",
     "date-filter-1day": "Dernier 24h",
     "date-filter-2days": "2 derniers jours",
     "date-filter-3days": "3 derniers jours",
@@ -45,5 +45,6 @@
     "troncon-filter-winter-protected": "Tronçons 4 saisons protégés",
     "troncon-filter-winter": "Tronçons 4 saisons",
     "troncon-filter-uncleared": "Tronçons non déblayés",
-    "menu": "Menu"
+    "menu": "Menu",
+    "no-comments": "Aucun commentaire"
 }

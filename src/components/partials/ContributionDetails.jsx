@@ -98,6 +98,8 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     // console.log(lastVote)
     // const totalVote = positive + negative;
 
+    const hasComments = replies.length > 0;
+
     const [canVote, setCanVote] = useState(false);
     const [voteLoading, setVoteLoading] = useState(false);
     const [formKey, setFormKey] = useState(id);
@@ -262,9 +264,9 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             </button>
                         </div>
                     </div>
-                    <div className={styles.repliesCount}>
-                        <CommentsIcon colored={replies.length > 0} />
-                        {replies.length > 0 ? <span>{replies.length}</span> : null}
+                    <div className={classNames([styles.repliesCount, {[styles.hasComments]: hasComments}])}>
+                        <CommentsIcon colored={hasComments} />
+                        <span>{hasComments ? replies.length: <FormattedMessage id="no-comments" />}</span> 
                     </div>
                     <div className={styles.replies}>
                         {replies.map(
