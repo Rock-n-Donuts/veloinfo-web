@@ -79,7 +79,10 @@ function HomeMenu({ className, opened, onClose }) {
                 </div>
                 <div className={styles.footer}>
                     <a href="https://github.com/Rock-n-Donuts" target="_blank" rel="noreferrer">
-                        Rock n Donuts 🍩
+                        🍩 Rock n Donuts
+                    </a>
+                    <a href="mailto:rock.n.donuts.velo@gmail.com" target="_blank" rel="noreferrer">
+                        ✉️ Contact
                     </a>
                 </div>
             </div>

@@ -21,15 +21,21 @@ function LocaleSelector({ className }) {
 
     return (
         <ul className={classNames([styles.container, { [className]: className !== null }])}>
-            {['fr', 'en'].map((l) => (
-                <li className={classNames([styles.locale, { [styles.active]: l === locale }])}>
+            {['fr', 'en'].map((localeItem, localeIndex) => (
+                <li
+                    key={`locale-${localeIndex}`}
+                    className={classNames([
+                        styles.locale,
+                        { [styles.active]: localeItem === locale },
+                    ])}
+                >
                     <button
                         type="button"
                         onClick={() => {
-                            setLocale(l);
+                            setLocale(localeItem);
                         }}
                     >
-                        <span>{l}</span>
+                        <span>{localeItem}</span>
                     </button>
                 </li>
             ))}
