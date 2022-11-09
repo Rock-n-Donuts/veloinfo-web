@@ -6,7 +6,7 @@ import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
 import { Tile as TileLayer, VectorImage } from 'ol/layer';
 import { Cluster, OSM, Vector as VectorSource } from 'ol/source';
-import { Style, Stroke, Icon } from 'ol/style';
+import { Style, Stroke, Icon, Fill, Text } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
 import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
@@ -19,6 +19,7 @@ import styles from '../../styles/partials/map.module.scss';
 const propTypes = {
     className: PropTypes.string,
     askForPosition: PropTypes.bool,
+    disableRotate: PropTypes.bool,
     mapCenter: PropTypes.arrayOf(PropTypes.number),
     zoom: PropTypes.number,
     lines: PropTypes.arrayOf(
@@ -36,6 +37,8 @@ const propTypes = {
             onClick: PropTypes.func,
         }),
     ),
+    clusterDistance: PropTypes.number,
+    clusterMinDistance: PropTypes.number,
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
     onPositionRefused: PropTypes.func,
@@ -47,10 +50,13 @@ const propTypes = {
 const defaultProps = {
     className: null,
     askForPosition: false,
+    disableRotate: false,
     mapCenter: [-73.561668, 45.508888],
     zoom: 15,
     lines: null,
     markers: null,
+    clusterDistance: 25,
+    clusterMinDistance: 20,
     onCenterChanged: null,
     onZoomChanged: null,
     onPositionRefused: null,
@@ -62,10 +68,13 @@ const defaultProps = {
 function Map({
     className,
     askForPosition,
+    disableRotate,
     mapCenter,
     zoom,
     lines,
     markers,
+    clusterDistance,
+    clusterMinDistance,
     onCenterChanged,
     onZoomChanged,
     onPositionRefused,
@@ -110,7 +119,7 @@ function Map({
                 const currentFeature = features !== null ? features[0] : feature;
                 const attributes = currentFeature.get('attributes');
                 const { clickable = false } = attributes || {};
-                
+
                 if (clickable) {
                     setIsHover(true);
                 } else {
@@ -143,8 +152,9 @@ function Map({
                                 clickedFeatures.map((r) => r.getGeometry().getCoordinates()),
                             );
                             mapRef.current.getView().fit(extent, {
-                                duration: 1000,
-                                padding: [100, 100, 100, 100],
+                                maxZoom: 22,
+                                duration: 750,
+                                padding: [200, 200, 200, 200],
                             });
                         } else {
                             const feature = clickedFeatures[0];
@@ -170,7 +180,7 @@ function Map({
     const initMap = useCallback(
         (target) => {
             const view = new View({
-                enableRotation: false,
+                enableRotation: !disableRotate,
                 center: fromLonLat(mapCenter),
                 zoom,
             });
@@ -187,7 +197,7 @@ function Map({
             setReady(true);
             return mapRef.current;
         },
-        [mapCenter, zoom, setReady],
+        [disableRotate, mapCenter, zoom, setReady],
     );
 
     const drawLines = useCallback((lines) => {
@@ -204,65 +214,89 @@ function Map({
                 }),
             );
         });
-        const vectorLineLayer = new VectorImage({
+        const layer = new VectorImage({
             source: vectorSource,
             style: new Style({
                 stroke: new Stroke({ color, width }),
             }),
         });
 
-        mapRef.current.addLayer(vectorLineLayer);
-        linesLayers.current.push(vectorLineLayer);
-        return vectorLineLayer;
+        mapRef.current.addLayer(layer);
+        linesLayers.current.push(layer);
+        return layer;
     }, []);
 
-    const addMarkers = useCallback((markers) => {
-        const { features, src, image, scale } = markers || {};
+    const addMarkers = useCallback(
+        (markers) => {
+            const { features, src, img, imgSize, scale, withoutCluster = false, color } = markers || {};
 
-        const vectorSource = new VectorSource();
+            const vectorSource = new VectorSource();
 
-        features.forEach(({ coords, data = null, clickable = false }) => {
-            vectorSource.addFeature(
-                new Feature({
-                    geometry: new Point(fromLonLat(coords)),
-                    attributes: { ...data, clickable },
-                }),
-            );
-        });
+            features.forEach(({ coords, data = null, clickable = false }) => {
+                vectorSource.addFeature(
+                    new Feature({
+                        geometry: new Point(fromLonLat(coords)),
+                        attributes: { ...data, clickable },
+                    }),
+                );
+            });
 
-        const clusterSource = new Cluster({
-            distance: 40,
-            minDistance: 5,
-            source: vectorSource,
-        });
+            const clusterSource = new Cluster({
+                distance: clusterDistance,
+                minDistance: clusterMinDistance,
+                source: vectorSource,
+            });
 
-        const styleCache = {};
-        const clusters = new VectorImage({
-            source: clusterSource,
-            style: function (feature) {
-                const size = feature.get('features').length;
-                let style = styleCache[size];
-                if (!style) {
-                    style = new Style({
-                        image: new Icon({
-                            anchor: [0.5, 1],
-                            anchorXUnits: 'fraction',
-                            anchorYUnits: 'fraction',
-                            src,
-                            image,
-                            scale,
-                        }),
-                    });
-                    styleCache[size] = style;
-                }
-                return style;
-            },
-        });
+            const styleCache = {};
+            const layer = new VectorImage({
+                source: withoutCluster ? vectorSource : clusterSource,
+                style: function (feature) {
+                    const features = feature.get('features');
+                    const { length = 0 } = features || {};
+                    let style = styleCache[length];
+                    if (!style) {
+                        style = new Style({
+                            image: new Icon({
+                                anchor: [0.5, 1],
+                                anchorXUnits: 'fraction',
+                                anchorYUnits: 'fraction',
+                                rotateWithView: true,
+                                src,
+                                img,
+                                imgSize,
+                                scale,
+                            }),
+                            text:
+                                length > 1
+                                    ? new Text({
+                                          text: length.toString(),
+                                          rotateWithView: true,
+                                          offsetX: 6,
+                                          offsetY: -3,
+                                          scale: scale * 2,
+                                          font: '12px Arial',
+                                          fill: new Fill({
+                                              color: '#FFF',
+                                          }),
+                                          stroke: new Stroke({
+                                              color,
+                                              width: 5
+                                          }),
+                                      })
+                                    : undefined,
+                        });
+                        styleCache[length] = style;
+                    }
+                    return style;
+                },
+            });
 
-        mapRef.current.addLayer(clusters);
-        markerLayers.current.push(clusters);
-        return clusters;
-    }, []);
+            mapRef.current.addLayer(layer);
+            markerLayers.current.push(layer);
+            return layer;
+        },
+        [clusterDistance, clusterMinDistance],
+    );
 
     useEffect(() => {
         const { current: mapContainer = null } = mapContainerRef;
@@ -382,7 +416,7 @@ function Map({
                 styles.container,
                 {
                     [className]: className !== null,
-                    [styles.isHover]: isHover
+                    [styles.isHover]: isHover,
                 },
             ])}
         >

@@ -99,6 +99,7 @@ export function getMarkersFromContributions(contributions) {
 
     const groupedMarkers = icons.map(
         ({ id, icon, color, quality = false, value, gray = false }) => {
+            const finalColor = gray ? '#999' : color;
             return {
                 features: contributions
                     .filter(
@@ -119,13 +120,14 @@ export function getMarkersFromContributions(contributions) {
                         clickable: true,
                     })),
                 src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-                    getContributionSvg({ icon, color: gray ? '#999' : color }),
+                    getContributionSvg({ icon, color: finalColor }),
                 )}`,
-                scale: parseInt(id) === 1 ? 1 : 0.75,
+                scale: `${id}` === '1' ? 1 : 0.5,
                 gray,
                 id,
                 icon,
                 value,
+                color: finalColor
             };
         },
     );
