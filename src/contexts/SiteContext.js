@@ -5,7 +5,7 @@ const SiteContext = createContext();
 
 export const SiteProvider = ({ children }) => {
 
-    const [locale, setLocale] = useState(Cookies.get('locale') || navigator.language);
+    const [locale, setLocale] = useState(Cookies.get('locale') || navigator.language.split(/[-_]/)[0]);
 
     useEffect(() => {
         Cookies.set('locale', locale);
