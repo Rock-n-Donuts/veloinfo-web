@@ -260,7 +260,7 @@ function Map({
                                 anchor: [0.5, 1],
                                 anchorXUnits: 'fraction',
                                 anchorYUnits: 'fraction',
-                                rotateWithView: false,
+                                rotateWithView: true,
                                 src,
                                 img,
                                 imgSize,
@@ -270,7 +270,7 @@ function Map({
                                 length > 1
                                     ? new Text({
                                           text: length.toString(),
-                                          rotateWithView: false,
+                                          rotateWithView: true,
                                           offsetX: 6,
                                           offsetY: -3,
                                           scale: scale * 2,
