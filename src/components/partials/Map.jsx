@@ -151,7 +151,7 @@ function Map({
                             mapRef.current.getView().fit(extent, {
                                 maxZoom: 22,
                                 duration: 750,
-                                padding: [200, 200, 200, 200],
+                                padding: [100, 100, 100, 100],
                             });
                         } else {
                             const feature = clickedFeatures[0];
