@@ -88,42 +88,48 @@ export function getMarkersFromContributions(contributions) {
                     id,
                     icon,
                 }));
-                const grayQualityIcons = qualityIcons.map((icon) => ({...icon, gray: true}));
-                return [
-                    ...all,
-                    ...qualityIcons,
-                    ...grayQualityIcons
-                ];
+                const grayQualityIcons = qualityIcons.map((icon) => ({ ...icon, gray: true }));
+                return [...all, ...qualityIcons, grayQualityIcons[0]];
             } else {
-                return [
-                    ...all,
-                    curr,
-                    {...curr, gray: true}
-                ];
+                return [...all, curr, { ...curr, gray: true }];
             }
         }, [])
         .reverse();
 
-    const groupedMarkers = icons.map(({ id, icon, color, quality = false, value, gray = false }) => {
-        return {
-            features: contributions
-                .filter(
-                    ({ quality: contributionQuality }) => !quality || `${contributionQuality}` === `${value}`,
-                )
-                .filter(({ issue_id }) => `${issue_id}` === `${id}`)
-                .filter(({ score }) => (!gray && `${score.last_vote}` !== '-1') || (gray && `${score.last_vote}` === '-1'))
-                .map(({ coords, ...contribution }) => ({
-                    coords,
-                    data: contribution,
-                    clickable: true,
-                })),
-            src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-                getContributionSvg({ icon, color: gray ? '#999' : color }),
-            )}`,
-            scale: parseInt(id) === 1 ? 1 : 0.75,
-            gray, id, icon, value
-        };
-    });
+    const groupedMarkers = icons.map(
+        ({ id, icon, color, quality = false, value, gray = false }) => {
+            return {
+                features: contributions
+                    .filter(
+                        ({ quality: contributionQuality, score }) =>
+                            !quality ||
+                            (gray && `${score.last_vote}` === '-1') ||
+                            `${contributionQuality}` === `${value}`,
+                    )
+                    .filter(
+                        ({ score }) =>
+                            (!gray && `${score.last_vote}` !== '-1') ||
+                            (gray && `${score.last_vote}` === '-1'),
+                    )
+                    .filter(({ issue_id }) => `${issue_id}` === `${id}`)
+                    .map(({ coords, ...contribution }) => ({
+                        coords,
+                        data: contribution,
+                        clickable: true,
+                    })),
+                src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+                    getContributionSvg({ icon, color: gray ? '#999' : color }),
+                )}`,
+                scale: parseInt(id) === 1 ? 1 : 0.75,
+                gray,
+                id,
+                icon,
+                value,
+            };
+        },
+    );
+
+    // console.log(contributions.length, groupedMarkers.reduce((total, { features }) => total + features.length, 0))
 
     return groupedMarkers;
 }

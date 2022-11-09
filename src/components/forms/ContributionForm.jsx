@@ -14,6 +14,7 @@ import ContributionIcon from '../../icons/Contribution';
 import successImage from '../../assets/images/success.svg';
 
 import styles from '../../styles/forms/contribution.module.scss';
+import { useMapData } from '../../contexts/DataContext';
 
 const propTypes = {
     active: PropTypes.bool,
@@ -60,6 +61,8 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
     const setNameValue = useCallback((e) => setName(e.target.value), [setName]);
     const setCommentValue = useCallback((e) => setComment(e.target.value), [setComment]);
     const setPhotoValue = useCallback((file) => setPhoto(file), [setPhoto]);
+
+    const { lines, markers } = useMapData();
 
     const resetForm = useCallback(() => {
         captchaRef.current.reset();
@@ -187,6 +190,8 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                             onCenterChanged={setCoordsValue}
                             askForPosition={active}
                             onPositionRefused={onPositionRefused}
+                            lines={lines}
+                            markers={markers}
                         />
                         <div className={styles.mapMarker}>
                             <ContributionIcon
