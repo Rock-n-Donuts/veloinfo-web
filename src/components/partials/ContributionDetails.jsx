@@ -46,7 +46,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const intl = useIntl();
     const { locale } = intl;
-    const shortLocale = locale.substring(0, 2);
 
     const contributionType = contributionsTypes.reduce((prev, ct) => {
         if (prev !== null) {
@@ -201,13 +200,13 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             src={contributionTypesIcons[finalContributionIcon]}
                             alt={finalContributionIcon}
                         />
-                        <span className={styles.label}>{contributionTypeLabel[shortLocale]}</span>
+                        <span className={styles.label}>{contributionTypeLabel[locale]}</span>
                     </div>
                     <div className={styles.dates}>
                         <div className={styles.createdDate}>
                             <span>Signalé</span>
                             <span> : </span>
-                            {getRelativeTime(shortLocale, created_at)}
+                            {getRelativeTime(locale, created_at)}
                             {name !== null && name.length > 0 ? (
                                 <span className={styles.authorName}> - {name}</span>
                             ) : null}
@@ -217,7 +216,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                                 <span>Mis à jour</span>
                                 {/* Remplacer selon le last vote score, ou le dernier reply (le plus récent) */}
                                 <span> : </span>
-                                {getRelativeTime(shortLocale, updated_at)}
+                                {getRelativeTime(locale, updated_at)}
                             </div>
                         ) : null}
                     </div>
@@ -240,7 +239,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                                 onClick={onVotePositive}
                             >
                                 {positiveVoteLabel !== null ? (
-                                    positiveVoteLabel[shortLocale]
+                                    positiveVoteLabel[locale]
                                 ) : (
                                     <FormattedMessage id="vote-positive" />
                                 )}
@@ -255,7 +254,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                                 onClick={onVoteNegative}
                             >
                                 {negativeVoteLabel !== null ? (
-                                    negativeVoteLabel[shortLocale]
+                                    negativeVoteLabel[locale]
                                 ) : (
                                     <FormattedMessage id="vote-negative" />
                                 )}
@@ -275,7 +274,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             ) => (
                                 <div key={`reply-${replyIndex}`} className={styles.reply}>
                                     <div className={styles.replyDate}>
-                                        <span>{getRelativeTime(shortLocale, replyDate)}</span>
+                                        <span>{getRelativeTime(locale, replyDate)}</span>
                                         {replyName !== null && replyName.length > 0 ? (
                                             <span className={styles.replyName}> - {replyName}</span>
                                         ) : null}

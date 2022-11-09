@@ -1,0 +1,26 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    display: flex;
+    align-items: center;
+
+    .locale {
+        button {
+            margin: 0 5px;
+            padding: 2px 10px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        &:not(:first-child) {
+            border-left: 1px solid $color-black;
+        }
+
+        &.active {
+            span {
+                border-bottom: 1px solid $color-black;
+            }
+        }
+    }
+}

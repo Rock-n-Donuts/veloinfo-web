@@ -1,8 +1,9 @@
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import CloseButton from '../buttons/Close';
+import LocaleSelector from './LocaleSelector';
 
 import styles from '../../styles/partials/home-menu.module.scss';
 
@@ -19,6 +20,8 @@ const defaultProps = {
 };
 
 function HomeMenu({ className, opened, onClose }) {
+    const intl = useIntl();
+    const { locale } = intl;
     return (
         <div
             className={classNames([
@@ -27,74 +30,58 @@ function HomeMenu({ className, opened, onClose }) {
             ])}
         >
             <div className={styles.content}>
-                <h1 className={styles.title}>Info vélo</h1>
-                <div className={styles.legend}>
-                    <div className={styles.pathsStatusContainer}>
-                        <div className={styles.pathsStatusLabel}>
-                            <FormattedMessage id="paths-status" />
-                        </div>
-                        <div className={styles.note}>
-                            <FormattedMessage id="paths-status-note" />
-                        </div>
-                        <div className={styles.pathsStatus}>
-                            <div className={styles.pathStatus}>
-                                <span
-                                    className={styles.line}
-                                    style={{ backgroundColor: '#4fae77' }}
-                                />
-                                <span className={styles.label}>Déneigé</span>
-                            </div>
-                            <div className={styles.pathStatus}>
-                                <span
-                                    className={styles.line}
-                                    style={{ backgroundColor: '#367c98' }}
-                                />
-                                <span className={styles.label}>Enneigé</span>
-                            </div>
-                            <div className={styles.pathStatus}>
-                                <span
-                                    className={styles.line}
-                                    style={{ backgroundColor: '#f09035' }}
-                                />
-                                <span className={styles.label}>Déneigement planifié</span>
-                            </div>
-                            <div className={styles.pathStatus}>
-                                <span
-                                    className={styles.line}
-                                    style={{ backgroundColor: '#8962c7' }}
-                                />
-                                <span className={styles.label}>Déneigement en cours</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <h1 className={styles.title}>
+                    <FormattedMessage id="app-title" />
+                </h1>
+                <LocaleSelector className={styles.localeSelector} />
+                <p className={styles.description}>
+                    <FormattedMessage id="app-description" values={{ br: <br /> }} />
+                </p>
                 <div className={styles.notifyCity}>
-                    <div className={styles.label}>Informer la ville</div>
+                    <div className={styles.label}>
+                        <FormattedMessage id="inform-city" />
+                    </div>
                     <div className={styles.links}>
                         <a
-                            href="https://montreal.ca/demarches/demander-linstallation-dun-support-velo"
+                            href={
+                                locale === 'en'
+                                    ? 'https://montreal.ca/en/how-to/request-installation-bicycle-rack'
+                                    : 'https://montreal.ca/demarches/demander-linstallation-dun-support-velo'
+                            }
                             target="_blank"
                             rel="noreferrer"
                         >
-                            Demander l'ajout d'un rack à vélo
+                            <FormattedMessage id="bike-rack-request" />
                         </a>
                         <a
-                            href="https://montreal.ca/requetes311/signaler-nid-poule/emplacement"
+                            href={
+                                locale === 'en'
+                                    ? 'https://montreal.ca/en/how-to/report-pothole'
+                                    : 'https://montreal.ca/requetes311/signaler-nid-poule/emplacement'
+                            }
                             target="_blank"
                             rel="noreferrer"
                         >
-                            Signaler un nid de poule
+                            <FormattedMessage id="pothole-report" />
                         </a>
                         <a
-                            href="https://montreal.ca/demarches/signaler-un-probleme-de-deneigement"
+                            href={
+                                locale === 'en'
+                                    ? 'https://montreal.ca/en/how-to/report-snow-removal-issue'
+                                    : 'https://montreal.ca/demarches/signaler-un-probleme-de-deneigement'
+                            }
                             target="_blank"
                             rel="noreferrer"
                         >
-                            Signaler un déneigement manquant
+                            <FormattedMessage id="snow-removal-issue-report" />
                         </a>
                     </div>
                 </div>
-                <div className={styles.footer}>Rock n Donuts 🍩</div>
+                <div className={styles.footer}>
+                    <a href="https://github.com/Rock-n-Donuts" target="_blank" rel="noreferrer">
+                        Rock n Donuts 🍩
+                    </a>
+                </div>
             </div>
             <CloseButton className={styles.closeButton} onClick={onClose} />
         </div>

@@ -37,7 +37,6 @@ function ContributionTypeSelector({
 
     const intl = useIntl();
     const { locale } = intl;
-    const shortLocale = locale.substring(0, 2);
 
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
@@ -69,7 +68,7 @@ function ContributionTypeSelector({
                                     color={color}
                                 />
                                 <span className={styles.labelContainer}>
-                                    <span className={styles.label}>{label[shortLocale]}</span>
+                                    <span className={styles.label}>{label[locale]}</span>
                                 </span>
                             </span>
                         </button>
@@ -115,7 +114,7 @@ function ContributionTypeSelector({
                                         styles.buttonContent,
                                     ])}
                                 >
-                                    <span className={styles.label}>{finalLabel[shortLocale]}</span>
+                                    <span className={styles.label}>{finalLabel[locale]}</span>
                                     <ContributionIcon
                                         className={styles.icon}
                                         icon={finalIcon}

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { useFilters } from '../../contexts/FiltersContext';
 import ContributionIcon from '../../icons/Contribution';
 import contributionsTypes from '../../data/contributions-types.json';
+import tronconsStates from '../../data/troncons-states.json';
 import layersIcon from '../../assets/images/layers.svg';
 
 import styles from '../../styles/partials/layers-filter.module.scss';
@@ -22,8 +23,7 @@ const defaultProps = {
 function LayersFilter({ className, tronconTypes }) {
     const intl = useIntl();
     const { locale } = intl;
-    const shortLocale = locale.substring(0, 2);
-    
+
     const {
         contributionTypes: selectedContributionTypes,
         setContributionTypes,
@@ -108,7 +108,7 @@ function LayersFilter({ className, tronconTypes }) {
                                             icon={icon}
                                             color={color}
                                         />
-                                        <span className={styles.label}>{label[shortLocale]}</span>
+                                        <span className={styles.label}>{label[locale]}</span>
                                     </button>
                                 );
                             })}
@@ -140,6 +140,28 @@ function LayersFilter({ className, tronconTypes }) {
                                     </button>
                                 );
                             })}
+                        </div>
+                        <div className={styles.tronconsStatus}>
+                            <div className={styles.title}>
+                                <FormattedMessage id="troncons-status-title" />
+                            </div>
+                            <div className={styles.tronconStates}>
+                                {tronconsStates.map(({ color, label }, stateIndex) => (
+                                    <div
+                                        key={`troncon-state-${stateIndex}`}
+                                        className={styles.tronconState}
+                                    >
+                                        <span
+                                            className={styles.line}
+                                            style={{ backgroundColor: color }}
+                                        />
+                                        <span className={styles.label}>{label[locale]}</span>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className={styles.note}>
+                                <FormattedMessage id="troncons-status-note" />
+                            </div>
                         </div>
                     </div>
                 </div>

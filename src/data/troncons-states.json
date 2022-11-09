@@ -1,0 +1,42 @@
+[
+    {
+        "type": "cleared",
+        "color": "#4fae77",
+        "label": {
+            "fr": "Déneigé",
+            "en": "Cleared"
+        }
+    },
+    {
+        "type": "snowy",
+        "color": "#367c98",
+        "label": {
+            "fr": "Enneigé",
+            "en": "Snowy"
+        }
+    },
+    {
+        "type": "planified",
+        "color": "#f09035",
+        "label": {
+            "fr": "Déneigement planifié",
+            "en": "Clearing planified"
+        }
+    },
+    {
+        "type": "clearing",
+        "color": "#8962c7",
+        "label": {
+            "fr": "Déneigement en cours",
+            "en": "Clearing in progress"
+        }
+    },
+    {
+        "type": "unknown",
+        "color": "#666666",
+        "label": {
+            "fr": "Non planifié",
+            "en": "Not planified"
+        }
+    }
+]

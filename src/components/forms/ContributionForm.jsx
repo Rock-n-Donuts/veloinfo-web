@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
+// import { useMapData } from '../../contexts/DataContext';
 import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from '../partials/FormGroup';
 import ImageUpload from '../partials/ImageUpload';
@@ -14,7 +15,6 @@ import ContributionIcon from '../../icons/Contribution';
 import successImage from '../../assets/images/success.svg';
 
 import styles from '../../styles/forms/contribution.module.scss';
-import { useMapData } from '../../contexts/DataContext';
 
 const propTypes = {
     active: PropTypes.bool,
@@ -42,7 +42,6 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
 
     const intl = useIntl();
     const { locale } = intl;
-    const shortLocale = locale.substring(0, 2);
     const captchaRef = useRef();
 
     const nameCookie = Cookies.get('name') || '';
@@ -62,7 +61,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
     const setCommentValue = useCallback((e) => setComment(e.target.value), [setComment]);
     const setPhotoValue = useCallback((file) => setPhoto(file), [setPhoto]);
 
-    const { lines, markers } = useMapData();
+    // const { lines, markers } = useMapData();
 
     const resetForm = useCallback(() => {
         captchaRef.current.reset();
@@ -190,8 +189,8 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                             onCenterChanged={setCoordsValue}
                             askForPosition={active}
                             onPositionRefused={onPositionRefused}
-                            lines={lines}
-                            markers={markers}
+                            // lines={lines}
+                            // markers={markers}
                         />
                         <div className={styles.mapMarker}>
                             <ContributionIcon
@@ -216,7 +215,7 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                                         checked={quality === value}
                                         required
                                     />
-                                    <span className={styles.label}>{label[shortLocale]}</span>
+                                    <span className={styles.label}>{label[locale]}</span>
                                 </label>
                             ))}
                         </FormGroup>

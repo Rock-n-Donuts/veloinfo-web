@@ -1,4 +1,5 @@
-import contributionTypes from '../data/contributions-types.json';
+import contributionsTypes from '../data/contributions-types.json';
+import tronconsStates from '../data/troncons-states.json';
 import getContributionSvg from '../icons/contributionSvg';
 
 export function getLinesFromTroncons(troncons) {
@@ -12,7 +13,7 @@ export function getLinesFromTroncons(troncons) {
     const snowyPaths = troncons.filter(
         ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
     );
-    const panifiedPaths = troncons.filter(
+    const planifiedPaths = troncons.filter(
         ({ side_one_state: s1, side_two_state: s2 }) =>
             s1 === 2 ||
             s1 === 3 ||
@@ -24,7 +25,7 @@ export function getLinesFromTroncons(troncons) {
             s2 === 10,
     );
 
-    const inProgressPaths = troncons.filter(
+    const clearingPaths = troncons.filter(
         ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
     );
 
@@ -33,9 +34,9 @@ export function getLinesFromTroncons(troncons) {
     //     unknownPaths.length +
     //         clearedPaths.length +
     //         snowyPaths.length +
-    //         panifiedPaths.length +
-    //         inProgressPaths.length,
-    //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${panifiedPaths.length} In-progress: ${inProgressPaths.length}`,
+    //         planifiedPaths.length +
+    //         clearingPaths.length,
+    //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${planifiedPaths.length} Clearing: ${clearingPaths.length}`,
     // );
 
     return [
@@ -44,41 +45,41 @@ export function getLinesFromTroncons(troncons) {
                 coords,
                 data: troncon,
             })),
-            color: '#666666',
+            color: tronconsStates.find(({ type }) => type === 'unknown').color,
         },
         {
             features: clearedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: '#4fae77',
+            color: tronconsStates.find(({ type }) => type === 'cleared').color,
         },
         {
             features: snowyPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: '#367c98',
+            color: tronconsStates.find(({ type }) => type === 'snowy').color
         },
         {
-            features: panifiedPaths.map(({ coords, ...troncon }) => ({
+            features: planifiedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: '#f09035',
+            color: tronconsStates.find(({ type }) => type === 'planified').color
         },
         {
-            features: inProgressPaths.map(({ coords, ...troncon }) => ({
+            features: clearingPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: '#8962c7',
+            color: tronconsStates.find(({ type }) => type === 'clearing').color
         },
     ];
 }
 
 export function getMarkersFromContributions(contributions) {
-    const icons = contributionTypes
+    const icons = contributionsTypes
         .reduce((all, curr) => {
             const { qualities = null, id, icon } = curr;
             if (qualities !== null) {

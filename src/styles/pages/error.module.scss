@@ -7,4 +7,25 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    animation: appear 0.5s ease both;
+
+    a {
+        font-weight: bold;
+        text-decoration: none;
+        font-size: 100px;
+        animation: rotate 60s 0.5s linear infinite;
+    }
+
+    @keyframes appear {
+        from {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+    }
+
+    @keyframes rotate {
+        to {
+            transform: rotate(360deg);
+        }
+    }
 }
