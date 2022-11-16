@@ -12,7 +12,7 @@ export function getRelativeTime(locale, date) {
         second: 1000,
     };
 
-    const parsedDate = parseISO(date);
+    const parsedDate = parseISO(`${date.substr(0, 10)}T${date.substr(11, 18)}Z`);
     const elapsed = parsedDate - new Date();
 
     let newString;

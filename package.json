@@ -29,7 +29,6 @@
         "react-google-recaptcha": "^2.1.0",
         "react-intl": "^6.2.1",
         "react-router-dom": "^6.4.3",
-        "react-scripts": "5.0.1",
         "react-transition-group": "^4.4.5",
         "relative-time-format": "^1.1.6",
         "typescript": "^4.8.4",
@@ -51,7 +50,8 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "import": "node src/import"
+        "import": "node src/tools/import",
+        "infoneige": "node src/tools/infoneige"
     },
     "eslintConfig": {
         "extends": [
@@ -72,6 +72,10 @@
         ]
     },
     "devDependencies": {
-        "sass": "^1.55.0"
+        "dotenv": "^16.0.3",
+        "fs": "^0.0.1-security",
+        "react-scripts": "5.0.1",
+        "sass": "^1.55.0",
+        "xml2json": "^0.12.0"
     }
 }

@@ -1,14 +1,15 @@
-// uses %APP_FOLDER%/to-import/input.json to output an array to use for an /import api call
+// uses %APP_FOLDER%/data/import to output an array to use for an /import api call
 const fs = require('fs');
 const dotenv = require('dotenv');
 dotenv.config();
 
-const input = 'to-import/input.json';
-const output = 'to-import/output.json';
+const input = 'data/import/bike-racks/input.json';
+const output = 'data/import/bike-racks/output.json';
 
 const rawdata = fs.readFileSync(input);
 const data = JSON.parse(rawdata);
 const contributions = data.map(({
+    INV_ID,
     LONG,
     LAT,
     MARQ,
@@ -22,6 +23,7 @@ const contributions = data.map(({
 
     return {
         coords: `${LONG}, ${LAT}`,
+        external_id: INV_ID,
         issue_id: 2,
         name: 'Ville de Montréal',
         comment: `${description}${inPark}`,

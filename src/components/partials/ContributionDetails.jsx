@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import CloseButton from '../buttons/Close';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { useUpdateContribution } from '../../contexts/DataContext';
@@ -13,6 +13,7 @@ import ReplyForm from '../forms/ReplyForm';
 
 import contributionsTypes from '../../data/contributions-types.json';
 import styles from '../../styles/partials/contribution-details.module.scss';
+import ContributionReply from './ContributionReply';
 
 const propTypes = {
     className: PropTypes.string,
@@ -46,6 +47,15 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const intl = useIntl();
     const { locale } = intl;
+
+    const createdAtRelativeTime = useMemo(
+        () => getRelativeTime(locale, created_at),
+        [locale, created_at],
+    );
+    const updatedAtRelativeTime = useMemo(
+        () => getRelativeTime(locale, updated_at),
+        [locale, updated_at],
+    );
 
     const contributionType = contributionsTypes.reduce((prev, ct) => {
         if (prev !== null) {
@@ -208,7 +218,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         <div className={styles.createdDate}>
                             <span>Signalé</span>
                             <span> : </span>
-                            {getRelativeTime(locale, created_at)}
+                            {createdAtRelativeTime}
                             {name !== null && name.length > 0 ? (
                                 <span className={styles.authorName}> - {name}</span>
                             ) : null}
@@ -218,7 +228,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                                 <span>Mis à jour</span>
                                 {/* Remplacer selon le last vote score, ou le dernier reply (le plus récent) */}
                                 <span> : </span>
-                                {getRelativeTime(locale, updated_at)}
+                                {updatedAtRelativeTime}
                             </div>
                         ) : null}
                     </div>
@@ -264,9 +274,16 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             </button>
                         </div>
                     </div>
-                    <div className={classNames([styles.repliesCount, {[styles.hasComments]: hasComments}])}>
+                    <div
+                        className={classNames([
+                            styles.repliesCount,
+                            { [styles.hasComments]: hasComments },
+                        ])}
+                    >
                         <CommentsIcon colored={hasComments} />
-                        <span>{hasComments ? replies.length: <FormattedMessage id="no-comments" />}</span> 
+                        <span>
+                            {hasComments ? replies.length : <FormattedMessage id="no-comments" />}
+                        </span>
                     </div>
                     <div className={styles.replies}>
                         {replies.map(
@@ -274,15 +291,13 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                                 { created_at: replyDate, name: replyName, message: replyMessage },
                                 replyIndex,
                             ) => (
-                                <div key={`reply-${replyIndex}`} className={styles.reply}>
-                                    <div className={styles.replyDate}>
-                                        <span>{getRelativeTime(locale, replyDate)}</span>
-                                        {replyName !== null && replyName.length > 0 ? (
-                                            <span className={styles.replyName}> - {replyName}</span>
-                                        ) : null}
-                                    </div>
-                                    <div className={styles.replyMessage}>{replyMessage}</div>
-                                </div>
+                                <ContributionReply
+                                    key={`reply-${replyIndex}`}
+                                    className={styles.reply}
+                                    date={replyDate}
+                                    name={replyName}
+                                    message={replyMessage}
+                                />
                             ),
                         )}
                     </div>
