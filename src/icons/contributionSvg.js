@@ -1,5 +1,5 @@
 const getContributionSvg = (props) => {
-    const {icon = 'snow', color = '#007E9C', iconColor = '#FFF' } = props || {};
+    const { icon = 'snow', color = '#007E9C', iconColor = '#FFF' } = props || {};
 
     const snow = `
         <path fill="${iconColor}" d="M21.3,7c0.2-0.2,0.4-0.3,0.7-0.3c0.3,0,0.5,0.1,0.7,0.3C22.9,7.2,23,7.5,23,7.7v3l2.4-2
@@ -56,7 +56,16 @@ const getContributionSvg = (props) => {
             L7,21z M21,9.8c-6.2,0-11.2,5-11.2,11.2s5,11.2,11.2,11.2s11.2-5,11.2-11.2S27.2,9.8,21,9.8z"/>
     `;
 
-    const icons = { snow, warning, heart, repair, parking };
+    const camera = `
+        <circle stroke="${iconColor}" fill="#000000" cx="20.6" cy="21" r="14.9"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" fill="${iconColor}" d="M30.4,21.4l-12.5-7.2c-0.4-0.2-0.8-0.1-1.1,0.2L15,17.6l6.6,3.9
+            l9.1,0.3L30.4,21.4L30.4,21.4z M10.9,21.9L10.9,21.9c0.7,0,1.3,0.4,1.5,1c0.1,0.2,0.1,0.4,0.1,0.6v0.1c0.5,0.3,1.1,0.6,1.6,0.9
+            c0.6,0.4,1.3,0.7,1.7,0.6c0.7-0.2,1.1-1,1.5-1.8l-0.5-0.5c-0.2-0.3,0.3-1,0.7-1.5c-0.9-0.5-3-1.5-3.2-2c-0.1-0.4,0.1-0.6,0.3-0.9
+            l6.9,3.9l6.5,0.2c-0.9,1.6-1.8,3.8-2.7,3.3l-5.6-3.2c-0.9,1.6-0.7,1.5-1.6,1.2c-0.6,1-0.9,2-2,2.3c0,0-0.8,0.3-1.6-0.2l-2.3-1.3
+            C12,24.8,11.5,25,11,25h-0.1L10.9,21.9L10.9,21.9z M30,23.4l-1.4-0.7l-1.5,2.6l1.3,0.7L30,23.4L30,23.4z"/>
+    `;
+
+    const icons = { snow, warning, heart, repair, parking, camera };
     const iconSvg = icons[icon];
 
     return `

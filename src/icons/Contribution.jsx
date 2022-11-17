@@ -7,7 +7,7 @@ import styles from '../styles/icons/contribution.module.scss';
 import contributions from './contributions';
 
 const propTypes = {
-    icon: PropTypes.oneOf(['snow', 'warning', 'parking', 'heart', 'repair']),
+    icon: PropTypes.oneOf(['snow', 'warning', 'parking', 'heart', 'repair', 'camera']),
     color: PropTypes.string,
     withoutMarker: PropTypes.bool,
     className: PropTypes.string,

@@ -50,7 +50,8 @@
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
-        "import": "node src/tools/import",
+        "import-cameras": "node src/tools/import/cameras",
+        "import-racks": "node src/tools/import/racks",
         "infoneige": "node src/tools/infoneige"
     },
     "eslintConfig": {

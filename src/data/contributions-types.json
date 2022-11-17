@@ -7,6 +7,7 @@
         },
         "icon": "snow",
         "color": "#367c99",
+        "scale": 2,
         "votes": {
             "positive": {
                 "color": "#f09035",
@@ -53,6 +54,31 @@
     {
         "id": 2,
         "label": {
+            "fr": "Caméra",
+            "en": "Camera"
+        },
+        "icon": "camera",
+        "color": "#367c99",
+        "disableAdd": true,
+        "hideCreatedDate": true,
+        "votes": {
+            "positive": {
+                "label": {
+                    "fr": "Bonne caméra",
+                    "en": "Good camera"
+                }                
+            },
+            "negative": {
+                "label": {
+                    "fr": "Mauvaise caméra ",
+                    "en": "Bad camera"
+                }                
+            }
+        }
+    },
+    {
+        "id": 3,
+        "label": {
             "fr": "Rack à vélo",
             "en": "Bike rack"
         },
@@ -60,7 +86,7 @@
         "color": "#439667"
     },
     {
-        "id": 3,
+        "id": 4,
         "label": {
             "fr": "Borne de réparation",
             "en": "Repair stop"
@@ -69,7 +95,7 @@
         "color": "#439667"
     },
     {
-        "id": 4,
+        "id": 5,
         "label": {
             "fr": "Boutique vélo",
             "en": "Bike shop"

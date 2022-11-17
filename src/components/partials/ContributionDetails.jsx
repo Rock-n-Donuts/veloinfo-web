@@ -40,6 +40,8 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         created_at,
         name = null,
         photo_path = null,
+        external_photo = null,
+        is_external = false,
         replies = [],
         score,
         updated_at,
@@ -47,6 +49,8 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const intl = useIntl();
     const { locale } = intl;
+
+    const now = useMemo( () => new Date().getTime(), []);
 
     const createdAtRelativeTime = useMemo(
         () => getRelativeTime(locale, created_at),
@@ -77,6 +81,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         icon: contributionTypeIcon,
         color: contributionTypeColor,
         votes: contributionTypeVotes,
+        hideCreatedDate: contributionTypeHideCreatedDate,
         qualities: contributionTypeQualities = null,
     } = contributionType || {};
     const contributionTypeQuality =
@@ -183,12 +188,13 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const [finalPhotoPath, setFinalPhotoPath] = useState(null);
     useEffect(() => {
-        if (photo_path !== null) {
+        const path = is_external && external_photo !== null ? `${external_photo}?${now}` : photo_path;
+        if (path !== null) {
             setTimeout(() => {
-                setFinalPhotoPath(photo_path);
+                setFinalPhotoPath(path);
             }, 250);
         }
-    }, [photo_path]);
+    }, [photo_path, external_photo, is_external, now]);
 
     return (
         <div
@@ -215,6 +221,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         <span className={styles.label}>{contributionTypeLabel[locale]}</span>
                     </div>
                     <div className={styles.dates}>
+                        { !contributionTypeHideCreatedDate ?
                         <div className={styles.createdDate}>
                             <span>Signalé</span>
                             <span> : </span>
@@ -222,7 +229,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             {name !== null && name.length > 0 ? (
                                 <span className={styles.authorName}> - {name}</span>
                             ) : null}
-                        </div>
+                        </div> : null }
                         {created_at !== updated_at ? (
                             <div className={styles.updatedDate}>
                                 <span>Mis à jour</span>

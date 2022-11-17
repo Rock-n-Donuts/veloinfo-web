@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -28,8 +29,13 @@ function ContributionTypeSelector({
     onSelect,
     onSelectCategory,
 }) {
+    const filteredCategories = useMemo(() =>
+        categories.filter(({ disableAdd = false }) => !disableAdd),
+        []
+    );
+
     const selectedCategory =
-        categoryIndexSelected !== null ? categories[categoryIndexSelected] : null;
+        categoryIndexSelected !== null ? filteredCategories[categoryIndexSelected] : null;
 
     const { contributions } = selectedCategory || {};
 
@@ -41,7 +47,7 @@ function ContributionTypeSelector({
     return (
         <div className={classNames([styles.container, { [className]: className !== null }])}>
             <div className={styles.categories}>
-                {categories.map(({ label, icon, color }, categoryIndex) => {
+                {filteredCategories.map(({ label, icon, color }, categoryIndex) => {
                     return (
                         <button
                             key={`category-${categoryIndex}`}

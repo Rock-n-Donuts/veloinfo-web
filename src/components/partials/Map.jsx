@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
 import { Tile as TileLayer, VectorImage } from 'ol/layer';
-import { Cluster, OSM, Vector as VectorSource } from 'ol/source';
+import { Cluster, Vector as VectorSource, XYZ } from 'ol/source';
 import { Style, Stroke, Icon, Fill, Text } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
 import View from 'ol/View';
@@ -15,6 +15,8 @@ import Feature from 'ol/Feature';
 import Loading from './Loading';
 
 import styles from '../../styles/partials/map.module.scss';
+
+const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 
 const propTypes = {
     className: PropTypes.string,
@@ -187,7 +189,10 @@ function Map({
                 view,
                 layers: [
                     new TileLayer({
-                        source: new OSM(),
+                        // source: new OSM(),
+                        source: new XYZ({
+                            url: `https://tile.jawg.io/jawg-sunny/{z}/{x}/{y}.png?access-token=${jawgToken}`
+                        }),
                     }),
                 ],
             });
@@ -225,7 +230,15 @@ function Map({
 
     const addMarkers = useCallback(
         (markers) => {
-            const { features, src, img, imgSize, scale, withoutCluster = false, color } = markers || {};
+            const {
+                features,
+                src,
+                img,
+                imgSize,
+                scale,
+                withoutCluster = false,
+                color,
+            } = markers || {};
 
             const vectorSource = new VectorSource();
 
@@ -275,7 +288,7 @@ function Map({
                                           }),
                                           stroke: new Stroke({
                                               color,
-                                              width: 5
+                                              width: 5,
                                           }),
                                       })
                                     : undefined,

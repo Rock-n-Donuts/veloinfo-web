@@ -5,7 +5,7 @@ const FiltersContext = createContext();
 
 const defaultFromDays = 5;
 const defaultTronconsTypes = ['winter-protected', 'winter'];
-const defaultContributionTypes = [1, 2, 3, 4];
+const defaultContributionTypes = [1, 2];
 
 export const FiltersProvider = ({ children }) => {
     let defaultFilters = null;
