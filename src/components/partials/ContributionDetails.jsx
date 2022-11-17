@@ -36,7 +36,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         id = null,
         issue_id,
         quality,
-        comment,
+        comment = null,
         created_at,
         name = null,
         image = null,
@@ -185,7 +185,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     );
 
     const {
-        url: imageUrl = null,
         width: imageWidth = null,
         height: imageHeight = null,
     } = image || {};
@@ -241,7 +240,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     {comment !== null && comment.length > 0 ? (
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
-                    {image !== null && imageUrl.length > 0 ? (
+                    {image !== null && finalImageUrl !== null ? (
                         <img
                             className={styles.photo}
                             src={finalImageUrl}
