@@ -122,7 +122,9 @@ export const DataProvider = ({ children }) => {
     }, [data, selectedFilters, filterData]);
 
     return (
-        <DataContext.Provider value={{ data, filteredData, mapData, ready, loading, error, setData }}>
+        <DataContext.Provider
+            value={{ data, filteredData, mapData, ready, loading, error, setData }}
+        >
             {children}
         </DataContext.Provider>
     );
@@ -177,15 +179,16 @@ export const useUpdateContribution = () => {
             setData((old) => {
                 const { id: updatedContributionId } = updatedContribution;
                 const { contributions } = old || {};
-                const foundContributionIndex = contributions.findIndex(({ id }) => {
-                    return parseInt(id) === parseInt(updatedContributionId);
-                });
+                const foundContributionIndex = contributions.findIndex(
+                    ({ id }) => `${id}` === `${updatedContributionId}`,
+                );
                 const newContributions = [...contributions];
                 if (foundContributionIndex >= 0) {
                     newContributions[foundContributionIndex] = updatedContribution;
                     return { ...old, contributions: newContributions };
                 }
-                return old;
+                newContributions.push(updatedContribution);
+                return {...old, contributions: newContributions};
             });
         },
         [setData],

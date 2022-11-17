@@ -39,9 +39,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         comment,
         created_at,
         name = null,
-        photo_path = null,
-        external_photo = null,
-        is_external = false,
+        image = null,
         replies = [],
         score,
         updated_at,
@@ -50,7 +48,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     const intl = useIntl();
     const { locale } = intl;
 
-    const now = useMemo( () => new Date().getTime(), []);
+    const now = useMemo(() => new Date().getTime(), []);
 
     const createdAtRelativeTime = useMemo(
         () => getRelativeTime(locale, created_at),
@@ -67,7 +65,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         }
         const { id, contributions = null } = ct;
 
-        if (parseInt(id) === parseInt(issue_id)) {
+        if (`${id}` === `${issue_id}`) {
             return ct;
         } else if (contributions !== null) {
             return contributions.find(({ id: cid }) => cid === issue_id);
@@ -186,15 +184,15 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         [id, updateContribution, setFormKey],
     );
 
-    const [finalPhotoPath, setFinalPhotoPath] = useState(null);
-    useEffect(() => {
-        const path = is_external && external_photo !== null ? `${external_photo}?${now}` : photo_path;
-        if (path !== null) {
-            setTimeout(() => {
-                setFinalPhotoPath(path);
-            }, 250);
-        }
-    }, [photo_path, external_photo, is_external, now]);
+    const {
+        url: imageUrl = null,
+        width: imageWidth = null,
+        height: imageHeight = null,
+    } = image || {};
+    const finalImageUrl = useMemo(() => {
+        const { url, is_external = false } = image || {};
+        return is_external && url !== null ? `${url}?${now}` : url;
+    }, [image, now]);
 
     return (
         <div
@@ -221,15 +219,16 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         <span className={styles.label}>{contributionTypeLabel[locale]}</span>
                     </div>
                     <div className={styles.dates}>
-                        { !contributionTypeHideCreatedDate ?
-                        <div className={styles.createdDate}>
-                            <span>Signalé</span>
-                            <span> : </span>
-                            {createdAtRelativeTime}
-                            {name !== null && name.length > 0 ? (
-                                <span className={styles.authorName}> - {name}</span>
-                            ) : null}
-                        </div> : null }
+                        {!contributionTypeHideCreatedDate ? (
+                            <div className={styles.createdDate}>
+                                <span>Signalé</span>
+                                <span> : </span>
+                                {createdAtRelativeTime}
+                                {name !== null && name.length > 0 ? (
+                                    <span className={styles.authorName}> - {name}</span>
+                                ) : null}
+                            </div>
+                        ) : null}
                         {created_at !== updated_at ? (
                             <div className={styles.updatedDate}>
                                 <span>Mis à jour</span>
@@ -242,10 +241,12 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     {comment !== null && comment.length > 0 ? (
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
-                    {finalPhotoPath !== null && finalPhotoPath.length > 0 ? (
+                    {image !== null && imageUrl.length > 0 ? (
                         <img
                             className={styles.photo}
-                            src={finalPhotoPath}
+                            src={finalImageUrl}
+                            width={imageWidth}
+                            height={imageHeight}
                             alt={intl.formatMessage({ id: 'photo' })}
                         />
                     ) : null}
