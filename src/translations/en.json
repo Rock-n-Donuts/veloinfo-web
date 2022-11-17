@@ -46,5 +46,8 @@
     "troncon-filter-winter": "4 seasons sections",
     "troncon-filter-uncleared": "Uncleared sections",
     "menu": "Menu",
-    "no-comments": "No comments"
+    "no-comments": "No comments",
+    "reported": "Reported",
+    "voted": "Voted",
+    "replied": "Replied"
 }

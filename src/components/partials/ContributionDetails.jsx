@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
+import { isAfter, parseISO } from 'date-fns';
 import { useUpdateContribution } from '../../contexts/DataContext';
 import CommentsIcon from '../../icons/Comments';
 import contributionTypesIcons from '../../icons/contributions';
@@ -48,17 +49,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     const intl = useIntl();
     const { locale } = intl;
 
-    const now = useMemo(() => new Date().getTime(), []);
-
-    const createdAtRelativeTime = useMemo(
-        () => getRelativeTime(locale, created_at),
-        [locale, created_at],
-    );
-    const updatedAtRelativeTime = useMemo(
-        () => getRelativeTime(locale, updated_at),
-        [locale, updated_at],
-    );
-
     const contributionType = contributionsTypes.reduce((prev, ct) => {
         if (prev !== null) {
             return prev;
@@ -91,7 +81,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         contributionTypeQuality || {};
     const finalContributionIcon =
         contributionTypeQualityIcon !== null ? contributionTypeQualityColor : contributionTypeIcon;
-    const finalContributionColor =
+    const contributionColor =
         contributionTypeQualityColor !== null
             ? contributionTypeQualityColor
             : contributionTypeColor;
@@ -103,13 +93,63 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     const { label: negativeVoteLabel = null, color: negativeVoteColor = null } =
         contributionTypeNegative || {};
 
-    const {
-        positive = 0,
-        negative = 0,
-        // lastVote = null
-    } = score || {};
-    // console.log(lastVote)
-    // const totalVote = positive + negative;
+    const { positive = 0, negative = 0, last_vote = null, last_vote_date = null } = score || {};
+    const finalContributionColor = `${last_vote}` === `${-1}` ? '#999' : contributionColor;
+
+    const lastAction = useMemo(() => {
+        const lastReply = replies !== null ? replies[replies.length - 1] : null;
+        const { created_at: lastReplyDate = null, name: lastReplyName = null } = lastReply || {};
+        const hasUpdate = updated_at !== null;
+        const hasReply = lastReplyDate !== null;
+        const hasVoted = last_vote_date !== null;
+        if (hasUpdate) {
+            const lastActionVoted =
+                (!hasReply && hasVoted) ||
+                isAfter(parseISO(last_vote_date), parseISO(lastReplyDate));
+            return {
+                label: `${intl.formatMessage({ id: lastActionVoted ? 'voted' : 'replied' })}${
+                    lastActionVoted
+                        ? ` "${(last_vote === 1 ? positiveVoteLabel : negativeVoteLabel)[locale]}"`
+                        : ``
+                }`,
+                author: lastActionVoted ? null : lastReplyName,
+            };
+        }
+        return null;
+    }, [
+        replies,
+        last_vote_date,
+        updated_at,
+        intl,
+        last_vote,
+        positiveVoteLabel,
+        negativeVoteLabel,
+        locale,
+    ]);
+
+    const { label: lastActionLabel = null, author: lastActionAuthor = null } = lastAction || {};
+
+    const [now, setNow] = useState(new Date());
+    const createdAtRelativeTime = useMemo(
+        () => getRelativeTime(locale, created_at),
+        [locale, created_at],
+    );
+    const updatedAtRelativeTime = useMemo(
+        () => getRelativeTime(locale, updated_at, now),
+        [locale, updated_at, now],
+    );
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setNow(new Date());
+        }, 1000);
+
+        return () => {
+            if (interval !== null) {
+                clearInterval(interval);
+            }
+        };
+    }, [locale]);
 
     const hasComments = replies.length > 0;
 
@@ -184,14 +224,12 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         [id, updateContribution, setFormKey],
     );
 
-    const {
-        width: imageWidth = null,
-        height: imageHeight = null,
-    } = image || {};
+    const { width: imageWidth = null, height: imageHeight = null } = image || {};
+
     const finalImageUrl = useMemo(() => {
         const { url, is_external = false } = image || {};
-        return is_external && url !== null ? `${url}?${now}` : url;
-    }, [image, now]);
+        return is_external && url !== null ? `${url}?${new Date().getTime()}` : url;
+    }, [image]);
 
     return (
         <div
@@ -220,8 +258,10 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     <div className={styles.dates}>
                         {!contributionTypeHideCreatedDate ? (
                             <div className={styles.createdDate}>
-                                <span>Signalé</span>
-                                <span> : </span>
+                                <span>
+                                    <FormattedMessage id="reported" />
+                                </span>
+                                <span> </span>
                                 {createdAtRelativeTime}
                                 {name !== null && name.length > 0 ? (
                                     <span className={styles.authorName}> - {name}</span>
@@ -230,10 +270,12 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         ) : null}
                         {created_at !== updated_at ? (
                             <div className={styles.updatedDate}>
-                                <span>Mis à jour</span>
-                                {/* Remplacer selon le last vote score, ou le dernier reply (le plus récent) */}
-                                <span> : </span>
+                                <span>{lastActionLabel}</span>
+                                <span> </span>
                                 {updatedAtRelativeTime}
+                                {lastActionAuthor !== null && lastActionAuthor.length > 0 ? (
+                                    <span className={styles.authorName}> - {lastActionAuthor}</span>
+                                ) : null}
                             </div>
                         ) : null}
                     </div>

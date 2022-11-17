@@ -1,4 +1,4 @@
-// uses %APP_FOLDER%/data/
+// uses %APP_FOLDER%/data/infoneige
 const fs = require('fs');
 const dotenv = require('dotenv');
 const xml2json = require('xml2json');
@@ -7,7 +7,7 @@ dotenv.config();
 const start = new Date().getTime();
 
 console.log('parsing xml...');
-const infoNeige = JSON.parse(xml2json.toJson(fs.readFileSync('data/infoneige.xml')));
+const infoNeige = JSON.parse(xml2json.toJson(fs.readFileSync('data/infoneige/input/response.xml')));
 let planifications =
     infoNeige['S:Envelope']['S:Body']['ns0:GetPlanificationsForDateResponse'][
         'planificationsForDateResponse'
@@ -27,8 +27,8 @@ planifications = planifications.filter(({ coteRueId }) => {
 })
 
 console.log('parsing json...');
-const { features: troncons } = JSON.parse(fs.readFileSync('data/reseau_cyclable.geojson'));
-const { features: cotes } = JSON.parse(fs.readFileSync('data/gbdouble.json'));
+const { features: troncons } = JSON.parse(fs.readFileSync('data/infoneige/input/reseau_cyclable.geojson'));
+const { features: cotes } = JSON.parse(fs.readFileSync('data/infoneige/input/gbdouble.json'));
 
 function getFilteredCotes() {
     console.log('filtering cotes...');
@@ -56,7 +56,7 @@ function writeGeojson(features, name) {
         type: 'FeatureCollection',
         features,
     };
-    fs.writeFileSync(`data/output/${name}.geojson`, JSON.stringify(geojson));
+    fs.writeFileSync(`data/infoneige/output/${name}.geojson`, JSON.stringify(geojson));
 }
 
 writeGeojson(getFilteredTroncons(), 'troncons');

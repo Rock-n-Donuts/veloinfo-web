@@ -1,7 +1,7 @@
 import RelativeTimeFormat from 'relative-time-format';
 import { parseISO } from 'date-fns';
 
-export function getRelativeTime(locale, date) {
+export function getRelativeTime(locale, date, now = new Date()) {
     const rtf = new RelativeTimeFormat(locale);
     const units = {
         year: 24 * 60 * 60 * 1000 * 365,
@@ -13,7 +13,7 @@ export function getRelativeTime(locale, date) {
     };
 
     const parsedDate = parseISO(`${date.substr(0, 10)}T${date.substr(11, 18)}Z`);
-    const elapsed = parsedDate - new Date();
+    const elapsed = parsedDate - now;
 
     let newString;
     for (let u in units) {

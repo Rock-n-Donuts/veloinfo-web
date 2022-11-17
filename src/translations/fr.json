@@ -46,5 +46,8 @@
     "troncon-filter-winter": "Tronçons 4 saisons",
     "troncon-filter-uncleared": "Tronçons non déblayés",
     "menu": "Menu",
-    "no-comments": "Aucun commentaire"
+    "no-comments": "Aucun commentaire",
+    "reported": "Signalé",
+    "voted": "Voté",
+    "replied": "Répondu"
 }
