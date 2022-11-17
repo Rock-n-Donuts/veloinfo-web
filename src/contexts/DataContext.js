@@ -168,22 +168,6 @@ export const useMapData = () => {
     return mapData;
 };
 
-export const useAddContribution = () => {
-    const ctx = useDataContext(DataContext);
-    const { setData } = ctx || {};
-
-    const addContribution = useCallback(
-        (contribution) => {
-            setData((old) => {
-                const { contributions } = old || {};
-                return { ...old, contributions: [...contributions, contribution] };
-            });
-        },
-        [setData],
-    );
-    return addContribution;
-};
-
 export const useUpdateContribution = () => {
     const ctx = useDataContext(DataContext);
     const { setData } = ctx || {};

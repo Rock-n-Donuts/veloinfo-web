@@ -22,7 +22,12 @@ const defaultProps = {
 
 function ContributionIcon({ icon, color, withoutMarker, className }) {
     return (
-        <div className={classNames([styles.container, { [className]: className !== null }])}>
+        <div
+            className={classNames([
+                styles.container,
+                { [className]: className !== null, [styles.withoutMarker]: withoutMarker },
+            ])}
+        >
             {!withoutMarker ? (
                 <svg
                     className={styles.background}

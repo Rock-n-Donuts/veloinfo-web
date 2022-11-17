@@ -98,7 +98,7 @@ export function getMarkersFromContributions(contributions) {
         .reverse();
 
     const groupedMarkers = icons.map(
-        ({ id, icon, color, quality = false, value, gray = false }) => {
+        ({ id, icon, color, quality = false, value, gray = false, withoutMarker }) => {
             const finalColor = gray ? '#999' : color;
             return {
                 features: contributions
@@ -120,7 +120,7 @@ export function getMarkersFromContributions(contributions) {
                         clickable: true,
                     })),
                 src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
-                    getContributionSvg({ icon, color: finalColor }),
+                    getContributionSvg({ icon, color: finalColor, withoutMarker }),
                 )}`,
                 scale: `${id}` === '1' ? 1 : 0.5,
                 gray,

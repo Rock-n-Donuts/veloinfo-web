@@ -7,7 +7,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import useOnClickOutside from '../../hooks/useOnClickOutside';
 import {
-    useAddContribution,
+    useUpdateContribution,
     useContribution,
     useMapData,
     useReady,
@@ -35,7 +35,7 @@ function HomePage() {
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
 
-    const addContribution = useAddContribution();
+    const updateContribution = useUpdateContribution();
 
     // const openMenu = useCallback(() => {
     //     setMenuOpened(true);
@@ -78,13 +78,13 @@ function HomePage() {
         (contribution) => {
             setContributionSubmitted(true);
             closeAddContribution();
-            addContribution(contribution);
+            updateContribution(contribution);
             setTimeout(() => {
                 setContributionSubmitted(false);
                 setContributionKey(uuid());
             }, 1000);
         },
-        [setContributionSubmitted, closeAddContribution, addContribution],
+        [setContributionSubmitted, closeAddContribution, updateContribution],
     );
 
     const selectContribution = useCallback(

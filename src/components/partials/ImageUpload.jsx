@@ -52,7 +52,7 @@ function ImageUpload({ className, label, onChange }) {
         >
             <span className={styles.label}>{label}</span>
             <img className={styles.selectedImage} src={blob} alt="preview" />
-            <input ref={fileUploadRef} type="file" accept="image/*" onChange={onChangePrivate} />
+            <input ref={fileUploadRef} type="file" accept="capture=camera, image/jpeg, image/png" onChange={onChangePrivate} />
             <button type="button" className={styles.close} onClick={onCloseClick}>
                 <img src={trashImage} alt="Remove" />
             </button>

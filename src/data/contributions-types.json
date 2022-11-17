@@ -14,14 +14,14 @@
                 "label": {
                     "fr": "Encore là",
                     "en": "Still there"
-                }                
+                }
             },
             "negative": {
                 "color": "#a5a5a5",
                 "label": {
                     "fr": "Périmé",
                     "en": "Outdated"
-                }                
+                }
             }
         },
         "qualities": [
@@ -58,21 +58,22 @@
             "en": "Camera"
         },
         "icon": "camera",
-        "color": "#367c99",
+        "color": "#000000",
         "disableAdd": true,
         "hideCreatedDate": true,
+        "withoutMarker": true,
         "votes": {
             "positive": {
                 "label": {
                     "fr": "Bonne caméra",
                     "en": "Good camera"
-                }                
+                }
             },
             "negative": {
                 "label": {
                     "fr": "Mauvaise caméra ",
                     "en": "Bad camera"
-                }                
+                }
             }
         }
     },
