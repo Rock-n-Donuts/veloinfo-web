@@ -75,6 +75,8 @@
     "devDependencies": {
         "dotenv": "^16.0.3",
         "fs": "^0.0.1-security",
+        "https": "^1.0.0",
+        "image-size": "^1.0.2",
         "react-scripts": "5.0.1",
         "sass": "^1.55.0",
         "xml2json": "^0.12.0"
