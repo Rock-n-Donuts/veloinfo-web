@@ -61,6 +61,7 @@
         overflow: auto;       
         opacity: 0;
         transition: opacity 0.25s ease;
+        
         background-color: rgba($color-black, 0.5);
     }
 
@@ -68,6 +69,7 @@
         display: flex;
         position: relative;
         min-height: 100%;
+        padding: 20px;
         height: auto;
 
         @media only screen and (min-width: 800px) {
@@ -89,7 +91,7 @@
     .contributionDetailsGroup {
         position: relative;
         margin: auto;
-        padding: 20px;
+        
         width: 100%;
         max-width: 600px;
 

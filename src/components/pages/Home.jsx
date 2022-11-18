@@ -96,6 +96,13 @@ function HomePage() {
     }, [setSelectedContributionId]);
 
     const transitionNodeRef = useRef(null);
+    const [contributionDetailsActive, setContributionDetailsActive] = useState(false);
+
+    const onContributionDetailsSafeClick = useCallback(() => {
+        if (contributionDetailsActive) {
+            unselectContribution();
+        }
+    }, [contributionDetailsActive, unselectContribution]);
 
     return (
         <div
@@ -136,7 +143,7 @@ function HomePage() {
                     <button
                         type="button"
                         className={styles.contributionDetailsSafe}
-                        onClick={unselectContribution}
+                        onClick={onContributionDetailsSafeClick}
                     />
                     <TransitionGroup className={styles.contributionDetailsGroup}>
                         {contributionSelected !== null ? (
@@ -144,8 +151,17 @@ function HomePage() {
                                 nodeRef={transitionNodeRef}
                                 key={contributionSelected.id}
                                 timeout={250}
+                                onEntered={() => {
+                                    setContributionDetailsActive(true);
+                                }}
+                                onExit={() => {
+                                    setContributionDetailsActive(false);
+                                }}
                             >
-                                <div className={styles.contributionDetailsInner} ref={transitionNodeRef}>
+                                <div
+                                    className={styles.contributionDetailsInner}
+                                    ref={transitionNodeRef}
+                                >
                                     <ContributionDetails
                                         contribution={contributionSelected}
                                         onClose={unselectContribution}
