@@ -12,15 +12,18 @@ export const FiltersProvider = ({ children }) => {
         cookiesFilters = JSON.parse(Cookies.get('filters') || null);
     } catch {}
 
-    const { fromTime: cookieFromTime = null,
+    const {
+        fromTime: cookieFromTime = null,
         tronconTypes: cookieTronconsTypes = null,
-        contributionTypes: cookieContributionTypes = null, } = cookiesFilters || {};
+        contributionTypes: cookieContributionTypes = null,
+    } = cookiesFilters || {};
 
     const defaultFilters = {
         fromTime: cookieFromTime !== null ? cookieFromTime : defaultfromTime,
         tronconTypes: cookieTronconsTypes !== null ? cookieTronconsTypes : defaultTronconsTypes,
-        contributionTypes: cookieContributionTypes !== null ? cookieContributionTypes : defaultContributionTypes,
-    }
+        contributionTypes:
+            cookieContributionTypes !== null ? cookieContributionTypes : defaultContributionTypes,
+    };
 
     const [fromTime, setFromTime] = useState(defaultFilters.fromTime);
     const [contributionTypes, setContributionTypes] = useState(defaultFilters.contributionTypes);

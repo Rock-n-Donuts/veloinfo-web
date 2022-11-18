@@ -4,7 +4,6 @@ import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
-import useOnClickOutside from '../../hooks/useOnClickOutside';
 import {
     useUpdateContribution,
     useContribution,
@@ -96,14 +95,7 @@ function HomePage() {
         setSelectedContributionId(null);
     }, [setSelectedContributionId]);
 
-    const modalRef = useRef(null);
-    const [modalReady, setModalReady] = useState(false);
-    useOnClickOutside(modalRef, () => {
-        if (modalReady) {
-            setSelectedContributionId(null);
-            setModalReady(false);
-        }        
-    });
+    const transitionNodeRef = useRef(null);
 
     return (
         <div
@@ -140,24 +132,29 @@ function HomePage() {
                 onContributionAdded={onContributionAdded}
             />
             <div className={styles.contributionDetailsContainer}>
-                <TransitionGroup className={styles.contributionDetails}>
-                    {contributionSelected !== null ? (
-                        <CSSTransition
-                            nodeRef={modalRef}
-                            key={contributionSelected.id}
-                            timeout={250}
-                            onEntered={() => {setModalReady(true)}}
-                            onExited={() => {setModalReady(false)}}
-                        >
-                            <div className={styles.contributionDetailsInner} ref={modalRef}>
-                                <ContributionDetails
-                                    contribution={contributionSelected}
-                                    onClose={unselectContribution}
-                                />
-                            </div>
-                        </CSSTransition>
-                    ) : null}
-                </TransitionGroup>
+                <div className={styles.contributionDetails}>
+                    <button
+                        type="button"
+                        className={styles.contributionDetailsSafe}
+                        onClick={unselectContribution}
+                    />
+                    <TransitionGroup className={styles.contributionDetailsGroup}>
+                        {contributionSelected !== null ? (
+                            <CSSTransition
+                                nodeRef={transitionNodeRef}
+                                key={contributionSelected.id}
+                                timeout={250}
+                            >
+                                <div className={styles.contributionDetailsInner} ref={transitionNodeRef}>
+                                    <ContributionDetails
+                                        contribution={contributionSelected}
+                                        onClose={unselectContribution}
+                                    />
+                                </div>
+                            </CSSTransition>
+                        ) : null}
+                    </TransitionGroup>
+                </div>
             </div>
             <Loading loading={!ready} />
         </div>

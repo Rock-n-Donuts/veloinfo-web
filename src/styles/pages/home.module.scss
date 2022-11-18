@@ -56,29 +56,45 @@
     .contributionDetailsContainer {
         @extend %fullscreen;
 
-        z-index: 2;
-        display: flex;
+        z-index: 2;        
         pointer-events: none;
         overflow: auto;       
         opacity: 0;
         transition: opacity 0.25s ease;
-        background-color: rgba($color-black, 0.5);
-        cursor: pointer;
+    }
+
+    .contributionDetails {
+        display: flex;
+        position: relative;
+        min-height: 100%;
+        height: auto;
 
         @media only screen and (min-width: 800px) {
             padding: 60px 0;
         }
     }
 
-    .contributionDetails {
+    .contributionDetailsSafe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: auto;
+        width: 100%;
+        min-height: 100%;
+
+        background-color: rgba($color-black, 0.5);
+        cursor: pointer;
+    }
+
+    .contributionDetailsGroup {
         position: relative;
         margin: auto;
         padding: 20px;
         width: 100%;
         max-width: 600px;
+
         transform: scale(0);
         transition: transform 0.25s ease;
-        cursor: auto;
     }
 
     .contributionDetailsInner {
@@ -95,20 +111,20 @@
         }
     }
 
-    &.addContributionOpened {
-        .addContribution {
-            transform: translateY(0);
-        }
-    }
-
     &.contributionSelected {
         .contributionDetailsContainer {
             pointer-events: auto;
             opacity: 1;
         }
 
-        .contributionDetails {
+        .contributionDetailsGroup {
             transform: scale(1);
+        }
+    }
+
+    &.addContributionOpened {
+        .addContribution {
+            transform: translateY(0);
         }
     }
 
