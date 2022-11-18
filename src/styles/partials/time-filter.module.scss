@@ -74,10 +74,16 @@
         button {
             min-width: 240px;
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
+            font-size: 14px;
             border-bottom: 1px solid rgba($color-white, 0.1);
 
+            &:first-child {
+                padding-top: 12px;
+            }
+
             &:last-child {
+                padding-bottom: 12px;
                 border-bottom: none;
             }
 
