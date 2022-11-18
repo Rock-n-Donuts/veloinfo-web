@@ -83,7 +83,8 @@ function LayersFilter({ className, tronconTypes }) {
                 <div className={styles.popup}>
                     <div className={styles.content}>
                         <div className={styles.contributionTypes}>
-                            {contributionsTypes.map(({ id, label, icon, color, withoutMarker }, typeIndex) => {
+                            {contributionsTypes.map(({ id, labelPlural = null, label: labelSingular = null, icon, color, withoutMarker }, typeIndex) => {
+                                const finalLabel = labelPlural !== null ? labelPlural : labelSingular;
                                 const selected = selectedContributionTypes.indexOf(id) > -1;
                                 return (
                                     <button
@@ -109,7 +110,7 @@ function LayersFilter({ className, tronconTypes }) {
                                             color={color}
                                             withoutMarker={withoutMarker}
                                         />
-                                        <span className={styles.label}>{label[locale]}</span>
+                                        <span className={styles.label}>{finalLabel[locale]}</span>
                                     </button>
                                 );
                             })}

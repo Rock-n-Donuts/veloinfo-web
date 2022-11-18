@@ -191,7 +191,8 @@ function Map({
                     new TileLayer({
                         // source: new OSM(),
                         source: new XYZ({
-                            url: `https://tile.jawg.io/jawg-sunny/{z}/{x}/{y}.png?access-token=${jawgToken}`
+                            // url: `https://tile.jawg.io/jawg-sunny/{z}/{x}/{y}.png?access-token=${jawgToken}`
+                            url: `https://tile.jawg.io/e711abcf-3365-4718-bfac-a85d734abd86/{z}/{x}/{y}.png?access-token=${jawgToken}`
                         }),
                     }),
                 ],

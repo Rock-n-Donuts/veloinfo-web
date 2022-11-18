@@ -2,8 +2,8 @@
     {
         "id": 1,
         "label": {
-            "fr": "Passibilité de la piste",
-            "en": "Cycle path passability"
+            "fr": "État de la piste",
+            "en": "Cycle path state"
         },
         "icon": "snow",
         "color": "#367c99",
@@ -57,6 +57,10 @@
             "fr": "Caméra",
             "en": "Camera"
         },
+        "labelPlural": {
+            "fr": "Caméras",
+            "en": "Cameras"
+        },
         "icon": "camera",
         "color": "#000000",
         "disableAdd": true,
@@ -80,8 +84,12 @@
     {
         "id": 3,
         "label": {
-            "fr": "Rack à vélo",
+            "fr": "Support à vélos",
             "en": "Bike rack"
+        },
+        "labelPlural": {
+            "fr": "Supports à vélos",
+            "en": "Bike racks"
         },
         "icon": "parking",
         "color": "#439667"
@@ -92,6 +100,10 @@
             "fr": "Borne de réparation",
             "en": "Repair stop"
         },
+        "labelPlural": {
+            "fr": "Bornes de réparation",
+            "en": "Repair stops"
+        },
         "icon": "repair",
         "color": "#439667"
     },
@@ -100,6 +112,10 @@
         "label": {
             "fr": "Boutique vélo",
             "en": "Bike shop"
+        },
+        "labelPlural": {
+            "fr": "Boutiques vélo",
+            "en": "Bike shops"
         },
         "icon": "heart",
         "color": "#439667"
