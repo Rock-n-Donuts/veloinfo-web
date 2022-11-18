@@ -7,17 +7,19 @@ const defaultTronconsTypes = ['winter-protected', 'winter'];
 const defaultContributionTypes = [1, 2];
 
 export const FiltersProvider = ({ children }) => {
-    let defaultFilters = null;
+    let cookiesFilters = null;
     try {
-        defaultFilters = JSON.parse(Cookies.get('filters') || null);
+        cookiesFilters = JSON.parse(Cookies.get('filters') || null);
     } catch {}
 
-    if (defaultFilters === null) {
-        defaultFilters = {
-            fromTime: defaultfromTime,
-            tronconTypes: defaultTronconsTypes,
-            contributionTypes: defaultContributionTypes,
-        };
+    const { fromTime: cookieFromTime = null,
+        tronconTypes: cookieTronconsTypes = null,
+        contributionTypes: cookieContributionTypes = null, } = cookiesFilters || {};
+
+    const defaultFilters = {
+        fromTime: cookieFromTime !== null ? cookieFromTime : defaultfromTime,
+        tronconTypes: cookieTronconsTypes !== null ? cookieTronconsTypes : defaultTronconsTypes,
+        contributionTypes: cookieContributionTypes !== null ? cookieContributionTypes : defaultContributionTypes,
     }
 
     const [fromTime, setFromTime] = useState(defaultFilters.fromTime);
