@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import axios from 'axios';
+
 import { useUser } from './AuthContext';
 import { useSelectedFilters } from './FiltersContext';
 import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';

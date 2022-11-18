@@ -1,58 +1,25 @@
 import { useCallback, useMemo, useState } from 'react';
+import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
+import { useFilters } from '../../contexts/FiltersContext';
 import snowIcon from '../../icons/contributions/snow.svg';
 import chevronIcon from '../../assets/images/chevron-bottom.svg';
+import choices from '../../data/time-filter-choices.json';
 
-import styles from '../../styles/partials/date-filter.module.scss';
-import { FormattedMessage } from 'react-intl';
-import { useFilters } from '../../contexts/FiltersContext';
+import styles from '../../styles/partials/time-filter.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    choices: PropTypes.arrayOf(
-        PropTypes.shape({
-            labelKey: PropTypes.string,
-            days: PropTypes.number,
-        }),
-    ),
 };
 
 const defaultProps = {
     className: null,
-    choices: [
-        {
-            labelKey: '1day',
-            days: 1,
-        },
-        {
-            labelKey: '2days',
-            days: 2,
-        },
-        {
-            labelKey: '3days',
-            days: 3,
-        },
-        {
-            labelKey: '5days',
-            days: 5,
-        },
-        {
-            labelKey: '7days',
-            days: 7,
-        },
-        {
-            labelKey: '14days',
-            days: 14,
-        },
-        {
-            labelKey: '30days',
-            days: 30,
-        },
-    ],
 };
 
-function DateFilter({ className, choices }) {
+function TimeFilter({ className }) {
+    const { locale } = useIntl();
     const [opened, setOpened] = useState(false);
 
     const open = useCallback(() => {
@@ -63,19 +30,18 @@ function DateFilter({ className, choices }) {
         setOpened(false);
     }, [setOpened]);
 
-    const { fromDays, setFromDays } = useFilters();
-    const currentChoice = useMemo( () => choices.find(({ days }) => days === fromDays),[choices, fromDays]);
-    const { labelKey: currentLabelKey = 'all' } = currentChoice || {};
+    const { fromTime, setFromTime } = useFilters();
+    const currentChoice = useMemo(
+        () => choices.find(({ key }) => key === fromTime) || null,
+        [fromTime],
+    );
+    const { key: currentChoiceKey = null, label: currentChoiceLabel = {} } = currentChoice || {};
     const setDateFilter = useCallback(
-        (days) => {
-            if (days !== null) {
-                setFromDays(days);
-            } else {
-                setFromDays(0);
-            }
+        (key) => {
+            setFromTime(key);
             setOpened(false);
         },
-        [setFromDays, setOpened],
+        [setFromTime, setOpened],
     );
 
     return (
@@ -93,7 +59,17 @@ function DateFilter({ className, choices }) {
                 }}
             >
                 <img src={snowIcon} alt="Snow" />
-                <span className={styles.label}><FormattedMessage id={`date-filter-${currentLabelKey}`} /></span>
+                <span className={styles.label}>
+                    {currentChoice !== null ? (
+                        currentChoiceLabel[locale] ? (
+                            currentChoiceLabel[locale]
+                        ) : (
+                            currentChoiceKey
+                        )
+                    ) : (
+                        <FormattedMessage id="time-filter-all" />
+                    )}
+                </span>
                 <img src={chevronIcon} alt="Chevron" />
             </button>
             <button
@@ -108,26 +84,28 @@ function DateFilter({ className, choices }) {
                     <div className={styles.arrow} />
                     <div className={styles.content}>
                         <div className={styles.choices}>
-                            {choices.map(({ labelKey, days }, choiceIndex) => (
+                            {choices.map(({ key, label = {} }, choiceIndex) => (
                                 <button
                                     type="button"
                                     key={`choice-${choiceIndex}`}
-                                    className={classNames([{ [styles.selected]: fromDays === days }])}
+                                    className={classNames([
+                                        { [styles.selected]: fromTime === key },
+                                    ])}
                                     onClick={() => {
-                                        setDateFilter(days);
+                                        setDateFilter(key);
                                     }}
                                 >
-                                    <FormattedMessage id={`date-filter-${labelKey}`} />
+                                    {label[locale] ? label[locale] : key}
                                 </button>
                             ))}
                             <button
                                 type="button"
-                                className={classNames([{ [styles.selected]: fromDays === 0 }])}
+                                className={classNames([{ [styles.selected]: fromTime === null }])}
                                 onClick={() => {
-                                    setDateFilter(0);
+                                    setDateFilter(null);
                                 }}
                             >
-                                <FormattedMessage id={`date-filter-all`} />
+                                <FormattedMessage id="time-filter-all" />
                             </button>
                         </div>
                     </div>
@@ -137,7 +115,7 @@ function DateFilter({ className, choices }) {
     );
 }
 
-DateFilter.propTypes = propTypes;
-DateFilter.defaultProps = defaultProps;
+TimeFilter.propTypes = propTypes;
+TimeFilter.defaultProps = defaultProps;
 
-export default DateFilter;
+export default TimeFilter;

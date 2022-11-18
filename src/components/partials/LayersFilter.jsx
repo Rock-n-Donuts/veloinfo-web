@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
 import { useFilters } from '../../contexts/FiltersContext';
 import ContributionIcon from '../../icons/Contribution';
 import contributionsTypes from '../../data/contributions-types.json';

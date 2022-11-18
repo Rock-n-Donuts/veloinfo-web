@@ -2,7 +2,6 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
-
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import useOnClickOutside from '../../hooks/useOnClickOutside';
@@ -12,7 +11,6 @@ import {
     useMapData,
     useReady,
 } from '../../contexts/DataContext';
-
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContribution from '../partials/AddContribution';

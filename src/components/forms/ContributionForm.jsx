@@ -11,7 +11,6 @@ import FormGroup from '../partials/FormGroup';
 import ImageUpload from '../partials/ImageUpload';
 import Map from '../partials/Map';
 import ContributionIcon from '../../icons/Contribution';
-
 import successImage from '../../assets/images/success.svg';
 
 import styles from '../../styles/forms/contribution.module.scss';

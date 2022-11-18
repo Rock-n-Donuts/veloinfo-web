@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 import CloseIcon from '../../icons/Close';
+
 import styles from '../../styles/buttons/close.module.scss';
 
 const propTypes = {

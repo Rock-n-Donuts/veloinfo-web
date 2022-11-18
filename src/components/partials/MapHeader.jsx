@@ -1,11 +1,11 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import DateFilter from './DateFilter';
+import TimeFilter from './TimeFilter';
 import LayersFilter from './LayersFilter';
+import MenuButton from '../buttons/Menu';
 
 import styles from '../../styles/partials/map-header.module.scss';
-import MenuButton from '../buttons/Menu';
 
 const propTypes = {
     className: PropTypes.string,
@@ -24,7 +24,7 @@ function MapHeader({ className, onTogglerClick }) {
                 <MenuButton className={styles.menuButton} onClick={onTogglerClick} />
             </div>
             <div className={styles.center}>
-                <DateFilter className={styles.dateFilter} />
+                <TimeFilter className={styles.timeFilter} />
             </div>
             <div className={styles.right}>
                 <LayersFilter className={styles.layersFilter} />

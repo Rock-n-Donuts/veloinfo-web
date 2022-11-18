@@ -3,6 +3,7 @@ const fs = require('fs');
 const sizeOf = require('image-size');
 const https = require('https');
 const dotenv = require('dotenv');
+
 dotenv.config();
 
 const input = 'data/import/cameras/input.json';

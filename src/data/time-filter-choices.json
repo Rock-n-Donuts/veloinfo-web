@@ -1,0 +1,90 @@
+[
+    {
+        "key": "1hour",
+        "hours": 1,
+        "label": {
+            "fr": "Moins d'une heure",
+            "en": "Moins d'une heure"
+        }
+    },
+    {
+        "key": "2hours",
+        "hours": 2,
+        "label": {
+            "fr": "2 dernières heures",
+            "en": "Last 2 hours"
+        }
+    },
+    {
+        "key": "3hours",
+        "hours": 3,
+        "label": {
+            "fr": "3 dernières heures",
+            "en": "Last 3 hours"
+        }
+    },
+    {
+        "key": "6hours",
+        "hours": 6,
+        "label": {
+            "fr": "6 dernières heures",
+            "en": "Last 6 hours"
+        }
+    },
+    {
+        "key": "12hours",
+        "hours": 12,
+        "label": {
+            "fr": "12 dernières heures",
+            "en": "Last 12 hours"
+        }
+    },
+    {
+        "key": "1day",
+        "days": 1,
+        "label": {
+            "fr": "Dernier 24h",
+            "en": "Last 24h"
+        }
+    },
+    {
+        "key": "2days",
+        "days": 2,
+        "label": {
+            "fr": "2 derniers jours",
+            "en": "Last 2 days"
+        }
+    },
+    {
+        "key": "3days",
+        "days": 3,
+        "label": {
+            "fr": "3 derniers jours",
+            "en": "Last 3 days"
+        }
+    },
+    {
+        "key": "5days",
+        "days": 5,
+        "label": {
+            "fr": "5 derniers jours",
+            "en": "Last 5 days"
+        }
+    },
+    {
+        "key": "7days",
+        "days": 7,
+        "label": {
+            "fr": "Semaine dernière",
+            "en": "Last week"
+        }
+    },
+    {
+        "key": "30days",
+        "days": 30,
+        "label": {
+            "fr": "Mois dernier",
+            "en": "Last month"
+        }
+    }
+]

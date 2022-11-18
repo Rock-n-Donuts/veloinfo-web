@@ -2,8 +2,10 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+
 import ContributionIcon from '../../icons/Contribution';
 import categories from '../../data/contributions-types.json';
+
 import styles from '../../styles/partials/contribution-type-selector.module.scss';
 
 const propTypes = {

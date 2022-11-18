@@ -2,7 +2,9 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
+
 import { getRelativeTime } from '../../lib/utils';
+
 import styles from '../../styles/partials/contribution-reply.module.scss';
 
 const propTypes = {

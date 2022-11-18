@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useIntl } from 'react-intl';
 
 import loadingImage from '../../assets/images/loading.svg';
+
 import styles from '../../styles/partials/loading.module.scss';
 
 const propTypes = {

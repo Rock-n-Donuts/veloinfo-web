@@ -2,8 +2,7 @@ import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
 const FiltersContext = createContext();
-
-const defaultFromDays = 5;
+const defaultfromTime = '5days';
 const defaultTronconsTypes = ['winter-protected', 'winter'];
 const defaultContributionTypes = [1, 2];
 
@@ -15,29 +14,29 @@ export const FiltersProvider = ({ children }) => {
 
     if (defaultFilters === null) {
         defaultFilters = {
-            fromDays: defaultFromDays,
+            fromTime: defaultfromTime,
             tronconTypes: defaultTronconsTypes,
             contributionTypes: defaultContributionTypes,
         };
     }
 
-    const [fromDays, setFromDays] = useState(defaultFilters.fromDays);
+    const [fromTime, setFromTime] = useState(defaultFilters.fromTime);
     const [contributionTypes, setContributionTypes] = useState(defaultFilters.contributionTypes);
     const [tronconTypes, setTronconTypes] = useState(defaultFilters.tronconTypes);
 
     useEffect(() => {
-        Cookies.set('filters', JSON.stringify({ fromDays, contributionTypes, tronconTypes }), {
+        Cookies.set('filters', JSON.stringify({ fromTime, contributionTypes, tronconTypes }), {
             expires: 3650,
         });
-    }, [fromDays, contributionTypes, tronconTypes]);
+    }, [fromTime, contributionTypes, tronconTypes]);
 
     return (
         <FiltersContext.Provider
             value={{
-                fromDays,
+                fromTime,
                 contributionTypes,
                 tronconTypes,
-                setFromDays,
+                setFromTime,
                 setContributionTypes,
                 setTronconTypes,
             }}
@@ -56,19 +55,19 @@ export const useFilters = () => {
 };
 
 export const useSelectedFilters = () => {
-    const { fromDays, contributionTypes, tronconTypes } = useFilters();
+    const { fromTime, contributionTypes, tronconTypes } = useFilters();
     const filters = useMemo(
-        () => ({ fromDays, contributionTypes, tronconTypes }),
-        [fromDays, contributionTypes, tronconTypes],
+        () => ({ fromTime, contributionTypes, tronconTypes }),
+        [fromTime, contributionTypes, tronconTypes],
     );
     return filters;
 };
 
 export const useSetFilters = () => {
-    const { setFromDays, setContributionTypes, setTronconTypes } = useFilters();
+    const { setFromTime, setContributionTypes, setTronconTypes } = useFilters();
     const setFilters = useMemo(
-        () => ({ setFromDays, setContributionTypes, setTronconTypes }),
-        [setFromDays, setContributionTypes, setTronconTypes],
+        () => ({ setFromTime, setContributionTypes, setTronconTypes }),
+        [setFromTime, setContributionTypes, setTronconTypes],
     );
     return setFilters;
 };

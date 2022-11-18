@@ -1,4 +1,7 @@
-import { parseISO, addDays } from 'date-fns';
+import { addDays, addHours } from 'date-fns';
+
+import { parseDate } from './utils';
+import timeChoices from '../data/time-filter-choices.json';
 
 export const getFilteredTroncons = (troncons, filters) => {
     const { tronconTypes = [] } = filters || {};
@@ -18,17 +21,20 @@ export const getFilteredTroncons = (troncons, filters) => {
 };
 
 export const getFilteredContributions = (contributions, filters) => {
-    const { contributionTypes = [], fromDays = 0 } = filters || {};
+    const { contributionTypes = [], fromTime: fromTimeKey = null } = filters || {};
+    const fromTime = timeChoices.find(({ key }) => key === fromTimeKey) || null;
+
     return [...(contributions || [])]
         .map((contribution) => {
             const { issue_id, created_at } = contribution;
             const validType = contributionTypes.indexOf(parseInt(issue_id)) > -1;
-            const validStateFromDays =
-                issue_id !== 1 ||
-                fromDays === 0 ||
-                addDays(new Date(), -fromDays) < parseISO(created_at);
+            const { days = 0, hours = 0 } = fromTime || {};
 
-            const visible = validType && validStateFromDays;
+            const validStatefromTime =
+                issue_id !== 1 ||
+                fromTime === null ||
+                addDays(addHours(new Date(), -hours), -days) < parseDate(created_at);
+            const visible = validType && validStatefromTime;
             return { ...contribution, visible };
         })
         .filter(({ visible }) => visible);

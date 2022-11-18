@@ -1,6 +1,7 @@
 // uses %APP_FOLDER%/data/import to output an array to use for an /import api call
 const fs = require('fs');
 const dotenv = require('dotenv');
+
 dotenv.config();
 
 const input = 'data/import/racks/input.json';

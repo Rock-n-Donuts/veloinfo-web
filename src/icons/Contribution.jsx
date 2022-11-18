@@ -1,10 +1,9 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
-
-import styles from '../styles/icons/contribution.module.scss';
 
 import contributions from './contributions';
+
+import styles from '../styles/icons/contribution.module.scss';
 
 const propTypes = {
     icon: PropTypes.oneOf(['snow', 'warning', 'parking', 'heart', 'repair', 'camera']),

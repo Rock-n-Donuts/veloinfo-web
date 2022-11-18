@@ -5,7 +5,6 @@ import { AuthProvider } from '../contexts/AuthContext';
 import { DataProvider } from '../contexts/DataContext';
 import { FiltersProvider } from '../contexts/FiltersContext';
 import { SiteProvider } from '../contexts/SiteContext';
-
 import App from './App';
 
 const propTypes = {};

@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
+
 import ContributionTypeSelector from './ContributionTypeSelector';
 import CloseButton from '../buttons/Close';
 import ContributionForm from '../forms/ContributionForm';

@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import Footer from '../partials/Footer';
 import Header from '../partials/Header';
 

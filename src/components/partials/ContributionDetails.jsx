@@ -6,15 +6,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { isAfter, parseISO } from 'date-fns';
+
 import { useUpdateContribution } from '../../contexts/DataContext';
+import ContributionReply from './ContributionReply';
 import CommentsIcon from '../../icons/Comments';
 import contributionTypesIcons from '../../icons/contributions';
 import { getRelativeTime } from '../../lib/utils';
 import ReplyForm from '../forms/ReplyForm';
-
 import contributionsTypes from '../../data/contributions-types.json';
+
 import styles from '../../styles/partials/contribution-details.module.scss';
-import ContributionReply from './ContributionReply';
 
 const propTypes = {
     className: PropTypes.string,
@@ -142,8 +143,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     useEffect(() => {
         const interval = setInterval(() => {
             setNow(new Date());
-        }, 1000);
-
+        }, 500);
         return () => {
             if (interval !== null) {
                 clearInterval(interval);

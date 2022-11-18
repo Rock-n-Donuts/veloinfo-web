@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { useIntl } from 'react-intl';
 
+import CloseIcon from '../../icons/Close';
 import menuIcon from '../../assets/images/menu-icon.svg';
 
 import styles from '../../styles/buttons/menu.module.scss';
-import CloseIcon from '../../icons/Close';
 
 const propTypes = {
     opened: PropTypes.bool,

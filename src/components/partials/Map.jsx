@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
 import { Tile as TileLayer, VectorImage } from 'ol/layer';
