@@ -61,6 +61,7 @@
         overflow: auto;       
         opacity: 0;
         transition: opacity 0.25s ease;
+        background-color: rgba($color-black, 0.5);
     }
 
     .contributionDetails {
@@ -82,7 +83,6 @@
         width: 100%;
         min-height: 100%;
 
-        background-color: rgba($color-black, 0.5);
         cursor: pointer;
     }
 
