@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { Tile as TileLayer, VectorImage } from 'ol/layer';
+import { VectorImage } from 'ol/layer';
 import { Cluster, Vector as VectorSource, XYZ } from 'ol/source';
 import { Style, Stroke, Icon, Fill, Text } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
@@ -11,10 +11,15 @@ import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 
+import TileLayer from 'ol/layer/WebGLTile';
+// import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
+// import {packColor} from 'ol/renderer/webgl/shaders';
+
 import Loading from './Loading';
 
 import styles from '../../styles/partials/map.module.scss';
 
+const jawgId = process.env.REACT_APP_JAWG_ID;
 const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 
 const propTypes = {
@@ -190,8 +195,7 @@ function Map({
                     new TileLayer({
                         // source: new OSM(),
                         source: new XYZ({
-                            // url: `https://tile.jawg.io/jawg-sunny/{z}/{x}/{y}.png?access-token=${jawgToken}`
-                            url: `https://tile.jawg.io/e711abcf-3365-4718-bfac-a85d734abd86/{z}/{x}/{y}.png?access-token=${jawgToken}`
+                            url: `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
                         }),
                     }),
                 ],

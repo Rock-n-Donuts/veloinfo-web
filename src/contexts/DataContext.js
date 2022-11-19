@@ -15,11 +15,10 @@ export const DataProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(data);
+    const [date, setDate] = useState(null);
     const [mapData, setMapData] = useState({ lines: [], markers: [] });
     const user = useUser();
     const selectedFilters = useSelectedFilters();
-
-    const { date = null } = data || {};
 
     const getData = useCallback((date = null) => {
         setLoading(true);
@@ -34,24 +33,28 @@ export const DataProvider = ({ children }) => {
             })
             .then((res) => {
                 const { data: newData = null } = res || {};
-                const { date: newDate = null } = newData || {};
+                const {
+                    date: newDate = null,
+                    troncons: newTroncons,
+                    contributions: newContributions,
+                } = newData || {};
                 if (date === null) {
                     // console.log('Initial data received', newData);
                     setReady(true);
+                    setDate(newDate);
                     setData(newData);
                 } else {
                     // console.log('Updated data received.', newData);
-                    if (date !== newDate)
+                    if (date !== newDate) {
+                        setDate(newDate);
+                    }
+
+                    if (newTroncons.length > 0 || newContributions.length > 0) {
                         setData((old) => {
                             const { troncons, contributions } = old || {};
-                            const {
-                                troncons: updatedTroncons,
-                                contributions: updatedContributions,
-                                date: updatedDate,
-                            } = newData || {};
                             const mergedTroncons = [...troncons];
                             const mergedContributions = [...contributions];
-                            updatedTroncons.forEach((troncon) => {
+                            newTroncons.forEach((troncon) => {
                                 const foundIndex = troncons.findIndex(
                                     ({ id }) => id === troncon.id,
                                 );
@@ -61,7 +64,7 @@ export const DataProvider = ({ children }) => {
                                     mergedTroncons.push(troncon);
                                 }
                             });
-                            updatedContributions.forEach((contribution) => {
+                            newContributions.forEach((contribution) => {
                                 const foundIndex = contributions.findIndex(
                                     ({ id }) => id === contribution.id,
                                 );
@@ -74,10 +77,11 @@ export const DataProvider = ({ children }) => {
                             const mergedData = {
                                 contributions: mergedContributions,
                                 troncons: mergedTroncons,
-                                date: updatedDate,
+                                date: newDate,
                             };
                             return mergedData;
                         });
+                    }
                 }
             })
             .catch((err) => setError(err))
@@ -93,8 +97,8 @@ export const DataProvider = ({ children }) => {
 
     useEffect(() => {
         if (date !== null) {
-            // console.log('Updating data...');
             setTimeout(() => {
+                // console.log('Updating data...');
                 getData(date);
             }, [pollingDelay * 1000]);
         }
@@ -189,7 +193,7 @@ export const useUpdateContribution = () => {
                     return { ...old, contributions: newContributions };
                 }
                 newContributions.push(updatedContribution);
-                return {...old, contributions: newContributions};
+                return { ...old, contributions: newContributions };
             });
         },
         [setData],
