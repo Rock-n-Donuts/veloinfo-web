@@ -1,3 +1,4 @@
+import 'pepjs';
 import './styles/index.scss';
 import axios from 'axios';
 import ReactDOM from 'react-dom/client';
