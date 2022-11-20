@@ -22,6 +22,8 @@ import styles from '../../styles/partials/map.module.scss';
 const jawgId = process.env.REACT_APP_JAWG_ID;
 const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 
+console.log(navigator.maxTouchPoints)
+
 const propTypes = {
     className: PropTypes.string,
     askForPosition: PropTypes.bool,
