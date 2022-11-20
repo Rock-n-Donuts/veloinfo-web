@@ -9,7 +9,6 @@
     },
     "dependencies": {
         "@formatjs/intl-relativetimeformat": "^11.1.4",
-        "@openlayers/pepjs": "^0.5.4",
         "@testing-library/jest-dom": "^5.16.5",
         "@testing-library/react": "^13.4.0",
         "@testing-library/user-event": "^13.5.0",
@@ -22,6 +21,7 @@
         "axios": "^1.1.3",
         "classnames": "^2.3.2",
         "date-fns": "^2.29.3",
+        "elm-pep": "^1.0.6",
         "js-cookie": "^3.0.1",
         "ol": "^7.1.1-dev.1667846236548",
         "prop-types": "^15.8.1",
