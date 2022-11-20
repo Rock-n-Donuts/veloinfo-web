@@ -6,6 +6,8 @@
 
     .map {
         @extend %fullscreen;
+
+        touch-action: none;
     }
 
     &.isHover{
