@@ -432,7 +432,7 @@ function Map({
                 },
             ])}
         >
-            <div ref={mapContainerRef} className={styles.map} />
+            <div ref={mapContainerRef} className={styles.map} touch-action="none" />
             <Loading loading={loadingUserPosition} />
         </div>
     );
