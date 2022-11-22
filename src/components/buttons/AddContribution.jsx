@@ -49,9 +49,9 @@ function AddContributionButton({ className, onNext }) {
 
     const updateContributionType = useCallback(
         (type) => {
-            updateContribution({ type });
+            updateContribution({ type: userContributionType === type ? null : type });
         },
-        [updateContribution],
+        [userContributionType, updateContribution],
     );
 
     return (
