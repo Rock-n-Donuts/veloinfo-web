@@ -19,7 +19,6 @@
     .type {
         position: relative;
         height: 51px;
-        overflow: hidden;
         transition: height 0.35s 0.1s ease;
 
         &.selected {
