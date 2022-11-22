@@ -25,17 +25,17 @@ const propTypes = {
     className: PropTypes.string,
     onBack: PropTypes.func,
     onSuccess: PropTypes.func,
-    onMapCenterChanged: PropTypes.func,
+    onMinimapMoved: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
     onBack: null,
     onSuccess: null,
-    onMapCenterChanged: null,
+    onMinimapMoved: null,
 };
 
-function ContributionForm({ className, onBack, onSuccess, onMapCenterChanged }) {
+function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
     const intl = useIntl();
     const { locale } = intl;
     const captchaRef = useRef();
@@ -203,7 +203,7 @@ function ContributionForm({ className, onBack, onSuccess, onMapCenterChanged }) 
                                 className={styles.map}
                                 mapCenter={coords}
                                 zoom={18}
-                                onCenterChanged={onMapCenterChanged}
+                                onMoveEnded={onMinimapMoved}
                             />
                             <div className={styles.mapMarker}>
                                 <ContributionIcon

@@ -23,14 +23,15 @@ import styles from '../../styles/partials/map.module.scss';
 const isDev = process.env.NODE_ENV !== 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
 const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
-const defaultMapCenter = [-73.561668, 45.508888];
 
 const propTypes = {
     className: PropTypes.string,
     disableInteractions: PropTypes.bool,
     askForPosition: PropTypes.bool,
     mapCenter: PropTypes.arrayOf(PropTypes.number),
+    defaultMapCenter: PropTypes.arrayOf(PropTypes.number),
     zoom: PropTypes.number,
+    defaultZoom: PropTypes.number,
     lines: PropTypes.arrayOf(
         PropTypes.shape({
             color: PropTypes.string,
@@ -48,6 +49,7 @@ const propTypes = {
     ),
     clusterDistance: PropTypes.number,
     clusterMinDistance: PropTypes.number,
+    onMoveEnded: PropTypes.func,
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
     onPositionRefused: PropTypes.func,
@@ -61,11 +63,14 @@ const defaultProps = {
     disableInteractions: false,
     askForPosition: false,
     mapCenter: null,
-    zoom: 15,
+    defaultMapCenter: [-73.561668, 45.508888],
+    zoom: null,
+    defaultZoom: 15,
     lines: null,
     markers: null,
     clusterDistance: 25,
     clusterMinDistance: 20,
+    onMoveEnded: null,
     onCenterChanged: null,
     onZoomChanged: null,
     onPositionRefused: null,
@@ -79,11 +84,14 @@ function Map({
     disableInteractions,
     askForPosition,
     mapCenter,
+    defaultMapCenter,
     zoom,
+    defaultZoom,
     lines,
     markers,
     clusterDistance,
     clusterMinDistance,
+    onMoveEnded,
     onCenterChanged,
     onZoomChanged,
     onPositionRefused,
@@ -114,6 +122,15 @@ function Map({
             onZoomChanged(mapRef.current.getView().getZoom());
         }
     }, [onZoomChanged]);
+
+    const onMoveEnd = useCallback(() => {
+        if (onMoveEnded !== null) {
+            onMoveEnded({
+                center: transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
+                zoom: mapRef.current.getView().getZoom()
+            });
+        }
+    }, [onMoveEnded]);
 
     const onMapPointerMove = useCallback(
         (e) => {
@@ -191,7 +208,7 @@ function Map({
             const view = new View({
                 enableRotation: false,
                 center: fromLonLat(mapCenter || defaultMapCenter),
-                zoom,
+                zoom: zoom !== null ? zoom : defaultZoom,
             });
 
             mapRef.current = new OlMap({
@@ -211,7 +228,7 @@ function Map({
             setReady(true);
             return mapRef.current;
         },
-        [mapCenter, zoom, disableInteractions],
+        [defaultMapCenter, mapCenter, zoom, defaultZoom, disableInteractions],
     );
 
     const drawLines = useCallback((lines) => {
@@ -328,6 +345,7 @@ function Map({
         if (mapRef.current !== null) {
             mapRef.current.getView().on('change:center', onChangeCenter);
             mapRef.current.getView().on('change:resolution', onChangeZoom);
+            mapRef.current.on('moveend', onMoveEnd);
             mapRef.current.on('click', onMapClick);
             // mapRef.current.on('pointermove', onMapPointerMove);
         }
@@ -336,21 +354,31 @@ function Map({
             if (mapRef.current !== null) {
                 mapRef.current.getView().un('change:center', onChangeCenter);
                 mapRef.current.getView().un('change:resolution', onChangeZoom);
+                mapRef.current.un('moveend', onMoveEnd);
                 mapRef.current.un('click', onMapClick);
                 // mapRef.current.un('pointermove', onMapPointerMove);
             }
         };
-    }, [initMap, onMapClick, onMapPointerMove, onChangeCenter, onChangeZoom]);
+    }, [initMap, onMapClick, onMapPointerMove, onChangeCenter, onChangeZoom, onMoveEnd]);
 
     useEffect(() => {
         if (mapRef.current !== null && mapCenter !== null) {
-            mapRef.current.getView().setCenter(transform(mapCenter, 'EPSG:4326', 'EPSG:3857'));
+            const lastCenter = transform(
+                mapRef.current.getView().getCenter(),
+                'EPSG:3857',
+                'EPSG:4326',
+            );
+            if (mapCenter[0] !== lastCenter[0] && mapCenter[1] !== lastCenter[1]) {
+                mapRef.current.getView().setCenter(transform(mapCenter, 'EPSG:4326', 'EPSG:3857'));
+            }
         }
     }, [mapCenter]);
 
     useEffect(() => {
         if (mapRef.current !== null && zoom !== null) {
-            mapRef.current.getView().setZoom(zoom);
+            if (zoom !== mapRef.current.getView().getZoom()) {
+                mapRef.current.getView().setZoom(zoom);
+            }
         }
     }, [zoom]);
 

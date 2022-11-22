@@ -39,14 +39,14 @@ function HomePage() {
 
     const mapCenter = useMemo(() => {
         const cookieCenter = Cookie.get('mapCenter') || null;
-        return cookieCenter !== null ? JSON.parse(cookieCenter) : [-73.561668, 45.508888];
+        return cookieCenter !== null ? JSON.parse(cookieCenter) : null;
     }, []);
     const lastMapCenter = useRef(mapCenter);
     const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
     
     const mapZoom = useMemo(() => {
         const cookieZoom = Cookie.get('mapZoom') || null;
-        return cookieZoom !== null ? parseFloat(cookieZoom) : 15;
+        return cookieZoom !== null ? parseFloat(cookieZoom) : null;
     }, []);
 
     const updateContribution = useUpdateContribution();
@@ -93,6 +93,15 @@ function HomePage() {
     const storeZoom = useCallback((zoom) => {
         Cookie.set('mapZoom', zoom, { expires: 3650 });
     }, []);
+
+    const onMapMoved = useCallback(({ zoom, center }) => {
+        storeCenter(center);
+        storeZoom(zoom);
+    }, [storeCenter, storeZoom]);
+
+    const onMinimapMoved = useCallback(({ center }) => {
+        storeCenter(center);
+    }, [storeCenter]);
 
     const onContributionAdded = useCallback(
         (contribution) => {
@@ -147,8 +156,7 @@ function HomePage() {
                     markers={markers}
                     mapCenter={mainMapCenter}
                     zoom={mapZoom}
-                    onCenterChanged={storeCenter}
-                    onZoomChanged={storeZoom}
+                    onMoveEnded={onMapMoved}
                     onMarkerClick={selectContribution}
                 />
                 <ContributionCoordsSelector className={styles.contributionCoordsSelector} />
@@ -162,7 +170,7 @@ function HomePage() {
                 key={contributionKey}
                 className={styles.addContribution}
                 onClose={closeAddContribution}
-                onMapCenterChanged={storeCenter}
+                onMinimapMoved={onMinimapMoved}
                 onContributionAdded={onContributionAdded}
             />
             <div className={styles.contributionDetailsContainer}>
