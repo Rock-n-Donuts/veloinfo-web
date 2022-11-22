@@ -45,35 +45,35 @@ export function getLinesFromTroncons(troncons) {
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ type }) => type === 'unknown').color,
+            color: tronconsStates.find(({ key }) => key === 'unknown').color,
         },
         {
             features: clearedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ type }) => type === 'cleared').color,
+            color: tronconsStates.find(({ key }) => key === 'cleared').color,
         },
         {
             features: snowyPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ type }) => type === 'snowy').color
+            color: tronconsStates.find(({ key }) => key === 'snowy').color
         },
         {
             features: planifiedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ type }) => type === 'planified').color
+            color: tronconsStates.find(({ key }) => key === 'planified').color
         },
         {
             features: clearingPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ type }) => type === 'clearing').color
+            color: tronconsStates.find(({ key }) => key === 'clearing').color
         },
     ];
 }

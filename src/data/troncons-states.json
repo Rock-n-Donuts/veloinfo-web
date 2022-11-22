@@ -1,6 +1,6 @@
 [
     {
-        "type": "cleared",
+        "key": "cleared",
         "color": "#4fae77",
         "label": {
             "fr": "Déneigé",
@@ -8,7 +8,7 @@
         }
     },
     {
-        "type": "snowy",
+        "key": "snowy",
         "color": "#367c98",
         "label": {
             "fr": "Enneigé",
@@ -16,7 +16,7 @@
         }
     },
     {
-        "type": "planified",
+        "key": "planified",
         "color": "#f09035",
         "label": {
             "fr": "Déneigement planifié",
@@ -24,7 +24,7 @@
         }
     },
     {
-        "type": "clearing",
+        "key": "clearing",
         "color": "#8962c7",
         "label": {
             "fr": "Déneigement en cours",
@@ -32,7 +32,7 @@
         }
     },
     {
-        "type": "unknown",
+        "key": "unknown",
         "color": "#666666",
         "label": {
             "fr": "Non planifié",

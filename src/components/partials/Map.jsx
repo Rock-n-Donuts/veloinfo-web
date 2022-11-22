@@ -32,6 +32,7 @@ const propTypes = {
     defaultMapCenter: PropTypes.arrayOf(PropTypes.number),
     zoom: PropTypes.number,
     defaultZoom: PropTypes.number,
+    maxZoom: PropTypes.number,
     lines: PropTypes.arrayOf(
         PropTypes.shape({
             color: PropTypes.string,
@@ -66,6 +67,7 @@ const defaultProps = {
     defaultMapCenter: [-73.561668, 45.508888],
     zoom: null,
     defaultZoom: 15,
+    maxZoom: 20,
     lines: null,
     markers: null,
     clusterDistance: 25,
@@ -87,6 +89,7 @@ function Map({
     defaultMapCenter,
     zoom,
     defaultZoom,
+    maxZoom,
     lines,
     markers,
     clusterDistance,
@@ -209,6 +212,7 @@ function Map({
                 enableRotation: false,
                 center: fromLonLat(mapCenter || defaultMapCenter),
                 zoom: zoom !== null ? zoom : defaultZoom,
+                maxZoom 
             });
 
             mapRef.current = new OlMap({
@@ -228,7 +232,7 @@ function Map({
             setReady(true);
             return mapRef.current;
         },
-        [defaultMapCenter, mapCenter, zoom, defaultZoom, disableInteractions],
+        [defaultMapCenter, mapCenter, zoom, defaultZoom, maxZoom, disableInteractions],
     );
 
     const drawLines = useCallback((lines) => {

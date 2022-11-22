@@ -21,6 +21,7 @@ import ContributionCoordsSelector from '../partials/ContributionCoordsSelector';
 import AddContributionButton from '../buttons/AddContribution';
 
 import styles from '../../styles/pages/home.module.scss';
+import ReportLinksButton from '../buttons/ReportLinks';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -164,6 +165,9 @@ function HomePage() {
             <AddContributionButton
                 className={styles.addContributionButton}
                 onNext={openAddContribution}
+            />
+            <ReportLinksButton
+                className={styles.reportLinksButton}
             />
             <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
             <AddContribution

@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
@@ -20,8 +20,6 @@ const defaultProps = {
 };
 
 function HomeMenu({ className, opened, onClose }) {
-    const intl = useIntl();
-    const { locale } = intl;
     return (
         <div
             className={classNames([
@@ -37,46 +35,6 @@ function HomeMenu({ className, opened, onClose }) {
                 <p className={styles.description}>
                     <FormattedMessage id="app-description" values={{ br: <br /> }} />
                 </p>
-                <div className={styles.notifyCity}>
-                    <div className={styles.label}>
-                        <FormattedMessage id="inform-city" />
-                    </div>
-                    <div className={styles.links}>
-                        <a
-                            href={
-                                locale === 'en'
-                                    ? 'https://montreal.ca/en/how-to/request-installation-bicycle-rack'
-                                    : 'https://montreal.ca/demarches/demander-linstallation-dun-support-velo'
-                            }
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <FormattedMessage id="bike-rack-request" />
-                        </a>
-                        <a
-                            href={
-                                locale === 'en'
-                                    ? 'https://montreal.ca/en/how-to/report-pothole'
-                                    : 'https://montreal.ca/requetes311/signaler-nid-poule/emplacement'
-                            }
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <FormattedMessage id="pothole-report" />
-                        </a>
-                        <a
-                            href={
-                                locale === 'en'
-                                    ? 'https://montreal.ca/en/how-to/report-snow-removal-issue'
-                                    : 'https://montreal.ca/demarches/signaler-un-probleme-de-deneigement'
-                            }
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <FormattedMessage id="snow-removal-issue-report" />
-                        </a>
-                    </div>
-                </div>
                 <div className={styles.footer}>
                     <a href="https://github.com/Rock-n-Donuts" target="_blank" rel="noreferrer">
                         🍩 Rock n Donuts
