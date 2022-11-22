@@ -14,10 +14,20 @@
         background-color: $color-blue-background;
     }
 
-    .map {
+    .mapContainer {
         z-index: 0;
         position: relative;
         flex-grow: 1;
+    }
+
+    .map {
+        @extend %fullscreen;
+    }
+
+    .contributionCoordsSelector {
+        @extend %fullscreen;
+
+        pointer-events: none;
     }
 
     .addContributionButton {

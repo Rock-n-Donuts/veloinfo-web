@@ -201,4 +201,6 @@ export const useUpdateContribution = () => {
     return updateContribution;
 };
 
+export const useAddContribution = useUpdateContribution;
+
 export default DataContext;

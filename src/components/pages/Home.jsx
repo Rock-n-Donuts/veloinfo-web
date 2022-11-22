@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
@@ -10,12 +10,14 @@ import {
     useMapData,
     useReady,
 } from '../../contexts/DataContext';
+import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContribution from '../partials/AddContribution';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
 import ContributionDetails from '../partials/ContributionDetails';
+import ContributionCoordsSelector from '../partials/ContributionCoordsSelector';
 import AddContributionButton from '../buttons/AddContribution';
 
 import styles from '../../styles/pages/home.module.scss';
@@ -27,12 +29,16 @@ function HomePage() {
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
 
+    const userCurrentContribution = useUserCurrentContribution();
+    const hasUserCurrentContribution = userCurrentContribution !== null;
+
     const isContributionSelected = selectedContributionId !== null;
     const ready = useReady();
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
 
     const updateContribution = useUpdateContribution();
+    const userUpdateContribution = useUserUpdateContribution();
 
     // const openMenu = useCallback(() => {
     //     setMenuOpened(true);
@@ -54,18 +60,35 @@ function HomePage() {
         setAddContributionOpened(false);
     }, [setAddContributionOpened]);
 
+
     const mapCenter = useMemo(() => {
         const cookieCenter = Cookie.get('mapCenter') || null;
         return cookieCenter !== null ? JSON.parse(cookieCenter) : [-73.561668, 45.508888];
     }, []);
+    const lastMapCenter = useRef(mapCenter);
+    
     const mapZoom = useMemo(() => {
         const cookieZoom = Cookie.get('mapZoom') || null;
         return cookieZoom !== null ? parseFloat(cookieZoom) : 15;
     }, []);
 
-    const storeCenter = useCallback((center) => {
-        Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
-    }, []);
+
+    const storeCenter = useCallback(
+        (center) => {
+            lastMapCenter.current = center;
+            Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
+            if (hasUserCurrentContribution) {
+                userUpdateContribution({ coords: center });
+            }
+        },
+        [hasUserCurrentContribution, userUpdateContribution],
+    );
+
+    useEffect( () => {
+        if (hasUserCurrentContribution) {
+            userUpdateContribution({ coords: lastMapCenter.current });
+        }
+    }, [hasUserCurrentContribution, userUpdateContribution]);
 
     const storeZoom = useCallback((zoom) => {
         Cookie.set('mapZoom', zoom, { expires: 3650 });
@@ -117,19 +140,22 @@ function HomePage() {
             ])}
         >
             <MapHeader className={styles.mapHeader} onTogglerClick={toggleMenu} />
-            <Map
-                className={styles.map}
-                lines={lines}
-                markers={markers}
-                mapCenter={mapCenter}
-                zoom={mapZoom}
-                onCenterChanged={storeCenter}
-                onZoomChanged={storeZoom}
-                onMarkerClick={selectContribution}
-            />
+            <div className={styles.mapContainer}>
+                <Map
+                    className={styles.map}
+                    lines={lines}
+                    markers={markers}
+                    mapCenter={mapCenter}
+                    zoom={mapZoom}
+                    onCenterChanged={storeCenter}
+                    onZoomChanged={storeZoom}
+                    onMarkerClick={selectContribution}
+                />
+                <ContributionCoordsSelector className={styles.contributionCoordsSelector} />
+            </div>
             <AddContributionButton
                 className={styles.addContributionButton}
-                onClick={openAddContribution}
+                onNext={openAddContribution}
             />
             <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
             <AddContribution

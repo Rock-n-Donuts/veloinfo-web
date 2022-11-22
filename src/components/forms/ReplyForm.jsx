@@ -120,7 +120,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
         >
             <form className={styles.form} onSubmit={submit}>
                 <div className={styles.content}>
-                    {nameCookie.length === 0 ? (
+                    {/* {nameCookie.length === 0 ? ( */}
                         <FormGroup className={styles.name}>
                             <input
                                 type="text"
@@ -129,7 +129,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                                 onChange={setNameValue}
                             />
                         </FormGroup>
-                    ) : null}
+                    {/* ) : null} */}
                     <FormGroup className={styles.comment}>
                         <textarea
                             required

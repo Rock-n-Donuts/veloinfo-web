@@ -1,37 +1,54 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 
-// import { useMapData } from '../../contexts/DataContext';
+import { useCompleteUserContribution, useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
 import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from '../partials/FormGroup';
 import ImageUpload from '../partials/ImageUpload';
 import Map from '../partials/Map';
 import ContributionIcon from '../../icons/Contribution';
 import successImage from '../../assets/images/success.svg';
+import contributionsTypes from '../../data/contributions-types.json';
 
 import styles from '../../styles/forms/contribution.module.scss';
 
 const propTypes = {
-    active: PropTypes.bool,
     className: PropTypes.string,
-    contributionType: PropTypes.shape({}),
     onBack: PropTypes.func,
     onSuccess: PropTypes.func,
 };
 
 const defaultProps = {
-    active: false,
     className: null,
-    contributionType: null,
     onBack: null,
     onSuccess: null,
 };
 
-function ContributionForm({ active, className, contributionType, onBack, onSuccess }) {
+function ContributionForm({ className, onBack, onSuccess }) {
+    const intl = useIntl();
+    const { locale } = intl;
+    const captchaRef = useRef();
+
+    const userCurrentContribution = useUserCurrentContribution();
+    const updateContribution = useUserUpdateContribution();
+    const completeUserContribution = useCompleteUserContribution();
+
+    const {
+        type = null,
+        coords = null,
+        quality,
+        name = '',
+        comment = '',
+        photo = null,
+    } = userCurrentContribution || {};
+
+    const contributionType = useMemo(
+        () => contributionsTypes.find(({ id }) => `${id}` === `${type}`),
+        [type],
+    );
     const {
         id: contributionTypeId,
         icon: contributionTypeIcon,
@@ -39,40 +56,31 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
         qualities: contributionTypeQualities = null,
     } = contributionType || {};
 
-    const intl = useIntl();
-    const { locale } = intl;
-    const captchaRef = useRef();
-
-    const nameCookie = Cookies.get('name') || '';
-    const [coords, setCoords] = useState(null);
-    const [quality, setQuality] = useState(0);
-    const [name, setName] = useState(nameCookie);
-    const [comment, setComment] = useState('');
-    const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
     const [success, setSuccess] = useState(false);
-    const [positionRefused, setPositionRefused] = useState(false);
 
-    const setCoordsValue = useCallback((center) => setCoords(center), [setCoords]);
-    const setQualityValue = useCallback((e) => setQuality(parseInt(e.target.value)), [setQuality]);
-    const setNameValue = useCallback((e) => setName(e.target.value), [setName]);
-    const setCommentValue = useCallback((e) => setComment(e.target.value), [setComment]);
-    const setPhotoValue = useCallback((file) => setPhoto(file), [setPhoto]);
-
-    // const { lines, markers } = useMapData();
-
+    const setQualityValue = useCallback(
+        (e) => updateContribution({ quality: parseInt(e.target.value) }),
+        [updateContribution],
+    );
+    const setNameValue = useCallback(
+        (e) => updateContribution({ name: e.target.value }),
+        [updateContribution],
+    );
+    const setCommentValue = useCallback(
+        (e) => updateContribution({ comment: e.target.value }),
+        [updateContribution],
+    );
+    const setPhotoValue = useCallback(
+        (photo) => updateContribution({ photo }),
+        [updateContribution],
+    );
+    
     const resetForm = useCallback(() => {
         captchaRef.current.reset();
-        setQuality(0);
-        setName('');
-        setComment('');
-        setPhoto(null);
-    }, [setQuality, setName, setComment, setPhoto]);
-
-    const onPositionRefused = useCallback(() => {
-        setPositionRefused(true);
-    }, [setPositionRefused]);
+        completeUserContribution();
+    }, [completeUserContribution]);
 
     const submit = useCallback(
         (e) => {
@@ -123,7 +131,6 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                     const { data } = res || {};
                     const { success = false, contribution = null } = data || {};
                     if (success) {
-                        Cookies.set('name', name, { expires: 3650 });
                         setSuccess(true);
                         setTimeout(() => {
                             resetForm();
@@ -173,65 +180,59 @@ function ContributionForm({ active, className, contributionType, onBack, onSucce
                     [className]: className !== null,
                     [styles.loading]: loading,
                     [styles.success]: success,
-                    [styles.showMarker]: positionRefused || coords !== null,
                 },
             ])}
         >
             <form className={styles.form} onSubmit={submit}>
                 <div className={styles.content}>
-                    <FormGroup
-                        className={styles.mapContainer}
-                        label={intl.formatMessage({ id: 'position-info' })}
-                    >
-                        <Map
-                            className={styles.map}
-                            onCenterChanged={setCoordsValue}
-                            askForPosition={active}
-                            onPositionRefused={onPositionRefused}
-                            // lines={lines}
-                            // markers={markers}
-                        />
-                        <div className={styles.mapMarker}>
-                            <ContributionIcon
-                                className={styles.icon}
-                                icon={contributionTypeIcon}
-                                color={iconColor}
-                            />
+                    <FormGroup label={intl.formatMessage({ id: 'position-info' })}>
+                        <div className={styles.mapContainer}>
+                            <Map className={styles.map} mapCenter={coords} zoom={18} disableInteractions />
+                            <div className={styles.mapMarker}>
+                                <ContributionIcon
+                                    className={styles.icon}
+                                    icon={contributionTypeIcon}
+                                    color={iconColor}
+                                />
+                            </div>
                         </div>
                     </FormGroup>
                     {contributionTypeQualities !== null ? (
                         <FormGroup
                             className={styles.quality}
-                            label={intl.formatMessage({ id: 'pavement-condition' })}
+                            label={intl.formatMessage({ id: 'quality' })}
                         >
-                            {contributionTypeQualities.map(({ value, label }, qualityIndex) => (
-                                <label key={`quality-${qualityIndex}`}>
-                                    <input
-                                        type="radio"
-                                        value={value}
-                                        name="quality"
-                                        onChange={setQualityValue}
-                                        checked={quality === value}
-                                        required
-                                    />
-                                    <span className={styles.label}>{label[locale]}</span>
-                                </label>
-                            ))}
+                            <div className={styles.qualities}>
+                                {contributionTypeQualities.map(
+                                    ({ value, label, color }, qualityIndex) => (
+                                        <label key={`quality-${qualityIndex}`}>
+                                            <input
+                                                type="radio"
+                                                value={value}
+                                                name="quality"
+                                                onChange={setQualityValue}
+                                                checked={quality === value}
+                                                required
+                                            />
+                                            <span
+                                                className={styles.bullet}
+                                                style={{ backgroundColor: color }}
+                                            />
+                                            <span className={styles.label}>{label[locale]}</span>
+                                        </label>
+                                    ),
+                                )}
+                            </div>
                         </FormGroup>
                     ) : null}
-                    {nameCookie.length === 0 ? (
-                        <FormGroup
-                            className={styles.name}
-                            label={intl.formatMessage({ id: 'name' })}
-                        >
-                            <input
-                                type="text"
-                                value={name}
-                                placeholder={intl.formatMessage({ id: 'name-placeholder' })}
-                                onChange={setNameValue}
-                            />
-                        </FormGroup>
-                    ) : null}
+                    <FormGroup className={styles.name} label={intl.formatMessage({ id: 'name' })}>
+                        <input
+                            type="text"
+                            value={name}
+                            placeholder={intl.formatMessage({ id: 'name-placeholder' })}
+                            onChange={setNameValue}
+                        />
+                    </FormGroup>
                     <FormGroup
                         className={styles.comment}
                         label={intl.formatMessage({ id: 'comment' })}

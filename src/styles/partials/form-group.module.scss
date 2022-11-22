@@ -4,8 +4,15 @@
 .container {
     padding-bottom: 15px;
 
+    .label, legend {
+        font-size: 14px;
+    }
+
     .label {        
         padding-bottom: 10px;
-        font-size: 14px;
+    }
+
+    .fieldsetContent {
+        padding: 10px;
     }
 }

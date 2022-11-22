@@ -9,14 +9,15 @@
     "add-contribution": "Ajouter une contribution",
     "add-contribution-title": "Ajouter une contribution à la carte",
     "close": "Fermer",
+    "cancel": "Annuler",
     "previous": "Précédent",
     "next": "Suivant",
     "back": "Retour",
     "continue": "Continuer",
     "publish": "Publier",
-    "position-info": "Positionner l'information",
+    "position-info": "Confirmez la position",
     "loading": "Chargement",
-    "pavement-condition": "État de la chaussée",
+    "quality": "État de la chaussée",
     "positive": "Positive",
     "neutral": "Neutre",
     "negative": "Négative",
@@ -42,5 +43,6 @@
     "no-comments": "Aucun commentaire",
     "reported": "Signalé",
     "voted": "Voté",
-    "replied": "Répondu"
+    "replied": "Répondu",
+    "ok": "OK"
 }

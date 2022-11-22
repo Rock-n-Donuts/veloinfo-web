@@ -21,6 +21,7 @@
     }
 
     .map {
+        pointer-events: none;
         height: 200px;
 
         @media only screen and (min-width: 800px) {
@@ -32,10 +33,6 @@
         position: absolute;
         bottom: 50%;
         left: 50%;
-        pointer-events: none;
-        opacity: 0;
-        transform: translateY(-25%);
-        transition: opacity 0.2s ease, transform 0.2s ease;
 
         .icon {
             width: 60px;
@@ -43,12 +40,32 @@
         }
     }
 
+    .qualities {
+        padding: 10px;
+        border: 1px solid #a5a5a5;
+        border-radius: 5px;
+    }
+
     .quality {
         label {
+            position: relative;
             display: inline-flex;
             align-items: center;
             margin-right: 20px;
             cursor: pointer;
+        }
+
+        .bullet {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.15em;
+            height: 1.15em;
+            border-radius: 50%;
+            background-color: black;
+            transform: scale(0);
+            transition: 0.2s transform ease;
         }
 
         input {
@@ -57,19 +74,11 @@
             width: 1.15em;
             height: 1.15em;
             cursor: pointer;
-
-            &::before {
-                content: '';
-                @extend %fullscreen;
-                border-radius: 50%;
-                background-color: black;
-                transform: scale(0);
-                transition: 0.2s transform ease;
-            }
+            border-width: 2px;
 
             &:checked {
-                &::before {
-                    transform: scale(0.6);
+                & + .bullet {
+                    transform: scale(0.5);
                 }
             }
         }
@@ -77,7 +86,7 @@
 
     .name,
     .comment {
-        margin-bottom: 20px;
+        padding-bottom: 20px;
 
         input, textarea {
             display: block;
@@ -125,10 +134,13 @@
         }
 
         .backButton {
+            display: none;
             margin-right: auto;
         }
+
         .submitButton {
             margin-left: auto;
+            background-color: $color-green;
         }
     }
 
@@ -166,13 +178,6 @@
 
         .success {
             opacity: 0.25;
-        }
-    }
-
-    &.showMarker {
-        .mapMarker {
-            transform: translateY(0);
-            opacity: 1;
         }
     }
 }

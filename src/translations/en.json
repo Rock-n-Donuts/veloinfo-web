@@ -9,14 +9,15 @@
     "add-contribution": "Add a contribution",
     "add-contribution-title": "Add a contribution to the map",
     "close": "Close",
+    "cancel": "Cancel",
     "previous": "Previous",
     "next": "Next",
     "back": "Back",
     "continue": "Continue",
     "publish": "Publish",
-    "position-info": "Position info",
+    "position-info": "Confirm position",
     "loading": "Loading",
-    "pavement-condition": "Pavement condition",
+    "quality": "Pavement condition",
     "positive": "Positive",
     "neutral": "Neutral",
     "negative": "Negative",
@@ -42,5 +43,6 @@
     "no-comments": "No comments",
     "reported": "Reported",
     "voted": "Voted",
-    "replied": "Replied"
+    "replied": "Replied",
+    "ok": "OK"
 }

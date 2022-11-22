@@ -52,29 +52,4 @@
         max-width: 800px;
         margin: 0 auto;
     }
-
-    .contributionTypeSelector {
-        opacity: 1;
-        transition: opacity 0.2s 0.2s ease;
-    }
-
-    .contributionForm {
-        opacity: 0;
-        transition: opacity 0.2s ease;
-        pointer-events: none;
-    }
-
-    &.formActive {
-        .contributionTypeSelector {
-            pointer-events: none;
-            opacity: 0;
-            transition-delay: 0s;
-        }
-
-        .contributionForm {
-            opacity: 1;
-            pointer-events: auto;
-            transition-delay: 0.2s;
-        }
-    }
 }

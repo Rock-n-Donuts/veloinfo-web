@@ -1,12 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
 
-import ContributionTypeSelector from './ContributionTypeSelector';
 import CloseButton from '../buttons/Close';
 import ContributionForm from '../forms/ContributionForm';
-import categories from '../../data/contributions-types.json';
 
 import styles from '../../styles/partials/add-contribution.module.scss';
 
@@ -23,51 +21,14 @@ const defaultProps = {
 };
 
 function AddContribution({ className, onClose, onContributionAdded }) {
-    const [categoryIndexSelected, setCategoryIndexSelected] = useState(null);
-    const [contributionTypeSelected, setContributionTypeSelected] = useState(null);
-    const [formActive, setFormActive] = useState(false);
-
-    const selectContributionType = useCallback(
-        (contributionType) => {
-            setContributionTypeSelected(contributionType);
-            if (contributionType !== null) {
-                setFormActive(true);
-            }
-        },
-        [setContributionTypeSelected, setFormActive],
-    );
-
-    const selectCategory = useCallback(
-        (categoryIndex) => {
-            const category = categories[categoryIndex];
-            const { id = null, contributions = null } = category || {};
-
-            if (id !== null && contributions === null) {
-                selectContributionType(category);
-            } else {
-                setCategoryIndexSelected(categoryIndex);
-                selectContributionType(null);
-            }
-        },
-        [setCategoryIndexSelected, selectContributionType],
-    );
-
-    const hideForm = useCallback(() => {
-        setFormActive(false);
-        setCategoryIndexSelected(null);
-        setTimeout(() => {
-            setContributionTypeSelected(null);
-        }, 250);
-    }, [setFormActive]);
 
     const onContributionSubmitted = useCallback(
         (contribution) => {
             if (onContributionAdded !== null) {
-                setContributionTypeSelected(null);
                 onContributionAdded(contribution);
             }
         },
-        [setContributionTypeSelected, onContributionAdded],
+        [onContributionAdded],
     );
 
     return (
@@ -76,7 +37,6 @@ function AddContribution({ className, onClose, onContributionAdded }) {
                 styles.container,
                 {
                     [className]: className !== null,
-                    [styles.formActive]: formActive,
                 },
             ])}
         >
@@ -87,21 +47,9 @@ function AddContribution({ className, onClose, onContributionAdded }) {
                     </div>
                 </div>
                 <div className={styles.pages}>
-                    <div className={classNames([styles.page, styles.contributionTypeSelector])}>
-                        <ContributionTypeSelector
-                            className={styles.pageContent}
-                            categoryIndexSelected={categoryIndexSelected}
-                            selected={contributionTypeSelected}
-                            onSelect={selectContributionType}
-                            onSelectCategory={selectCategory}
-                        />
-                    </div>
-                    <div className={classNames([styles.page, styles.contributionForm])}>
+                    <div className={classNames([styles.page])}>
                         <ContributionForm
-                            active={formActive}
                             className={styles.pageContent}
-                            contributionType={contributionTypeSelected}
-                            onBack={hideForm}
                             onSuccess={onContributionSubmitted}
                         />
                     </div>

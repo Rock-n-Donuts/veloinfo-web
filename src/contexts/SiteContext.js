@@ -1,11 +1,19 @@
 import Cookies from 'js-cookie';
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 const SiteContext = createContext();
 
-export const SiteProvider = ({ children }) => {
+const getDefaultContribution = () => {
+    return {
+        name: Cookies.get('name') || null,
+    };
+};
 
-    const [locale, setLocale] = useState(Cookies.get('locale') || navigator.language.split(/[-_]/)[0]);
+export const SiteProvider = ({ children }) => {
+    const [locale, setLocale] = useState(
+        Cookies.get('locale') || navigator.language.split(/[-_]/)[0],
+    );
+    const [userContributions, setUserContributions] = useState([]);
 
     useEffect(() => {
         Cookies.set('locale', locale);
@@ -16,6 +24,8 @@ export const SiteProvider = ({ children }) => {
             value={{
                 locale,
                 setLocale,
+                userContributions,
+                setUserContributions,
             }}
         >
             {children}
@@ -39,6 +49,83 @@ export const useLocale = () => {
 export const useSetLocale = () => {
     const { setLocale } = useSite();
     return setLocale;
+};
+
+export const useUserContributions = () => {
+    const { userContributions } = useSite();
+    return userContributions;
+};
+
+export const useUserContribution = (index) => {
+    const { userContributions } = useSite();
+    const contribution = useMemo(
+        () => (userContributions.length > index ? userContributions[index] : null),
+        [userContributions, index],
+    );
+    return contribution;
+};
+
+export const useUserCurrentContribution = () => {
+    const { userContributions } = useSite();
+    const contribution = useMemo(
+        () => (userContributions.length > 0 ? userContributions[0] : null),
+        [userContributions],
+    );
+    return contribution;
+};
+
+export const useAddUserContribution = () => {
+    const { setUserContributions } = useSite();
+    const cb = useCallback(
+        (contribution = {}) => {
+            setUserContributions((old) => [...old, { ...getDefaultContribution(), ...contribution }]);
+        },
+        [setUserContributions],
+    );
+    return cb;
+};
+
+export const useCancelUserContributions = () => {
+    const { setUserContributions } = useSite();
+    const cb = useCallback(() => {
+        setUserContributions([]);
+    }, [setUserContributions]);
+    return cb;
+};
+
+export const useCompleteUserContribution = () => {
+    const { setUserContributions } = useSite();
+    const cb = useCallback(() => {
+        setUserContributions(old => {
+            if (old && old.length > 0) {
+                const { name = null } = old[0];
+                if (name !== null && name.length > 0) {
+                    Cookies.set('name', name, { expires: 3650 });
+                }  
+                return old.slice(1);
+            }
+            return [];
+        });
+    }, [setUserContributions]);
+    return cb;
+};
+
+export const useUserUpdateContribution = (contributionIndex = null) => {
+    const { setUserContributions } = useSite();
+    const cb = useCallback(
+        (update, index = null) => {
+            const finalIndex = index !== null ? index : contributionIndex;
+            setUserContributions((old) => {
+                const { [finalIndex || 0]: userContribution } = old;                              
+                return [
+                    { ...getDefaultContribution(), ...userContribution, ...update },
+                    ...old.slice(finalIndex !== null ? finalIndex + 1 : 1),
+                ];
+            });
+        },
+        [setUserContributions, contributionIndex],
+    );
+    return cb;
 };
 
 export default SiteContext;
