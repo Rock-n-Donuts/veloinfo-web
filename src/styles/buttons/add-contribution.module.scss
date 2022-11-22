@@ -50,8 +50,6 @@
         border-width: 2px;
         border-style: solid;
         border-radius: 10px;
-
-        overflow: hidden;
     }
 
     .iconContainer {
@@ -109,7 +107,6 @@
     &.typeSelected {
         .types {
             pointer-events: none;
-            // opacity: 0;
 
             .type {
                 &.selected {
@@ -118,7 +115,6 @@
 
                 &:not(.selected) {
                     height: 0;
-                    // transition-delay: 0.15s;
 
                     .typeContent {
                         opacity: 0;
