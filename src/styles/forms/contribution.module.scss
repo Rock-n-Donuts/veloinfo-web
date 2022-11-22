@@ -20,7 +20,12 @@
         position: relative;
     }
 
+    .mapContent {
+        position: relative;
+    }
+
     .map {
+        position: relative;
         pointer-events: none;
         height: 200px;
 
@@ -30,14 +35,29 @@
     }
 
     .mapMarker {
+        pointer-events: none;
         position: absolute;
         bottom: 50%;
         left: 50%;
 
         .icon {
+            position: absolute;
+            bottom: 0;
             width: 60px;
             transform: translateX(-50%);
         }
+    }
+
+    .toggleMinimapEnable {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        padding: 10px;
+        color: $color-blue;
+        background-color: $color-white;
+        border-radius: 5px;
+        border: 1px solid #CCC;
+        font-size: 1.5em;
     }
 
     .qualities {
@@ -178,6 +198,16 @@
 
         .success {
             opacity: 0.25;
+        }
+    }
+
+    &.minimapEnabled {
+        .map {
+            pointer-events: auto;
+        }
+
+        .toggleMinimapEnable {
+            color: $color-orange;
         }
     }
 }

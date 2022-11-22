@@ -3,8 +3,14 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faUnlock } from '@fortawesome/free-solid-svg-icons';
 
-import { useCompleteUserContribution, useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
+import {
+    useCompleteUserContribution,
+    useUserCurrentContribution,
+    useUserUpdateContribution,
+} from '../../contexts/SiteContext';
 import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from '../partials/FormGroup';
 import ImageUpload from '../partials/ImageUpload';
@@ -19,15 +25,17 @@ const propTypes = {
     className: PropTypes.string,
     onBack: PropTypes.func,
     onSuccess: PropTypes.func,
+    onMapCenterChanged: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
     onBack: null,
     onSuccess: null,
+    onMapCenterChanged: null,
 };
 
-function ContributionForm({ className, onBack, onSuccess }) {
+function ContributionForm({ className, onBack, onSuccess, onMapCenterChanged }) {
     const intl = useIntl();
     const { locale } = intl;
     const captchaRef = useRef();
@@ -35,6 +43,7 @@ function ContributionForm({ className, onBack, onSuccess }) {
     const userCurrentContribution = useUserCurrentContribution();
     const updateContribution = useUserUpdateContribution();
     const completeUserContribution = useCompleteUserContribution();
+    const [minimapEnabled, setMinimapEnabled] = useState(false);
 
     const {
         type = null,
@@ -60,6 +69,8 @@ function ContributionForm({ className, onBack, onSuccess }) {
     const [errors, setErrors] = useState(null);
     const [success, setSuccess] = useState(false);
 
+    const toggleMinimapEnable = useCallback(() => setMinimapEnabled((old) => !old), []);
+
     const setQualityValue = useCallback(
         (e) => updateContribution({ quality: parseInt(e.target.value) }),
         [updateContribution],
@@ -76,7 +87,7 @@ function ContributionForm({ className, onBack, onSuccess }) {
         (photo) => updateContribution({ photo }),
         [updateContribution],
     );
-    
+
     const resetForm = useCallback(() => {
         captchaRef.current.reset();
         completeUserContribution();
@@ -180,14 +191,20 @@ function ContributionForm({ className, onBack, onSuccess }) {
                     [className]: className !== null,
                     [styles.loading]: loading,
                     [styles.success]: success,
+                    [styles.minimapEnabled]: minimapEnabled,
                 },
             ])}
         >
             <form className={styles.form} onSubmit={submit}>
                 <div className={styles.content}>
-                    <FormGroup label={intl.formatMessage({ id: 'position-info' })}>
-                        <div className={styles.mapContainer}>
-                            <Map className={styles.map} mapCenter={coords} zoom={18} disableInteractions />
+                    <FormGroup className={styles.mapContainer} label={intl.formatMessage({ id: 'position-info'})}>
+                        <div className={styles.mapContent}>
+                            <Map
+                                className={styles.map}
+                                mapCenter={coords}
+                                zoom={18}
+                                onCenterChanged={onMapCenterChanged}
+                            />
                             <div className={styles.mapMarker}>
                                 <ContributionIcon
                                     className={styles.icon}
@@ -195,6 +212,9 @@ function ContributionForm({ className, onBack, onSuccess }) {
                                     color={iconColor}
                                 />
                             </div>
+                            <button className={styles.toggleMinimapEnable} type="button" onClick={toggleMinimapEnable}>
+                                <FontAwesomeIcon icon={minimapEnabled ? faUnlock : faLock } />
+                            </button>
                         </div>
                     </FormGroup>
                     {contributionTypeQualities !== null ? (

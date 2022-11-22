@@ -12,6 +12,8 @@
         transition: transform .2s ease-in;
 
         .icon {
+            position: absolute;
+            bottom: 0;
             width: 80px;
             transform: translateX(-50%);
         }

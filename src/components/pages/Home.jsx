@@ -37,6 +37,18 @@ function HomePage() {
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
 
+    const mapCenter = useMemo(() => {
+        const cookieCenter = Cookie.get('mapCenter') || null;
+        return cookieCenter !== null ? JSON.parse(cookieCenter) : [-73.561668, 45.508888];
+    }, []);
+    const lastMapCenter = useRef(mapCenter);
+    const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
+    
+    const mapZoom = useMemo(() => {
+        const cookieZoom = Cookie.get('mapZoom') || null;
+        return cookieZoom !== null ? parseFloat(cookieZoom) : 15;
+    }, []);
+
     const updateContribution = useUpdateContribution();
     const userUpdateContribution = useUserUpdateContribution();
 
@@ -57,21 +69,9 @@ function HomePage() {
     }, [setAddContributionOpened]);
 
     const closeAddContribution = useCallback(() => {
+        setMainMapCenter(lastMapCenter.current);
         setAddContributionOpened(false);
     }, [setAddContributionOpened]);
-
-
-    const mapCenter = useMemo(() => {
-        const cookieCenter = Cookie.get('mapCenter') || null;
-        return cookieCenter !== null ? JSON.parse(cookieCenter) : [-73.561668, 45.508888];
-    }, []);
-    const lastMapCenter = useRef(mapCenter);
-    
-    const mapZoom = useMemo(() => {
-        const cookieZoom = Cookie.get('mapZoom') || null;
-        return cookieZoom !== null ? parseFloat(cookieZoom) : 15;
-    }, []);
-
 
     const storeCenter = useCallback(
         (center) => {
@@ -145,7 +145,7 @@ function HomePage() {
                     className={styles.map}
                     lines={lines}
                     markers={markers}
-                    mapCenter={mapCenter}
+                    mapCenter={mainMapCenter}
                     zoom={mapZoom}
                     onCenterChanged={storeCenter}
                     onZoomChanged={storeZoom}
@@ -162,6 +162,7 @@ function HomePage() {
                 key={contributionKey}
                 className={styles.addContribution}
                 onClose={closeAddContribution}
+                onMapCenterChanged={storeCenter}
                 onContributionAdded={onContributionAdded}
             />
             <div className={styles.contributionDetailsContainer}>

@@ -12,15 +12,17 @@ const propTypes = {
     className: PropTypes.string,
     onClose: PropTypes.func,
     onContributionAdded: PropTypes.func,
+    onMapCenterChanged: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
     onClose: null,
     onContributionAdded: null,
+    onMapCenterChanged: null,
 };
 
-function AddContribution({ className, onClose, onContributionAdded }) {
+function AddContribution({ className, onClose, onContributionAdded, onMapCenterChanged }) {
 
     const onContributionSubmitted = useCallback(
         (contribution) => {
@@ -51,6 +53,7 @@ function AddContribution({ className, onClose, onContributionAdded }) {
                         <ContributionForm
                             className={styles.pageContent}
                             onSuccess={onContributionSubmitted}
+                            onMapCenterChanged={onMapCenterChanged}
                         />
                     </div>
                 </div>
