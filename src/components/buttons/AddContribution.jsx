@@ -74,7 +74,14 @@ function AddContributionButton({ className, onNext }) {
                             key={`type-${typeIndex}`}
                             className={classNames([styles.type, { [styles.selected]: selected }])}
                         >
-                            <div className={styles.typeContent}>
+                            <div
+                                className={styles.typeContent}
+                                style={{
+                                    transitionDelay: `${
+                                        (validTypes.length - 1 - typeIndex) * 0.03
+                                    }s`,
+                                }}
+                            >
                                 <button
                                     onClick={() => {
                                         updateContributionType(id);
@@ -82,9 +89,6 @@ function AddContributionButton({ className, onNext }) {
                                     className={styles.typeButton}
                                     style={{
                                         borderColor: color,
-                                        transitionDelay: `${
-                                            (validTypes.length - 1 - typeIndex) * 0.05
-                                        }s`,
                                     }}
                                 >
                                     <span

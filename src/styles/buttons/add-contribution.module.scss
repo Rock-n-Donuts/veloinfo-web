@@ -19,7 +19,7 @@
     .type {
         position: relative;
         height: 51px;
-        transition: height 0.35s 0.1s ease;
+        transition: height 0.35s ease;
 
         &:last-child {
             .typeContent {
@@ -32,7 +32,7 @@
         padding-bottom: 5px;
         opacity: 0;
         transform: translateY(10px);
-        transition: opacity 0.25s ease, transform 0.25s ease;
+        transition: opacity 0.3s ease-in, transform 0.25s ease;
     }
 
     .typeButton {
@@ -101,16 +101,20 @@
     }
 
     &.typeSelected {
-        .types {
-            .type {
-                &:not(.selected) {
-                    height: 0;
+        .type {
+            transition: height 0.35s 0.1s ease;
 
-                    .typeContent {
-                        opacity: 0;
-                    }
+            &:not(.selected) {
+                height: 0;
+
+                .typeContent {
+                    opacity: 0;
                 }
             }
+        }
+
+        .typeContent {
+            transition: opacity 0.25s ease, transform 0.25s ease;
         }
 
         .nextButton {
