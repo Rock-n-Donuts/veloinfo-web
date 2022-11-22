@@ -20,7 +20,7 @@ import Loading from './Loading';
 
 import styles from '../../styles/partials/map.module.scss';
 
-const isDev = process.env.NODE_ENV === 'development';
+const isDev = process.env.NODE_ENV !== 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
 const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 const defaultMapCenter = [-73.561668, 45.508888];
