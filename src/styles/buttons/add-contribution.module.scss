@@ -42,6 +42,8 @@
     }
 
     .typeButton {
+        position: relative;
+        overflow: hidden;
         display: flex;
         width: 100%;
         align-items: center;
@@ -52,6 +54,7 @@
     }
 
     .iconContainer {
+        display: block;
         padding: 6px;
     }
 
