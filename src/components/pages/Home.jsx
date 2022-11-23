@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
@@ -24,9 +25,10 @@ import ReportLinksButton from '../buttons/ReportLinks';
 import styles from '../../styles/pages/home.module.scss';
 
 function HomePage() {
+    const { id: selectedContributionId = null } = useParams();
+    const navigate = useNavigate();
     const [menuOpened, setMenuOpened] = useState(false);
     const [addContributionOpened, setAddContributionOpened] = useState(false);
-    const [selectedContributionId, setSelectedContributionId] = useState(null);
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
 
@@ -44,7 +46,7 @@ function HomePage() {
     }, []);
     const lastMapCenter = useRef(mapCenter);
     const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
-    
+
     const mapZoom = useMemo(() => {
         const cookieZoom = Cookie.get('mapZoom') || null;
         return cookieZoom !== null ? parseFloat(cookieZoom) : null;
@@ -85,7 +87,7 @@ function HomePage() {
         [hasUserCurrentContribution, userUpdateContribution],
     );
 
-    useEffect( () => {
+    useEffect(() => {
         if (hasUserCurrentContribution) {
             userUpdateContribution({ coords: lastMapCenter.current });
         }
@@ -95,14 +97,20 @@ function HomePage() {
         Cookie.set('mapZoom', zoom, { expires: 3650 });
     }, []);
 
-    const onMapMoved = useCallback(({ zoom, center }) => {
-        storeCenter(center);
-        storeZoom(zoom);
-    }, [storeCenter, storeZoom]);
+    const onMapMoved = useCallback(
+        ({ zoom, center }) => {
+            storeCenter(center);
+            storeZoom(zoom);
+        },
+        [storeCenter, storeZoom],
+    );
 
-    const onMinimapMoved = useCallback(({ center }) => {
-        storeCenter(center);
-    }, [storeCenter]);
+    const onMinimapMoved = useCallback(
+        ({ center }) => {
+            storeCenter(center);
+        },
+        [storeCenter],
+    );
 
     const onContributionAdded = useCallback(
         (contribution) => {
@@ -119,29 +127,29 @@ function HomePage() {
 
     const selectContribution = useCallback(
         ({ id }) => {
-            setSelectedContributionId(id);
+            navigate(`/contribution/${id}`);
         },
-        [setSelectedContributionId],
+        [navigate],
     );
 
     const unselectContribution = useCallback(() => {
-        setSelectedContributionId(null);
-    }, [setSelectedContributionId]);
+        navigate('/');
+    }, [navigate]);
 
     const transitionNodeRef = useRef(null);
     const [contributionDetailsActive, setContributionDetailsActive] = useState(false);
 
     const onContributionDetailsSafeClick = useCallback(() => {
-        if (contributionDetailsActive) {
+        if (contributionDetailsActive || contributionSelected === null) {
             unselectContribution();
         }
-    }, [contributionDetailsActive, unselectContribution]);
+    }, [contributionDetailsActive, unselectContribution, contributionSelected]);
 
     const [reportLinksOpened, setReportLinksOpened] = useState(false);
-    const openReportLinks = useCallback( () => {
+    const openReportLinks = useCallback(() => {
         setReportLinksOpened(true);
     }, []);
-    const closeReportLinks = useCallback( () => {
+    const closeReportLinks = useCallback(() => {
         setReportLinksOpened(false);
     }, []);
 

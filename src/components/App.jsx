@@ -34,6 +34,7 @@ function App() {
             <MainLayout>
                 <Routes>
                     <Route path="/" exact element={<HomePage />} />
+                    <Route path="/contribution/:id" exact element={<HomePage />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </MainLayout>
