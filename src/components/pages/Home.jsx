@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
@@ -12,6 +13,7 @@ import {
     useReady,
 } from '../../contexts/DataContext';
 import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
+import Meta from '../partials/Meta';
 import Map from '../partials/Map';
 import MapHeader from '../partials/MapHeader';
 import AddContribution from '../partials/AddContribution';
@@ -25,6 +27,7 @@ import ReportLinksButton from '../buttons/ReportLinks';
 import styles from '../../styles/pages/home.module.scss';
 
 function HomePage() {
+    const intl = useIntl();
     const { id: selectedContributionId = null } = useParams();
     const initialSelectedContributionId = useRef(selectedContributionId);
 
@@ -195,6 +198,11 @@ function HomePage() {
                 },
             ])}
         >
+            <Meta
+                title={intl.formatMessage({ id: 'app-title' })}
+                description={intl.formatMessage({ id: 'app-description' })}
+                image="/og-image.jpg"
+            />
             <MapHeader className={styles.mapHeader} onTogglerClick={toggleMenu} />
             <div className={styles.mapContainer}>
                 <Map
