@@ -1,17 +1,18 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import CloseButton from '../buttons/Close';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { isAfter, parseISO } from 'date-fns';
 
 import { useUpdateContribution } from '../../contexts/DataContext';
+import Meta from './Meta';
 import ContributionReply from './ContributionReply';
 import CommentsIcon from '../../icons/Comments';
 import contributionTypesIcons from '../../icons/contributions';
-import { getRelativeTime } from '../../lib/utils';
+import { getRelativeTime, parseDate } from '../../lib/utils';
 import ReplyForm from '../forms/ReplyForm';
 import contributionTypes from '../../data/contribution-types.json';
 
@@ -131,6 +132,17 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     const { label: lastActionLabel = null, author: lastActionAuthor = null } = lastAction || {};
 
     const [now, setNow] = useState(new Date());
+    const createdAtParsedTime = useMemo(
+        () =>
+            intl.formatDate(parseDate(created_at), {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+            }),
+        [intl, created_at],
+    );
     const createdAtRelativeTime = useMemo(
         () => getRelativeTime(locale, created_at),
         [locale, created_at],
@@ -224,7 +236,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         [id, updateContribution, setFormKey],
     );
 
-    const { width: imageWidth = null, height: imageHeight = null } = image || {};
+    const { url: imageUrl, width: imageWidth = null, height: imageHeight = null } = image || {};
 
     const finalImageUrl = useMemo(() => {
         const { url, is_external = false } = image || {};
@@ -244,6 +256,13 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         >
             {contribution !== null ? (
                 <div className={styles.content}>
+                    <Meta
+                        title={`${createdAtParsedTime} - ${contributionTypeLabel[locale]} #${id}`}
+                        description={`${comment}${
+                            name !== null && name.length > 0 ? ` - ${name}` : ``
+                        }`}
+                        image={imageUrl}
+                    />
                     <div
                         className={styles.contributionType}
                         style={{ backgroundColor: finalContributionColor }}
@@ -262,7 +281,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                                     <FormattedMessage id="reported" />
                                 </span>
                                 <span> </span>
-                                {createdAtRelativeTime}
+                                <span title={createdAtParsedTime}>{createdAtRelativeTime}</span>
                                 {name !== null && name.length > 0 ? (
                                     <span className={styles.authorName}> - {name}</span>
                                 ) : null}

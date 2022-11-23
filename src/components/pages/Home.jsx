@@ -26,6 +26,8 @@ import styles from '../../styles/pages/home.module.scss';
 
 function HomePage() {
     const { id: selectedContributionId = null } = useParams();
+    const initialSelectedContributionId = useRef(selectedContributionId);
+
     const navigate = useNavigate();
     const [menuOpened, setMenuOpened] = useState(false);
     const [addContributionOpened, setAddContributionOpened] = useState(false);
@@ -152,6 +154,32 @@ function HomePage() {
     const closeReportLinks = useCallback(() => {
         setReportLinksOpened(false);
     }, []);
+
+    const initialSelectedContribution = useMemo(
+        () =>
+            contributionSelected !== null &&
+            `${contributionSelected.id}` === `${initialSelectedContributionId.current}`
+                ? contributionSelected
+                : null,
+        [contributionSelected],
+    );
+    useEffect(() => {
+        if (initialSelectedContribution !== null) {
+            const { coords = null } = initialSelectedContribution || {};
+            if (coords !== null) {
+                setMainMapCenter(coords);
+            }
+        }
+    }, [initialSelectedContribution]);
+
+    // useEffect(() => {
+    //     if (contributionSelected !== null) {
+    //         const { coords = null } = contributionSelected || {};
+    //         if (coords !== null) {
+    //             setMainMapCenter(coords);
+    //         }
+    //     }
+    // }, [contributionSelected]);
 
     return (
         <div
