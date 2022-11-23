@@ -72,14 +72,13 @@
         position: relative;
         display: flex;
         align-items: center;
-        margin: 10px -5px 0;
+        margin-top: 10px;
 
         button {
             padding: 10px;
             min-width: 100px;
             color: $color-white;
             border-radius: 5px;
-            margin: 0 5px;
         }
     }
 

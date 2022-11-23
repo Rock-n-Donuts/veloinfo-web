@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
@@ -12,18 +12,40 @@ import styles from '../../styles/buttons/report-links.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    opened: PropTypes.bool,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
+    opened: false,
+    onOpen: null,
+    onClose: null,
 };
 
-function ReportLinksButton({ className }) {
+function ReportLinksButton({ className, opened, onOpen, onClose }) {
     const { locale } = useIntl();
 
-    const [opened, setOpened] = useState(false);
+    const open = useCallback( () => {
+        if (onOpen !== null) {
+            onOpen();
+        }
+    }, [onOpen]);
 
-    const onToggleOpen = useCallback(() => setOpened((old) => !old), []);
+    const close = useCallback( () => {
+        if (onClose !== null) {
+            onClose();
+        }
+    }, [onClose]);
+
+    const toggleOpen = useCallback(() => {
+        if (opened) {
+            close();
+        } else {
+            open();
+        }
+    }, [opened, open, close]);
 
     return (
         <div
@@ -54,6 +76,7 @@ function ReportLinksButton({ className }) {
                                     target="_blank"
                                     rel="noreferrer"
                                     className={styles.link}
+                                    onClick={close}
                                     style={{
                                         borderColor: color,
                                     }}
@@ -77,7 +100,7 @@ function ReportLinksButton({ className }) {
                 })}
             </div>
             <div className={styles.actions}>
-                <button type="button" className={styles.toggleOpenButton} onClick={onToggleOpen}>
+                <button type="button" className={styles.toggleOpenButton} onClick={toggleOpen}>
                     <FormattedMessage id={opened ? 'cancel' : 'report'} />
                 </button>
             </div>

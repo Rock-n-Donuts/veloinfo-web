@@ -5,6 +5,7 @@
     display: flex;
     align-items: stretch;
     height: 50px;
+    z-index: 0;
 
     & > * {
         display: flex;
@@ -33,11 +34,11 @@
         width: 50px;
     }
 
-    // .timeFilter {
-        
-    // }
+    .timeFilter {
+        z-index: 1;
+    }
 
-    // .layersFilter {
-        
-    // }
+    .layersFilter {
+        z-index: 0;
+    }
 }

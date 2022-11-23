@@ -1,7 +1,7 @@
 [
     {
         "icon": "parking",
-        "color": "#000",
+        "color": "#f09035",
         "link": {
             "fr": "https://montreal.ca/demarches/demander-linstallation-dun-support-velo",
             "en": "https://montreal.ca/en/how-to/request-installation-bicycle-rack"
@@ -13,7 +13,7 @@
     },
     {
         "icon": "warning",
-        "color": "#000",
+        "color": "#f09035",
         "link": {
             "fr": "https://montreal.ca/requetes311/signaler-nid-poule/emplacement",
             "en": "https://montreal.ca/en/how-to/report-pothole"
@@ -25,7 +25,7 @@
     },
     {
         "icon": "snow",
-        "color": "#000",
+        "color": "#f09035",
         "link": {
             "fr": "https://montreal.ca/demarches/signaler-un-probleme-de-deneigement",
             "en": "https://montreal.ca/en/how-to/report-snow-removal-issue"

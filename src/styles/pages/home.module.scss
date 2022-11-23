@@ -34,12 +34,18 @@
         position: absolute;
         bottom: 10px;
         right: 10px;
+        z-index: 2;
+        opacity: 1;
+        transition: opacity 0.25s ease;
     }
 
     .reportLinksButton {
         position: absolute;
         bottom: 10px;
         left: 10px;
+        z-index: 1;
+        opacity: 1;
+        transition: opacity 0.25s ease;
     }
 
     .homeMenu {
@@ -150,6 +156,20 @@
         .addContribution {
             transform: translateY(-100%);
             transition-timing-function: ease-in;
+        }
+    }
+
+    &.hasUserCurrentContribution {
+        .reportLinksButton {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    &.reportLinksOpened {
+        .addContributionButton {
+            opacity: 0;
+            pointer-events: none;
         }
     }
 }

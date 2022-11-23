@@ -19,9 +19,9 @@ import Loading from '../partials/Loading';
 import ContributionDetails from '../partials/ContributionDetails';
 import ContributionCoordsSelector from '../partials/ContributionCoordsSelector';
 import AddContributionButton from '../buttons/AddContribution';
+import ReportLinksButton from '../buttons/ReportLinks';
 
 import styles from '../../styles/pages/home.module.scss';
-import ReportLinksButton from '../buttons/ReportLinks';
 
 function HomePage() {
     const [menuOpened, setMenuOpened] = useState(false);
@@ -137,15 +137,25 @@ function HomePage() {
         }
     }, [contributionDetailsActive, unselectContribution]);
 
+    const [reportLinksOpened, setReportLinksOpened] = useState(false);
+    const openReportLinks = useCallback( () => {
+        setReportLinksOpened(true);
+    }, []);
+    const closeReportLinks = useCallback( () => {
+        setReportLinksOpened(false);
+    }, []);
+
     return (
         <div
             className={classNames([
                 styles.container,
                 {
                     [styles.menuOpened]: menuOpened,
-                    [styles.contributionSelected]: isContributionSelected,
+                    [styles.reportLinksOpened]: reportLinksOpened,
+                    [styles.hasUserCurrentContribution]: hasUserCurrentContribution,
                     [styles.addContributionOpened]: addContributionOpened,
                     [styles.contributionSubmited]: contributionSubmited,
+                    [styles.contributionSelected]: isContributionSelected,
                 },
             ])}
         >
@@ -168,6 +178,9 @@ function HomePage() {
             />
             <ReportLinksButton
                 className={styles.reportLinksButton}
+                opened={reportLinksOpened}
+                onOpen={openReportLinks}
+                onClose={closeReportLinks}
             />
             <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
             <AddContribution
