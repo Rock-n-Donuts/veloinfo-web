@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import { useUserCurrentContribution } from '../../contexts/SiteContext';
 import ContributionIcon from '../../icons/Contribution';
-import contributionsTypes from '../../data/contributions-types.json';
+import contributionTypes from '../../data/contribution-types.json';
 
 import styles from '../../styles/partials/contribution-coords-selector.module.scss';
 
@@ -20,7 +20,7 @@ function ContributionCoordsSelector({ className }) {
     const userContribution = useUserCurrentContribution();
     const { type = null } = userContribution || {};
     const contributionType = useMemo(
-        () => contributionsTypes.find(({ id }) => id === type),
+        () => contributionTypes.find(({ id }) => id === type),
         [type],
     );
     const { icon, color } = contributionType || {};

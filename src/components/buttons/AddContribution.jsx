@@ -10,7 +10,7 @@ import {
     useUserUpdateContribution,
 } from '../../contexts/SiteContext';
 import ContributionIcon from '../../icons/Contribution';
-import contributionsTypes from '../../data/contributions-types.json';
+import contributionTypes from '../../data/contribution-types.json';
 
 import styles from '../../styles/buttons/add-contribution.module.scss';
 
@@ -35,7 +35,7 @@ function AddContributionButton({ className, onNext }) {
     const cancelContribution = useCancelUserContributions();
 
     const validTypes = useMemo(
-        () => contributionsTypes.filter(({ disableAdd }) => !disableAdd),
+        () => contributionTypes.filter(({ disableAdd }) => !disableAdd),
         [],
     );
 

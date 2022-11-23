@@ -1,0 +1,23 @@
+[
+    {
+        "key": "winter-protected",
+        "label": {
+            "fr": "Tronçons 4 saisons protégés",
+            "en": "Protected 4 seasons sections"
+        }
+    },
+    {
+        "key": "winter",
+        "label": {
+            "fr": "Tronçons 4 saisons",
+            "en": "4 seasons sections"
+        }
+    },
+    {
+        "key": "uncleared",
+        "label": {
+            "fr": "Tronçons non déblayés",
+            "en": "Uncleared sections"
+        }
+    }
+]

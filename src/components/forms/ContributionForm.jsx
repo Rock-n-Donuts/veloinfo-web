@@ -17,7 +17,7 @@ import ImageUpload from '../partials/ImageUpload';
 import Map from '../partials/Map';
 import ContributionIcon from '../../icons/Contribution';
 import successImage from '../../assets/images/success.svg';
-import contributionsTypes from '../../data/contributions-types.json';
+import contributionTypes from '../../data/contribution-types.json';
 
 import styles from '../../styles/forms/contribution.module.scss';
 
@@ -55,7 +55,7 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
     } = userCurrentContribution || {};
 
     const contributionType = useMemo(
-        () => contributionsTypes.find(({ id }) => `${id}` === `${type}`),
+        () => contributionTypes.find(({ id }) => `${id}` === `${type}`),
         [type],
     );
     const {

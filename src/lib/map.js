@@ -1,5 +1,5 @@
-import contributionsTypes from '../data/contributions-types.json';
-import tronconsStates from '../data/troncons-states.json';
+import contributionTypes from '../data/contribution-types.json';
+import tronconStates from '../data/troncon-states.json';
 import getContributionSvg from '../icons/contributionSvg';
 
 export function getLinesFromTroncons(troncons) {
@@ -45,41 +45,41 @@ export function getLinesFromTroncons(troncons) {
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ key }) => key === 'unknown').color,
+            color: tronconStates.find(({ key }) => key === 'unknown').color,
         },
         {
             features: clearedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ key }) => key === 'cleared').color,
+            color: tronconStates.find(({ key }) => key === 'cleared').color,
         },
         {
             features: snowyPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ key }) => key === 'snowy').color
+            color: tronconStates.find(({ key }) => key === 'snowy').color
         },
         {
             features: planifiedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ key }) => key === 'planified').color
+            color: tronconStates.find(({ key }) => key === 'planified').color
         },
         {
             features: clearingPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconsStates.find(({ key }) => key === 'clearing').color
+            color: tronconStates.find(({ key }) => key === 'clearing').color
         },
     ];
 }
 
 export function getMarkersFromContributions(contributions) {
-    const icons = contributionsTypes
+    const icons = contributionTypes
         .reduce((all, curr) => {
             const { qualities = null, id, icon } = curr;
             if (qualities !== null) {

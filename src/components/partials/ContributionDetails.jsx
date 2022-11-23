@@ -13,7 +13,7 @@ import CommentsIcon from '../../icons/Comments';
 import contributionTypesIcons from '../../icons/contributions';
 import { getRelativeTime } from '../../lib/utils';
 import ReplyForm from '../forms/ReplyForm';
-import contributionsTypes from '../../data/contributions-types.json';
+import contributionTypes from '../../data/contribution-types.json';
 
 import styles from '../../styles/partials/contribution-details.module.scss';
 
@@ -50,7 +50,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     const intl = useIntl();
     const { locale } = intl;
 
-    const contributionType = contributionsTypes.reduce((prev, ct) => {
+    const contributionType = contributionTypes.reduce((prev, ct) => {
         if (prev !== null) {
             return prev;
         }

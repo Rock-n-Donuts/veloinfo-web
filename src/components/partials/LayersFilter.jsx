@@ -5,25 +5,23 @@ import classNames from 'classnames';
 
 import { useFilters } from '../../contexts/FiltersContext';
 import ContributionIcon from '../../icons/Contribution';
-import contributionsTypes from '../../data/contributions-types.json';
-import tronconsStates from '../../data/troncons-states.json';
+import contributionTypes from '../../data/contribution-types.json';
+import tronconTypes from '../../data/troncon-types.json';
+import tronconStates from '../../data/troncon-states.json';
 import layersIcon from '../../assets/images/layers.svg';
 
 import styles from '../../styles/partials/layers-filter.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    tronconTypes: PropTypes.arrayOf(PropTypes.string),
 };
 
 const defaultProps = {
     className: null,
-    tronconTypes: ['winter-protected', 'winter', 'uncleared'],
 };
 
-function LayersFilter({ className, tronconTypes }) {
-    const intl = useIntl();
-    const { locale } = intl;
+function LayersFilter({ className }) {
+    const { locale } = useIntl();
 
     const {
         contributionTypes: selectedContributionTypes,
@@ -84,41 +82,56 @@ function LayersFilter({ className, tronconTypes }) {
                 <div className={styles.popup}>
                     <div className={styles.content}>
                         <div className={styles.contributionTypes}>
-                            {contributionsTypes.map(({ id, labelPlural = null, label: labelSingular = null, icon, color, withoutMarker }, typeIndex) => {
-                                const finalLabel = labelPlural !== null ? labelPlural : labelSingular;
-                                const selected = selectedContributionTypes.indexOf(id) > -1;
-                                return (
-                                    <button
-                                        className={classNames([
-                                            styles.contributionType,
-                                            { [styles.selected]: selected },
-                                        ])}
-                                        type="button"
-                                        key={`type-${typeIndex}`}
-                                        onClick={() => {
-                                            toggleContributionType(id);
-                                        }}
-                                    >
-                                        <input
-                                            className={styles.checkbox}
-                                            type="checkbox"
-                                            checked={selected}
-                                            readOnly
-                                        />
-                                        <ContributionIcon
-                                            className={styles.icon}
-                                            icon={icon}
-                                            color={color}
-                                            withoutMarker={withoutMarker}
-                                        />
-                                        <span className={styles.label}>{finalLabel[locale]}</span>
-                                    </button>
-                                );
-                            })}
+                            {contributionTypes.map(
+                                (
+                                    {
+                                        id,
+                                        labelPlural = null,
+                                        label: labelSingular = null,
+                                        icon,
+                                        color,
+                                        withoutMarker,
+                                    },
+                                    typeIndex,
+                                ) => {
+                                    const finalLabel =
+                                        labelPlural !== null ? labelPlural : labelSingular;
+                                    const selected = selectedContributionTypes.indexOf(id) > -1;
+                                    return (
+                                        <button
+                                            className={classNames([
+                                                styles.contributionType,
+                                                { [styles.selected]: selected },
+                                            ])}
+                                            type="button"
+                                            key={`type-${typeIndex}`}
+                                            onClick={() => {
+                                                toggleContributionType(id);
+                                            }}
+                                        >
+                                            <input
+                                                className={styles.checkbox}
+                                                type="checkbox"
+                                                checked={selected}
+                                                readOnly
+                                            />
+                                            <ContributionIcon
+                                                className={styles.icon}
+                                                icon={icon}
+                                                color={color}
+                                                withoutMarker={withoutMarker}
+                                            />
+                                            <span className={styles.label}>
+                                                {finalLabel[locale]}
+                                            </span>
+                                        </button>
+                                    );
+                                },
+                            )}
                         </div>
                         <div className={styles.tronconTypes}>
-                            {tronconTypes.map((type, typeIndex) => {
-                                const selected = selectedTronconTypes.indexOf(type) > -1;
+                            {tronconTypes.map(({ key, label }, typeIndex) => {
+                                const selected = selectedTronconTypes.indexOf(key) > -1;
                                 return (
                                     <button
                                         className={classNames([
@@ -128,7 +141,7 @@ function LayersFilter({ className, tronconTypes }) {
                                         type="button"
                                         key={`type-${typeIndex}`}
                                         onClick={() => {
-                                            toggleTronconType(type);
+                                            toggleTronconType(key);
                                         }}
                                     >
                                         <input
@@ -137,9 +150,7 @@ function LayersFilter({ className, tronconTypes }) {
                                             checked={selected}
                                             readOnly
                                         />
-                                        <span className={styles.label}>
-                                            <FormattedMessage id={`troncon-filter-${type}`} />
-                                        </span>
+                                        <span className={styles.label}>{label[locale]}</span>
                                     </button>
                                 );
                             })}
@@ -149,7 +160,7 @@ function LayersFilter({ className, tronconTypes }) {
                                 <FormattedMessage id="troncons-status-title" />
                             </div>
                             <div className={styles.tronconStates}>
-                                {tronconsStates.map(({ color, label }, stateIndex) => (
+                                {tronconStates.map(({ color, label }, stateIndex) => (
                                     <div
                                         key={`troncon-state-${stateIndex}`}
                                         className={styles.tronconState}

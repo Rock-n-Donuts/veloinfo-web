@@ -1,9 +1,11 @@
 import Cookies from 'js-cookie';
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 
+import tronconTypes from '../data/troncon-types.json';
+
 const FiltersContext = createContext();
 const defaultfromTime = '5days';
-const defaultTronconsTypes = ['winter-protected', 'winter'];
+const defaultTronconsTypes = tronconTypes.map(({ key }) => key);
 const defaultContributionTypes = [1, 2];
 
 export const FiltersProvider = ({ children }) => {
