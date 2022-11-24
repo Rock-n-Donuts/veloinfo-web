@@ -6,7 +6,7 @@ import tronconTypes from '../data/troncon-types.json';
 const FiltersContext = createContext();
 const defaultfromTime = '5days';
 const defaultTronconsTypes = tronconTypes.map(({ key }) => key);
-const defaultContributionTypes = [1, 2];
+const defaultContributionTypes = [1, 2, 3];
 
 export const FiltersProvider = ({ children }) => {
     let cookiesFilters = null;
