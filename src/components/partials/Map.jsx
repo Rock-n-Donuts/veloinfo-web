@@ -441,7 +441,7 @@ function Map({
         let layers = null;
         if (ready && markers !== null) {
             layers = markers.map((markersGroup) => addMarkers(markersGroup));
-            console.log(markers.reduce((a, { features }) => features.length + a, 0));
+            // console.log(markers.reduce((a, { features }) => features.length + a, 0));
         }
 
         return () => {
