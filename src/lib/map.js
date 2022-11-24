@@ -1,6 +1,5 @@
 import contributionTypes from '../data/contribution-types.json';
 import tronconStates from '../data/troncon-states.json';
-import getContributionSvg from '../icons/contributionSvg';
 
 export function getLinesFromTroncons(troncons) {
     const unknownPaths = troncons.filter(

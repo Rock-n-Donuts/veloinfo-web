@@ -16,12 +16,11 @@ import TileLayer from 'ol/layer/WebGLTile';
 // import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
 // import {packColor} from 'ol/renderer/webgl/shaders';
 
+import { getColoredIcons } from '../../lib/map';
 import MapMarker from './MapMarker';
 import Loading from './Loading';
 
-import contributionTypes from '../../data/contribution-types.json';
 import styles from '../../styles/partials/map.module.scss';
-import { getColoredIcons } from '../../lib/map';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
