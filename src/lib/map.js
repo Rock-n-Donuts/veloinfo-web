@@ -119,7 +119,7 @@ export function getMarkersFromContributions(contributions) {
                         data: contribution,
                         clickable: true,
                     })),
-                src: `https://raw.githubusercontent.com/Rock-n-Donuts/veloinfo-web/main/src/assets/images/trash-can.svg`,
+                src: `https://picsum.photos/50`,
                 scale: `${id}` === '1' ? 1 : 0.5,
                 gray,
                 id,
