@@ -34,6 +34,7 @@ function HomePage() {
     const navigate = useNavigate();
     const [menuOpened, setMenuOpened] = useState(false);
     const [addContributionOpened, setAddContributionOpened] = useState(false);
+    
     const [contributionSubmited, setContributionSubmitted] = useState(false);
     const [contributionKey, setContributionKey] = useState(uuid());
 
@@ -175,14 +176,11 @@ function HomePage() {
         }
     }, [initialSelectedContribution]);
 
-    // useEffect(() => {
-    //     if (contributionSelected !== null) {
-    //         const { coords = null } = contributionSelected || {};
-    //         if (coords !== null) {
-    //             setMainMapCenter(coords);
-    //         }
-    //     }
-    // }, [contributionSelected]);
+    useEffect(() => {
+        if (contributionSelected !== null) {
+            setMenuOpened(false);
+        }
+    }, [contributionSelected]);
 
     return (
         <div
