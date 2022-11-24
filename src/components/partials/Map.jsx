@@ -11,6 +11,7 @@ import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 import { defaults as defaultInteractions } from 'ol/interaction/defaults';
+import camera from '../../icons/contributions/camera.svg';
 
 import TileLayer from 'ol/layer/WebGLTile';
 // import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
@@ -102,6 +103,7 @@ function Map({
     onLineClick,
     onReady,
 }) {
+    const cameraRef = useRef(null);
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
     const [isHover, setIsHover] = useState(false);
@@ -111,6 +113,11 @@ function Map({
 
     const linesLayers = useRef([]);
     const markerLayers = useRef([]);
+
+    const [cLoaded, setCLoaded] = useState(false)
+    const onCameraLoaded = useCallback( () => {
+        setCLoaded(true);
+    },[] );
 
     const onChangeCenter = useCallback(() => {
         if (onCenterChanged !== null) {
@@ -304,8 +311,8 @@ function Map({
                                 anchorXUnits: 'fraction',
                                 anchorYUnits: 'fraction',
                                 src,
-                                img,
-                                imgSize,
+                                img: cameraRef.current,
+                                imgSize: [50,58],
                                 scale,
                             }),
                             text:
@@ -439,7 +446,7 @@ function Map({
 
     useEffect(() => {
         let layers = null;
-        if (ready && markers !== null) {
+        if (cLoaded && ready && markers !== null) {
             layers = markers.map((markersGroup) => addMarkers(markersGroup));
         }
 
@@ -451,7 +458,7 @@ function Map({
                 });
             }
         };
-    }, [ready, markers, addMarkers]);
+    }, [ready, markers, addMarkers, cLoaded]);
 
     useEffect(() => {
         if (ready) {
@@ -460,6 +467,8 @@ function Map({
             }
         }
     }, [ready, onReady]);
+
+    
 
     return (
         <div
@@ -472,6 +481,9 @@ function Map({
             ])}
         >
             <div ref={mapContainerRef} className={styles.map} touch-action="none" />
+            <div className={styles.markers}>
+                <img src={camera} ref={cameraRef} alt="cam" onLoad={onCameraLoaded} />
+            </div>
             <Loading loading={loadingUserPosition} />
         </div>
     );
