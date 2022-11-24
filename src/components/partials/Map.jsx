@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { fromLonLat, transform } from 'ol/proj';
@@ -16,6 +16,8 @@ import TileLayer from 'ol/layer/WebGLTile';
 // import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
 // import {packColor} from 'ol/renderer/webgl/shaders';
 
+import { getColoredIcons } from '../../lib/map';
+import MapMarker from './MapMarker';
 import Loading from './Loading';
 
 import styles from '../../styles/partials/map.module.scss';
@@ -102,6 +104,7 @@ function Map({
     onLineClick,
     onReady,
 }) {
+    const markerIconsRef = useRef([]);
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
     const [isHover, setIsHover] = useState(false);
@@ -111,6 +114,19 @@ function Map({
 
     const linesLayers = useRef([]);
     const markerLayers = useRef([]);
+
+    const [iconsLoaded, setIconLoaded] = useState(
+        getColoredIcons().map(({ icon, color }) => ({ key: `${icon}${color}`, loaded: false })),
+    );
+    const allIconsLoaded = useMemo(
+        () => iconsLoaded.filter(({ loaded }) => !loaded).length === 0,
+        [iconsLoaded],
+    );
+    const onMarkerIconLoaded = useCallback((icon) => {
+        setIconLoaded((old) =>
+            old.map(({ key, loaded }) => ({ key, loaded: key === icon ? true : loaded })),
+        );
+    }, []);
 
     const onChangeCenter = useCallback(() => {
         if (onCenterChanged !== null) {
@@ -130,7 +146,7 @@ function Map({
         if (onMoveEnded !== null) {
             onMoveEnded({
                 center: transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-                zoom: mapRef.current.getView().getZoom()
+                zoom: mapRef.current.getView().getZoom(),
             });
         }
     }, [onMoveEnded]);
@@ -212,7 +228,7 @@ function Map({
                 enableRotation: false,
                 center: fromLonLat(mapCenter || defaultMapCenter),
                 zoom: zoom !== null ? zoom : defaultZoom,
-                maxZoom 
+                maxZoom,
             });
 
             mapRef.current = new OlMap({
@@ -266,8 +282,7 @@ function Map({
             const {
                 features,
                 src,
-                img,
-                imgSize,
+                icon,
                 scale,
                 withoutCluster = false,
                 color,
@@ -298,6 +313,7 @@ function Map({
                     const { length = 0 } = features || {};
                     let style = styleCache[length];
                     if (!style) {
+                        const img = markerIconsRef.current[`${icon}${color}`];
                         style = new Style({
                             image: new Icon({
                                 anchor: [0.5, 1],
@@ -305,8 +321,8 @@ function Map({
                                 anchorYUnits: 'fraction',
                                 src,
                                 img,
-                                imgSize,
-                                scale,
+                                imgSize: [img.width, img.height],
+                                scale: scale,
                             }),
                             text:
                                 length > 1
@@ -342,7 +358,7 @@ function Map({
     useEffect(() => {
         const { current: mapContainer = null } = mapContainerRef;
 
-        if (mapContainer && mapRef.current === null) {
+        if (allIconsLoaded && mapContainer && mapRef.current === null) {
             initMap(mapContainer);
         }
 
@@ -363,7 +379,15 @@ function Map({
                 // mapRef.current.un('pointermove', onMapPointerMove);
             }
         };
-    }, [initMap, onMapClick, onMapPointerMove, onChangeCenter, onChangeZoom, onMoveEnd]);
+    }, [
+        allIconsLoaded,
+        initMap,
+        onMapClick,
+        onMapPointerMove,
+        onChangeCenter,
+        onChangeZoom,
+        onMoveEnd,
+    ]);
 
     useEffect(() => {
         if (mapRef.current !== null && mapCenter !== null) {
@@ -462,6 +486,8 @@ function Map({
         }
     }, [ready, onReady]);
 
+    const markerIcons = useMemo(() => getColoredIcons(), []);
+
     return (
         <div
             className={classNames([
@@ -473,6 +499,22 @@ function Map({
             ])}
         >
             <div ref={mapContainerRef} className={styles.map} touch-action="none" />
+            <div className={styles.markers}>
+                {markerIcons.map(({ color, icon, withoutMarker }, iconIndex) => (
+                    <MapMarker
+                        key={`marker-${iconIndex}`}
+                        ref={(el) => {
+                            markerIconsRef.current[`${icon}${color}`] = el;
+                        }}
+                        icon={icon}
+                        color={color}
+                        withoutMarker={withoutMarker}
+                        onLoad={() => {
+                            onMarkerIconLoaded(`${icon}${color}`);
+                        }}
+                    />
+                ))}
+            </div>
             <Loading loading={loadingUserPosition} />
         </div>
     );
