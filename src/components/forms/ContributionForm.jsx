@@ -49,8 +49,8 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
         type = null,
         coords = null,
         quality,
-        name = '',
-        comment = '',
+        name = null,
+        comment = null,
         photo = null,
     } = userCurrentContribution || {};
 
@@ -72,7 +72,7 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
     const toggleMinimapEnable = useCallback(() => setMinimapEnabled((old) => !old), []);
 
     const setQualityValue = useCallback(
-        (e) => updateContribution({ quality: parseInt(e.target.value) }),
+        (e) => updateContribution({ quality: e.target.value }),
         [updateContribution],
     );
     const setNameValue = useCallback(
@@ -118,15 +118,15 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
             if (
                 contributionTypeQualities !== null &&
                 quality !== null &&
-                quality <= 1 &&
-                quality >= -1
+                parseInt(quality) <= 1 &&
+                parseInt(quality) >= -1
             ) {
-                formData.append('quality', quality);
+                formData.append('quality', parseInt(quality, 10));
             }
-            if (name.length > 0) {
+            if (name !== null && name.length > 0) {
                 formData.append('name', name);
             }
-            if (comment.length > 0) {
+            if (comment !== null && comment.length > 0) {
                 formData.append('comment', comment);
             }
             if (photo !== null) {
@@ -179,7 +179,7 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
 
     const currentQuality =
         contributionTypeQualities !== null
-            ? contributionTypeQualities.find(({ value }) => parseInt(value) === parseInt(quality))
+            ? contributionTypeQualities.find(({ value }) => `${value}` === `${quality}`)
             : null;
     const { color: iconColor = contributionTypeColor } = currentQuality || {};
 
@@ -231,7 +231,7 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
                                                 value={value}
                                                 name="quality"
                                                 onChange={setQualityValue}
-                                                checked={quality === value}
+                                                checked={`${quality}` === `${value}`}
                                                 required
                                             />
                                             <span
@@ -248,7 +248,7 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
                     <FormGroup className={styles.name} label={intl.formatMessage({ id: 'name' })}>
                         <input
                             type="text"
-                            value={name}
+                            value={name || ''}
                             placeholder={intl.formatMessage({ id: 'name-placeholder' })}
                             onChange={setNameValue}
                         />
@@ -258,7 +258,7 @@ function ContributionForm({ className, onBack, onSuccess, onMinimapMoved }) {
                         label={intl.formatMessage({ id: 'comment' })}
                     >
                         <textarea
-                            value={comment}
+                            value={comment || ''}
                             placeholder={intl.formatMessage({ id: 'comment-placeholder' })}
                             onChange={setCommentValue}
                         />

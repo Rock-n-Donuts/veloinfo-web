@@ -24,7 +24,9 @@ export const FiltersProvider = ({ children }) => {
         fromTime: cookieFromTime !== null ? cookieFromTime : defaultfromTime,
         tronconTypes: cookieTronconsTypes !== null ? cookieTronconsTypes : defaultTronconsTypes,
         contributionTypes:
-            cookieContributionTypes !== null ? cookieContributionTypes : defaultContributionTypes,
+            cookieContributionTypes !== null
+                ? cookieContributionTypes.map((id) => `${id}`)
+                : defaultContributionTypes.map((id) => `${id}`),
     };
 
     const [fromTime, setFromTime] = useState(defaultFilters.fromTime);

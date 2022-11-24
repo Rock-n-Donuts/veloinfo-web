@@ -25,9 +25,9 @@ const defaultProps = {
 function ReplyForm({ contributionId, className, onSuccess }) {
     const intl = useIntl();
     const captchaRef = useRef();
-    const nameCookie = Cookies.get('name') || '';
+    const nameCookie = Cookies.get('name') || null;
     const [name, setName] = useState(nameCookie);
-    const [comment, setComment] = useState('');
+    const [comment, setComment] = useState(null);
     // const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
@@ -38,8 +38,8 @@ function ReplyForm({ contributionId, className, onSuccess }) {
 
     const resetForm = useCallback(() => {
         captchaRef.current.reset();
-        setName('');
-        setComment('');
+        setName(null);
+        setComment(null);
         // setPhoto(null);
     }, [setName, setComment]);
 
@@ -58,10 +58,10 @@ function ReplyForm({ contributionId, className, onSuccess }) {
             setLoading(true);
 
             const formData = new FormData();
-            if (name.length > 0) {
+            if (name !== null && name.length > 0) {
                 formData.append('name', name);
             }
-            if (comment.length > 0) {
+            if (comment !== null && comment.length > 0) {
                 formData.append('comment', comment);
             }
             // if (photo !== null) {
@@ -124,7 +124,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                         <FormGroup className={styles.name}>
                             <input
                                 type="text"
-                                value={name}
+                                value={name || ''}
                                 placeholder={intl.formatMessage({ id: 'name-placeholder' })}
                                 onChange={setNameValue}
                             />
@@ -133,7 +133,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     <FormGroup className={styles.comment}>
                         <textarea
                             required
-                            value={comment}
+                            value={comment || ''}
                             placeholder={intl.formatMessage({ id: 'comment-placeholder' })}
                             onChange={setCommentValue}
                         />

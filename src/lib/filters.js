@@ -27,7 +27,7 @@ export const getFilteredContributions = (contributions, filters) => {
     return [...(contributions || [])]
         .map((contribution) => {
             const { issue_id, created_at } = contribution;
-            const validType = contributionTypes.find(id => `${id}` ===  `${issue_id}`) > -1;
+            const validType = contributionTypes.indexOf(`${issue_id}`) > -1;
             const { days = 0, hours = 0 } = fromTime || {};
 
             const validStatefromTime =

@@ -76,7 +76,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     } = contributionType || {};
     const contributionTypeQuality =
         contributionTypeQualities !== null
-            ? contributionTypeQualities.find(({ value }) => parseInt(value) === parseInt(quality))
+            ? contributionTypeQualities.find(({ value }) => `${value}` === `${quality}`)
             : null;
 
     const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null } =

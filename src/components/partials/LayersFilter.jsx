@@ -41,7 +41,7 @@ function LayersFilter({ className }) {
         var index = newTypes.findIndex((typeId) => `${typeId}` === `${item}`);
 
         if (index === -1) {
-            newTypes.push(item);
+            newTypes.push(`${item}`);
         } else {
             newTypes.splice(index, 1);
         }
@@ -96,7 +96,7 @@ function LayersFilter({ className }) {
                                 ) => {
                                     const finalLabel =
                                         labelPlural !== null ? labelPlural : labelSingular;
-                                    const selected = selectedContributionTypes.indexOf(id) > -1;
+                                    const selected = selectedContributionTypes.indexOf(`${id}`) > -1;
                                     return (
                                         <button
                                             className={classNames([
