@@ -10,9 +10,9 @@ const defaultContributionTypes = [1, 2, 3];
 
 export const FiltersProvider = ({ children }) => {
     let cookiesFilters = null;
-    try {
-        cookiesFilters = JSON.parse(Cookies.get('filters') || null);
-    } catch {}
+    // try {
+    //     cookiesFilters = JSON.parse(Cookies.get('filters') || null);
+    // } catch {}
 
     const {
         fromTime: cookieFromTime = null,
