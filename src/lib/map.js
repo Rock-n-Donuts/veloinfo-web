@@ -124,8 +124,9 @@ export function getMarkersFromContributions(contributions) {
                 gray,
                 id,
                 icon,
+                color: finalColor,
+                withoutMarker,
                 value,
-                color: finalColor
             };
         },
     );

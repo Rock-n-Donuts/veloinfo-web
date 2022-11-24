@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { fromLonLat, transform } from 'ol/proj';
@@ -11,7 +11,6 @@ import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 import { defaults as defaultInteractions } from 'ol/interaction/defaults';
-import camera from '../../icons/contributions/camera.svg';
 
 import TileLayer from 'ol/layer/WebGLTile';
 // import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
@@ -20,6 +19,7 @@ import TileLayer from 'ol/layer/WebGLTile';
 import Loading from './Loading';
 
 import styles from '../../styles/partials/map.module.scss';
+import MapMarker from './MapMarker';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
@@ -103,7 +103,7 @@ function Map({
     onLineClick,
     onReady,
 }) {
-    const cameraRef = useRef(null);
+    const markerIconsRef = useRef([]);
     const mapContainerRef = useRef(null);
     const mapRef = useRef(null);
     const [isHover, setIsHover] = useState(false);
@@ -114,10 +114,16 @@ function Map({
     const linesLayers = useRef([]);
     const markerLayers = useRef([]);
 
-    const [cLoaded, setCLoaded] = useState(false)
-    const onCameraLoaded = useCallback( () => {
-        setCLoaded(true);
-    },[] );
+    const [iconsLoaded, setIconLoaded] = useState([{ key: 'camera', loaded: false }, { key: 'snow', loaded: false}]);
+    const allIconsLoaded = useMemo(
+        () => iconsLoaded.filter(({ loaded }) => !loaded).length === 0,
+        [iconsLoaded],
+    );
+    const onMarkerIconLoaded = useCallback((icon) => {
+        setIconLoaded((old) =>
+            old.map(({ key, loaded }) => ({ key, loaded: key === icon ? true : loaded })),
+        );
+    }, []);
 
     const onChangeCenter = useCallback(() => {
         if (onCenterChanged !== null) {
@@ -137,7 +143,7 @@ function Map({
         if (onMoveEnded !== null) {
             onMoveEnded({
                 center: transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-                zoom: mapRef.current.getView().getZoom()
+                zoom: mapRef.current.getView().getZoom(),
             });
         }
     }, [onMoveEnded]);
@@ -219,7 +225,7 @@ function Map({
                 enableRotation: false,
                 center: fromLonLat(mapCenter || defaultMapCenter),
                 zoom: zoom !== null ? zoom : defaultZoom,
-                maxZoom 
+                maxZoom,
             });
 
             mapRef.current = new OlMap({
@@ -275,6 +281,8 @@ function Map({
                 src,
                 img,
                 imgSize,
+                icon,
+                withoutMarker,
                 scale,
                 withoutCluster = false,
                 color,
@@ -311,9 +319,9 @@ function Map({
                                 anchorXUnits: 'fraction',
                                 anchorYUnits: 'fraction',
                                 src,
-                                img: cameraRef.current,
-                                imgSize: [50,58],
-                                scale,
+                                img: markerIconsRef.current[icon === 'camera' ? 'camera' : 'snow'],
+                                imgSize: icon === 'camera' ? [50, 58] : [42, 52],
+                                scale: scale,
                             }),
                             text:
                                 length > 1
@@ -349,7 +357,7 @@ function Map({
     useEffect(() => {
         const { current: mapContainer = null } = mapContainerRef;
 
-        if (mapContainer && mapRef.current === null) {
+        if (allIconsLoaded && mapContainer && mapRef.current === null) {
             initMap(mapContainer);
         }
 
@@ -370,7 +378,15 @@ function Map({
                 // mapRef.current.un('pointermove', onMapPointerMove);
             }
         };
-    }, [initMap, onMapClick, onMapPointerMove, onChangeCenter, onChangeZoom, onMoveEnd]);
+    }, [
+        allIconsLoaded,
+        initMap,
+        onMapClick,
+        onMapPointerMove,
+        onChangeCenter,
+        onChangeZoom,
+        onMoveEnd,
+    ]);
 
     useEffect(() => {
         if (mapRef.current !== null && mapCenter !== null) {
@@ -446,7 +462,7 @@ function Map({
 
     useEffect(() => {
         let layers = null;
-        if (cLoaded && ready && markers !== null) {
+        if (ready && markers !== null) {
             layers = markers.map((markersGroup) => addMarkers(markersGroup));
         }
 
@@ -458,7 +474,7 @@ function Map({
                 });
             }
         };
-    }, [ready, markers, addMarkers, cLoaded]);
+    }, [ready, markers, addMarkers]);
 
     useEffect(() => {
         if (ready) {
@@ -467,8 +483,6 @@ function Map({
             }
         }
     }, [ready, onReady]);
-
-    
 
     return (
         <div
@@ -482,7 +496,27 @@ function Map({
         >
             <div ref={mapContainerRef} className={styles.map} touch-action="none" />
             <div className={styles.markers}>
-                <img src={camera} ref={cameraRef} alt="cam" onLoad={onCameraLoaded} />
+                <MapMarker
+                    ref={(el) => {
+                        markerIconsRef.current['camera'] = el;
+                    }}
+                    icon="camera"
+                    color="#000"
+                    withoutMarker
+                    onLoad={() => {
+                        onMarkerIconLoaded('camera');
+                    }}
+                />
+                <MapMarker
+                    ref={(el) => {
+                        markerIconsRef.current['snow'] = el;
+                    }}
+                    icon="snow"
+                    color="blue"
+                    onLoad={() => {
+                        onMarkerIconLoaded('snow');
+                    }}
+                />
             </div>
             <Loading loading={loadingUserPosition} />
         </div>
