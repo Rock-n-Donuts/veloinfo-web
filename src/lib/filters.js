@@ -24,8 +24,6 @@ export const getFilteredContributions = (contributions, filters) => {
     const { contributionTypes = [], fromTime: fromTimeKey = null } = filters || {};
     const fromTime = timeChoices.find(({ key }) => key === fromTimeKey) || null;
 
-    console.log('filtering', contributionTypes)
-
     return [...(contributions || [])]
         .map((contribution) => {
             const { issue_id, created_at } = contribution;
