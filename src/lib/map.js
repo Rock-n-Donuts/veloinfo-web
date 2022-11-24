@@ -119,7 +119,7 @@ export function getMarkersFromContributions(contributions) {
                         data: contribution,
                         clickable: true,
                     })),
-                src: `https://picsum.photos/50`,
+                src: `https://veloinfo.ca/static/media/camera.09e5de679c6dc2edb7cf56091a9dc67b.svg`,
                 scale: `${id}` === '1' ? 1 : 0.5,
                 gray,
                 id,
