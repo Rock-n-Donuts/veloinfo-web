@@ -24,6 +24,8 @@ export const getFilteredContributions = (contributions, filters) => {
     const { contributionTypes = [], fromTime: fromTimeKey = null } = filters || {};
     const fromTime = timeChoices.find(({ key }) => key === fromTimeKey) || null;
 
+    console.log('filtering', contributionTypes)
+
     return [...(contributions || [])]
         .map((contribution) => {
             const { issue_id, created_at } = contribution;
@@ -31,7 +33,7 @@ export const getFilteredContributions = (contributions, filters) => {
             const { days = 0, hours = 0 } = fromTime || {};
 
             const validStatefromTime =
-                issue_id !== 1 ||
+                `${issue_id}` !== `${1}` ||
                 fromTime === null ||
                 addDays(addHours(new Date(), -hours), -days) < parseDate(created_at);
             const visible = validType && validStatefromTime;

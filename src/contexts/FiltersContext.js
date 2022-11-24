@@ -29,8 +29,11 @@ export const FiltersProvider = ({ children }) => {
                 : defaultContributionTypes.map((id) => `${id}`),
     };
 
+    
+
     const [fromTime, setFromTime] = useState(defaultFilters.fromTime);
     const [contributionTypes, setContributionTypes] = useState(defaultFilters.contributionTypes);
+    console.log('context', contributionTypes)
     const [tronconTypes, setTronconTypes] = useState(defaultFilters.tronconTypes);
 
     useEffect(() => {
