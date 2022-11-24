@@ -59,79 +59,75 @@ export function getLinesFromTroncons(troncons) {
                 coords,
                 data: troncon,
             })),
-            color: tronconStates.find(({ key }) => key === 'snowy').color
+            color: tronconStates.find(({ key }) => key === 'snowy').color,
         },
         {
             features: planifiedPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconStates.find(({ key }) => key === 'planified').color
+            color: tronconStates.find(({ key }) => key === 'planified').color,
         },
         {
             features: clearingPaths.map(({ coords, ...troncon }) => ({
                 coords,
                 data: troncon,
             })),
-            color: tronconStates.find(({ key }) => key === 'clearing').color
+            color: tronconStates.find(({ key }) => key === 'clearing').color,
         },
     ];
 }
 
-export function getMarkersFromContributions(contributions) {
-    const icons = contributionTypes
-        .reduce((all, curr) => {
-            const { qualities = null, id, icon } = curr;
-            if (qualities !== null) {
-                const qualityIcons = qualities.map((quality) => ({
-                    ...quality,
-                    quality: true,
-                    id,
-                    icon,
-                }));
-                const grayQualityIcons = qualityIcons.map((icon) => ({ ...icon, gray: true }));
-                return [...all, ...qualityIcons, grayQualityIcons[0]];
-            } else {
-                return [...all, curr, { ...curr, gray: true }];
-            }
-        }, [])
-        .reverse();
-
-    const groupedMarkers = icons.map(
-        ({ id, icon, color, quality = false, value, gray = false, withoutMarker }) => {
-            const finalColor = gray ? '#999' : color;
-            return {
-                features: contributions
-                    .filter(
-                        ({ quality: contributionQuality, score }) =>
-                            !quality ||
-                            (gray && `${score.last_vote}` === '-1') ||
-                            `${contributionQuality}` === `${value}`,
-                    )
-                    .filter(
-                        ({ score }) =>
-                            (!gray && `${score.last_vote}` !== '-1') ||
-                            (gray && `${score.last_vote}` === '-1'),
-                    )
-                    .filter(({ issue_id }) => `${issue_id}` === `${id}`)
-                    .map(({ coords, ...contribution }) => ({
-                        coords,
-                        data: contribution,
-                        clickable: true,
-                    })),
-                // src: `https://picsum.photos/50`,
-                scale: `${id}` === '1' ? 1 : 0.5,
-                gray,
+export function getColoredIcons() {
+    return contributionTypes.reduce((all, curr) => {
+        const { qualities = null, id, icon } = curr;
+        const gray = '#999';
+        if (qualities !== null) {
+            const qualityIcons = qualities.map((quality) => ({
+                ...quality,
+                quality: true,
                 id,
                 icon,
-                color: finalColor,
-                withoutMarker,
-                value,
-            };
-        },
-    );
+            }));
+            const grayQualityIcons = qualityIcons.map((icon) => ({
+                ...icon,
+                gray: true,
+                color: gray,
+            }));
+            return [...all, ...qualityIcons, grayQualityIcons[0]];
+        } else {
+            return [...all, curr, { ...curr, gray: true, color: gray }];
+        }
+    }, []);
+}
 
-    // console.log(contributions.length, groupedMarkers.reduce((total, { features }) => total + features.length, 0))
-
-    return groupedMarkers;
+export function getMarkersFromContributions(contributions) {
+    return getColoredIcons()
+        .map(({ id, icon, color, quality = false, value, gray = false, withoutMarker }) => ({
+            features: contributions
+                .filter(
+                    ({ quality: contributionQuality, score }) =>
+                        !quality ||
+                        (gray && `${score.last_vote}` === '-1') ||
+                        `${contributionQuality}` === `${value}`,
+                )
+                .filter(
+                    ({ score }) =>
+                        (!gray && `${score.last_vote}` !== '-1') ||
+                        (gray && `${score.last_vote}` === '-1'),
+                )
+                .filter(({ issue_id }) => `${issue_id}` === `${id}`)
+                .map(({ coords, ...contribution }) => ({
+                    coords,
+                    data: contribution,
+                    clickable: true,
+                })),
+            scale: `${id}` === '1' ? 1 : 0.5,
+            id,
+            icon,
+            color,
+            withoutMarker,
+            value,
+        }))
+        .reverse();
 }

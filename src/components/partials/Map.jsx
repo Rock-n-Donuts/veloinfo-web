@@ -16,10 +16,12 @@ import TileLayer from 'ol/layer/WebGLTile';
 // import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
 // import {packColor} from 'ol/renderer/webgl/shaders';
 
+import MapMarker from './MapMarker';
 import Loading from './Loading';
 
+import contributionTypes from '../../data/contribution-types.json';
 import styles from '../../styles/partials/map.module.scss';
-import MapMarker from './MapMarker';
+import { getColoredIcons } from '../../lib/map';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
@@ -114,7 +116,9 @@ function Map({
     const linesLayers = useRef([]);
     const markerLayers = useRef([]);
 
-    const [iconsLoaded, setIconLoaded] = useState([{ key: 'camera', loaded: false }, { key: 'snow', loaded: false}]);
+    const [iconsLoaded, setIconLoaded] = useState(
+        getColoredIcons().map(({ icon, color }) => ({ key: `${icon}${color}`, loaded: false })),
+    );
     const allIconsLoaded = useMemo(
         () => iconsLoaded.filter(({ loaded }) => !loaded).length === 0,
         [iconsLoaded],
@@ -319,7 +323,7 @@ function Map({
                                 anchorXUnits: 'fraction',
                                 anchorYUnits: 'fraction',
                                 src,
-                                img: markerIconsRef.current[icon === 'camera' ? 'camera' : 'snow'],
+                                img: markerIconsRef.current[`${icon}${color}`],
                                 imgSize: icon === 'camera' ? [50, 58] : [42, 52],
                                 scale: scale,
                             }),
@@ -484,6 +488,8 @@ function Map({
         }
     }, [ready, onReady]);
 
+    const markerIcons = useMemo(() => getColoredIcons(), []);
+
     return (
         <div
             className={classNames([
@@ -496,27 +502,20 @@ function Map({
         >
             <div ref={mapContainerRef} className={styles.map} touch-action="none" />
             <div className={styles.markers}>
-                <MapMarker
-                    ref={(el) => {
-                        markerIconsRef.current['camera'] = el;
-                    }}
-                    icon="camera"
-                    color="#000"
-                    withoutMarker
-                    onLoad={() => {
-                        onMarkerIconLoaded('camera');
-                    }}
-                />
-                <MapMarker
-                    ref={(el) => {
-                        markerIconsRef.current['snow'] = el;
-                    }}
-                    icon="snow"
-                    color="blue"
-                    onLoad={() => {
-                        onMarkerIconLoaded('snow');
-                    }}
-                />
+                {markerIcons.map(({ color, icon, withoutMarker }, iconIndex) => (
+                    <MapMarker
+                        key={`marker-${iconIndex}`}
+                        ref={(el) => {
+                            markerIconsRef.current[`${icon}${color}`] = el;
+                        }}
+                        icon={icon}
+                        color={color}
+                        withoutMarker={withoutMarker}
+                        onLoad={() => {
+                            onMarkerIconLoaded(`${icon}${color}`);
+                        }}
+                    />
+                ))}
             </div>
             <Loading loading={loadingUserPosition} />
         </div>
