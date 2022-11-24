@@ -283,10 +283,7 @@ function Map({
             const {
                 features,
                 src,
-                img,
-                imgSize,
                 icon,
-                withoutMarker,
                 scale,
                 withoutCluster = false,
                 color,
@@ -317,14 +314,15 @@ function Map({
                     const { length = 0 } = features || {};
                     let style = styleCache[length];
                     if (!style) {
+                        const img = markerIconsRef.current[`${icon}${color}`];
                         style = new Style({
                             image: new Icon({
                                 anchor: [0.5, 1],
                                 anchorXUnits: 'fraction',
                                 anchorYUnits: 'fraction',
                                 src,
-                                img: markerIconsRef.current[`${icon}${color}`],
-                                imgSize: icon === 'camera' ? [50, 58] : [42, 52],
+                                img,
+                                imgSize: [img.width, img.height],
                                 scale: scale,
                             }),
                             text:
