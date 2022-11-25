@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -8,27 +8,24 @@ import snowIcon from '../../icons/contributions/snow.svg';
 import chevronIcon from '../../assets/images/chevron-bottom.svg';
 import choices from '../../data/time-filter-choices.json';
 
-import styles from '../../styles/partials/time-filter.module.scss';
+import styles from '../../styles/filters/time-filter.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    opened: PropTypes.bool,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
+    opened: false,
+    onOpen: null,
+    onClose: null,
 };
 
-function TimeFilter({ className }) {
+function TimeFilter({ className, opened, onOpen, onClose }) {
     const { locale } = useIntl();
-    const [opened, setOpened] = useState(false);
-
-    const open = useCallback(() => {
-        setOpened(true);
-    }, [setOpened]);
-
-    const close = useCallback(() => {
-        setOpened(false);
-    }, [setOpened]);
 
     const { fromTime, setFromTime } = useFilters();
     const currentChoice = useMemo(
@@ -39,10 +36,32 @@ function TimeFilter({ className }) {
     const setDateFilter = useCallback(
         (key) => {
             setFromTime(key);
-            setOpened(false);
+            if (onClose !== null) {
+                onClose();
+            }
         },
-        [setFromTime, setOpened],
+        [setFromTime, onClose],
     );
+
+    const onOpenClick = useCallback(() => {
+        if (onOpen !== null) {
+            onOpen();
+        }
+    }, [onOpen]);
+
+    const onCloseClick = useCallback(() => {
+        if (onClose !== null) {
+            onClose();
+        }
+    }, [onClose]);
+
+    const onToggleClick = useCallback(() => {
+        if (opened) {
+            onCloseClick();
+        } else {
+            onOpenClick();
+        }
+    }, [opened, onOpenClick, onCloseClick]);
 
     return (
         <div
@@ -51,13 +70,7 @@ function TimeFilter({ className }) {
                 { [className]: className !== null, [styles.opened]: opened },
             ])}
         >
-            <button
-                type="button"
-                className={styles.dateRangeInner}
-                onClick={() => {
-                    open();
-                }}
-            >
+            <button type="button" className={styles.dateRangeInner} onClick={onToggleClick}>
                 <img src={snowIcon} alt="Snow" />
                 <span className={styles.label}>
                     {currentChoice !== null ? (
@@ -72,13 +85,7 @@ function TimeFilter({ className }) {
                 </span>
                 <img src={chevronIcon} alt="Chevron" />
             </button>
-            <button
-                type="button"
-                onClick={() => {
-                    close();
-                }}
-                className={styles.popupSafe}
-            />
+            <button type="button" onClick={onCloseClick} className={styles.popupSafe} />
             <div className={styles.popupContainer}>
                 <div className={styles.popup}>
                     <div className={styles.arrow} />

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -10,17 +10,23 @@ import tronconTypes from '../../data/troncon-types.json';
 import tronconStates from '../../data/troncon-states.json';
 import layersIcon from '../../assets/images/layers.svg';
 
-import styles from '../../styles/partials/layers-filter.module.scss';
+import styles from '../../styles/filters/layers-filter.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    opened: PropTypes.bool,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
+    opened: false,
+    onOpen: null,
+    onClose: null,
 };
 
-function LayersFilter({ className }) {
+function LayersFilter({ className, opened, onOpen, onClose }) {
     const { locale } = useIntl();
 
     const {
@@ -29,12 +35,6 @@ function LayersFilter({ className }) {
         tronconTypes: selectedTronconTypes,
         setTronconTypes,
     } = useFilters();
-
-    const [opened, setOpened] = useState(false);
-
-    const toggle = useCallback(() => {
-        setOpened((old) => !old);
-    }, [setOpened]);
 
     const toggleInArray = useCallback((old, item) => {
         const newTypes = [...old];
@@ -62,6 +62,26 @@ function LayersFilter({ className }) {
         [setTronconTypes, toggleInArray],
     );
 
+    const onOpenClick = useCallback(() => {
+        if (onOpen !== null) {
+            onOpen();
+        }
+    }, [onOpen]);
+
+    const onCloseClick = useCallback(() => {
+        if (onClose !== null) {
+            onClose();
+        }
+    }, [onClose]);
+
+    const onToggleClick = useCallback(() => {
+        if (opened) {
+            onCloseClick();
+        } else {
+            onOpenClick();
+        }
+    }, [opened, onOpenClick, onCloseClick]);
+
     return (
         <div
             className={classNames([
@@ -69,13 +89,7 @@ function LayersFilter({ className }) {
                 { [className]: className !== null, [styles.opened]: opened },
             ])}
         >
-            <button
-                type="button"
-                className={styles.toggler}
-                onClick={() => {
-                    toggle();
-                }}
-            >
+            <button type="button" className={styles.toggler} onClick={onToggleClick}>
                 <img src={layersIcon} alt="Layers" />
             </button>
             <div className={styles.popupContainer}>
@@ -96,7 +110,8 @@ function LayersFilter({ className }) {
                                 ) => {
                                     const finalLabel =
                                         labelPlural !== null ? labelPlural : labelSingular;
-                                    const selected = selectedContributionTypes.indexOf(`${id}`) > -1;
+                                    const selected =
+                                        selectedContributionTypes.indexOf(`${id}`) > -1;
                                     return (
                                         <button
                                             className={classNames([

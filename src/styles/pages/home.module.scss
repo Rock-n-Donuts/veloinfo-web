@@ -10,8 +10,46 @@
     .mapHeader {
         z-index: 1;
         position: relative;
+        display: flex;
+        align-items: stretch;
+        height: 50px;
         color: $color-white;
         background-color: $color-blue-background;
+
+        & > * {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1 1 0;
+
+            & > * {
+                flex-grow: 1;
+            }
+        }
+
+        .left {
+            align-items: flex-start;
+        }
+
+        .center {
+            align-items: center;
+        }
+
+        .right {
+            align-items: flex-end;
+        }
+
+        .menuButton {
+            width: 50px;
+        }
+
+        .timeFilter {
+            z-index: 1;
+        }
+
+        .layersFilter {
+            z-index: 0;
+        }
     }
 
     .mapContainer {
@@ -78,12 +116,12 @@
     .contributionDetailsContainer {
         @extend %fullscreen;
 
-        z-index: 2;        
+        z-index: 2;
         pointer-events: none;
-        overflow: auto;       
+        overflow: auto;
         opacity: 0;
         transition: opacity 0.25s ease;
-        
+
         background-color: rgba($color-black, 0.5);
     }
 
@@ -113,7 +151,7 @@
     .contributionDetailsGroup {
         position: relative;
         margin: auto;
-        
+
         width: 100%;
         max-width: 600px;
 
@@ -146,7 +184,7 @@
         }
     }
 
-    &.addContributionOpened {
+    &.formOpened {
         .addContribution {
             transform: translateY(0);
         }
@@ -159,7 +197,7 @@
         }
     }
 
-    &.hasUserCurrentContribution {
+    &.addContribution {
         .reportLinksButton {
             opacity: 0;
             pointer-events: none;

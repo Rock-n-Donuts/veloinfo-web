@@ -22,8 +22,7 @@ const defaultProps = {
     onMinimapMoved: null,
 };
 
-function AddContribution({ className, onClose, onContributionAdded, onMinimapMoved }) {
-
+function AddContributionModal({ className, onClose, onContributionAdded, onMinimapMoved }) {
     const onContributionSubmitted = useCallback(
         (contribution) => {
             if (onContributionAdded !== null) {
@@ -63,7 +62,7 @@ function AddContribution({ className, onClose, onContributionAdded, onMinimapMov
     );
 }
 
-AddContribution.propTypes = propTypes;
-AddContribution.defaultProps = defaultProps;
+AddContributionModal.propTypes = propTypes;
+AddContributionModal.defaultProps = defaultProps;
 
-export default AddContribution;
+export default AddContributionModal;

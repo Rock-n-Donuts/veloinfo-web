@@ -10,28 +10,29 @@ import styles from '../../styles/partials/contribution-coords-selector.module.sc
 
 const propTypes = {
     className: PropTypes.string,
+    opened: PropTypes.bool,
 };
 
 const defaultProps = {
     className: null,
+    opened: false,
 };
 
-function ContributionCoordsSelector({ className }) {
+function ContributionCoordsSelector({ className, opened }) {
     const userContribution = useUserCurrentContribution();
     const { type = null } = userContribution || {};
-    const contributionType = useMemo(
-        () => contributionTypes.find(({ id }) => id === type),
-        [type],
-    );
+    const hasType = type !== null;
+    const contributionType = useMemo(() => contributionTypes.find(({ id }) => id === type), [type]);
     const { icon, color } = contributionType || {};
     return (
-        <div className={classNames([styles.container, { [className]: className !== null, [styles.active]: type !== null }])}>
+        <div
+            className={classNames([
+                styles.container,
+                { [className]: className !== null, [styles.active]: opened && hasType },
+            ])}
+        >
             <div className={styles.mapMarker}>
-                <ContributionIcon
-                    className={styles.icon}
-                    icon={icon}
-                    color={color}
-                />
+                <ContributionIcon className={styles.icon} icon={icon} color={color} />
             </div>
         </div>
     );

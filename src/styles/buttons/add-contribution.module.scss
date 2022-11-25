@@ -102,7 +102,7 @@
         }
     }
 
-    &.typeSelected {
+    &.opened.typeSelected {
         .type {
             transition: height 0.35s 0.1s ease;
 

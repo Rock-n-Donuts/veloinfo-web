@@ -4,8 +4,6 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 
 import {
-    useAddUserContribution,
-    useCancelUserContributions,
     useUserCurrentContribution,
     useUserUpdateContribution,
 } from '../../contexts/SiteContext';
@@ -16,36 +14,31 @@ import styles from '../../styles/buttons/add-contribution.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    opened: PropTypes.bool,
+    onOpen: PropTypes.func,
+    onClose: PropTypes.func,
     onNext: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
+    opened: false,
+    onOpen: null,
+    onClose: null,
     onNext: null,
 };
 
-function AddContributionButton({ className, onNext }) {
+function AddContributionButton({ className, opened, onOpen, onClose, onNext }) {
     const { locale } = useIntl();
     const userCurrentContribution = useUserCurrentContribution();
-    const opened = userCurrentContribution !== null;
     const { type: userContributionType = null } = userCurrentContribution || {};
 
     const updateContribution = useUserUpdateContribution();
-    const addContribution = useAddUserContribution();
-    const cancelContribution = useCancelUserContributions();
 
     const validTypes = useMemo(
         () => contributionTypes.filter(({ disableAdd }) => !disableAdd),
         [],
     );
-
-    const onToggleOpen = useCallback(() => {
-        if (opened) {
-            cancelContribution();
-        } else {
-            addContribution();
-        }
-    }, [opened, addContribution, cancelContribution]);
 
     const updateContributionType = useCallback(
         (type) => {
@@ -53,6 +46,32 @@ function AddContributionButton({ className, onNext }) {
         },
         [userContributionType, updateContribution],
     );
+
+    const onOpenClick = useCallback(() => {
+        if (onOpen !== null) {
+            onOpen();
+        }
+    }, [onOpen]);
+
+    const onCloseClick = useCallback(() => {
+        if (onClose !== null) {
+            onClose();
+        }
+    }, [onClose]);
+
+    const onToggleClick = useCallback(() => {
+        if (opened) {
+            onCloseClick();
+        } else {
+            onOpenClick();
+        }
+    }, [opened, onOpenClick, onCloseClick]);
+
+    const onNextClick = useCallback( () => {
+        if (onNext !== null) {
+            onNext();
+        }
+    }, [onNext]);
 
     return (
         <div
@@ -109,10 +128,10 @@ function AddContributionButton({ className, onNext }) {
                 })}
             </div>
             <div className={styles.actions}>
-                <button type="button" className={styles.nextButton} onClick={onNext}>
+                <button type="button" className={styles.nextButton} onClick={onNextClick}>
                     <FormattedMessage id="ok" />
                 </button>
-                <button type="button" className={styles.toggleOpenButton} onClick={onToggleOpen}>
+                <button type="button" className={styles.toggleOpenButton} onClick={onToggleClick}>
                     <FormattedMessage id={opened ? 'cancel' : 'add'} />
                 </button>
             </div>

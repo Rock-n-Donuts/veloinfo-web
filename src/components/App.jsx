@@ -35,6 +35,8 @@ function App() {
                 <Routes>
                     <Route path="/" exact element={<HomePage />} />
                     <Route path="/contribution/:id" exact element={<HomePage />} />
+                    <Route path="/ajouter" exact element={<HomePage addContribution />} />
+                    <Route path="/signaler" exact element={<HomePage report />} />
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </MainLayout>

@@ -34,7 +34,7 @@
     .popup {
         position: relative;
         padding: 10px;
-        background-color: $color-white;
+        background-color: rgba($color-white, 0.95);
         color: $color-black;
     }
 
@@ -77,7 +77,6 @@
         margin: 10px 0;
     }
 
-
     .tronconsStatus {
         font-size: 14px;
         .title {
@@ -111,7 +110,6 @@
             margin-left: 10px;
         }
     }
-
 
     &.opened {
         .popupContainer {
