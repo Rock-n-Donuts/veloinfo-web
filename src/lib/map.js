@@ -1,3 +1,5 @@
+// import getContributionSvg from '../icons/contributionSvg';
+
 import contributionTypes from '../data/contribution-types.json';
 import tronconStates from '../data/troncon-states.json';
 
@@ -127,6 +129,9 @@ export function getMarkersFromContributions(contributions) {
             color,
             withoutMarker,
             value,
+            // src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+            //     getContributionSvg({ icon, color, withoutMarker }),
+            // )}`
         }))
         .reverse();
 }

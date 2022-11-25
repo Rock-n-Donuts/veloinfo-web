@@ -313,7 +313,7 @@ function Map({
                     const { length = 0 } = features || {};
                     let style = styleCache[length];
                     if (!style) {
-                        const img = markerIconsRef.current[`${icon}${color}`];
+                        const img = src === undefined ? markerIconsRef.current[`${icon}${color}`] : undefined;
                         style = new Style({
                             image: new Icon({
                                 anchor: [0.5, 1],
@@ -321,7 +321,7 @@ function Map({
                                 anchorYUnits: 'fraction',
                                 src,
                                 img,
-                                imgSize: [img.width, img.height],
+                                imgSize: src === undefined ? [img.width, img.height] : undefined,
                                 scale: scale,
                             }),
                             text:
