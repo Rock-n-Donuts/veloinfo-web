@@ -12,9 +12,9 @@ import {
     useUserUpdateContribution,
 } from '../../contexts/SiteContext';
 import ReCAPTCHA from '../partials/ReCAPTCHA';
-import FormGroup from '../partials/FormGroup';
+import FormGroup from './FormGroup';
 import ImageUpload from '../partials/ImageUpload';
-import Map from '../partials/Map';
+import Map from '../map/Map';
 import ContributionIcon from '../../icons/Contribution';
 import successImage from '../../assets/images/success.svg';
 import contributionTypes from '../../data/contribution-types.json';

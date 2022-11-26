@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import styles from '../../styles/partials/form-group.module.scss';
+import styles from '../../styles/forms/form-group.module.scss';
 
 const propTypes = {
     className: PropTypes.string,

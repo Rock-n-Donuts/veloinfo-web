@@ -6,7 +6,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 import ReCAPTCHA from '../partials/ReCAPTCHA';
-import FormGroup from '../partials/FormGroup';
+import FormGroup from './FormGroup';
 
 import styles from '../../styles/forms/reply.module.scss';
 

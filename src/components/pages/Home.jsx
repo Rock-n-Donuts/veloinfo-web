@@ -13,8 +13,8 @@ import {
     useReady,
 } from '../../contexts/DataContext';
 import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
+import Map from '../map/Map';
 import Meta from '../partials/Meta';
-import Map from '../partials/Map';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
 import AddContributionModal from '../partials/AddContributionModal';

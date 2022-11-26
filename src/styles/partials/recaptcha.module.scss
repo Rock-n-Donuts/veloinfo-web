@@ -1,0 +1,12 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    min-height: 80px;
+    opacity: 0;
+    transition: opacity .25s ease;
+
+    &.ready {
+        opacity: 1
+    }
+}

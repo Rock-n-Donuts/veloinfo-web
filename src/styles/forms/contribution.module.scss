@@ -125,11 +125,11 @@
     }
 
     .captchaContainer {
-        text-align: right;
+        display: flex;
     }
 
     .captcha {
-        display: inline-block;
+        margin-left: auto;
         margin-bottom: 20px;
     }
 
