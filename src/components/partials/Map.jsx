@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { VectorImage } from 'ol/layer';
+import { VectorImage, Tile as TileLayer } from 'ol/layer';
 import { Cluster, Vector as VectorSource, XYZ, OSM } from 'ol/source';
 import { Style, Stroke, Icon, Fill, Text } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
@@ -12,7 +12,7 @@ import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 import { defaults as defaultInteractions } from 'ol/interaction/defaults';
 
-import TileLayer from 'ol/layer/WebGLTile';
+// import TileLayer from 'ol/layer/WebGLTile';
 // import WebGLVectorLayerRenderer from 'ol/renderer/webgl/VectorLayer';
 // import {packColor} from 'ol/renderer/webgl/shaders';
 
