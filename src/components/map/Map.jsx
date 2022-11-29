@@ -109,7 +109,6 @@ function Map({
     const [loadingUserPosition, setLoadingUserPosition] = useState(false);
 
     const storedLines = useRef([]);
-    const storedMarkers = useRef([]);
     const markerLayers = useRef([]);
 
     const [iconsLoaded, setIconLoaded] = useState(
@@ -317,143 +316,89 @@ function Map({
                     geometry: new Point(fromLonLat(coords)),
                     attributes: { ...data, clickable },
                 });
-                // const { visible = false} = data;
-                // feature.setStyle(visible ? undefined : new Style({}));
                 return feature;
             }
 
-            // removing all then re-adding seems faster?
             markerLayers.current.forEach((layer) => {
                 mapRef.current.removeLayer(layer);
             });
             markerLayers.current = [];
 
             markerGroups.forEach((markers, groupIndex) => {
-                const cacheGroup = null // storedMarkers.current[groupIndex] || null;
-                if (cacheGroup !== null) {
-                    const { source /* , layer */ } = cacheGroup;
-                    const { features } = markers;
-                    cacheGroup.features = cacheGroup.features.filter((featureObject) => {
-                        const { id: featureId, feature } = featureObject;
-                        const foundFeature =
-                            (features.find(({ data: { id } }) => id === featureId) || null) !==
-                            null;
-                        if (!foundFeature) {
-                            source.removeFeature(feature);
+                const {
+                    features: markersFeatures,
+                    src,
+                    icon,
+                    scale,
+                    withoutCluster = false,
+                    color,
+                } = markers || {};
+
+                const vectorSource = new VectorSource();
+
+                const clusterSource = new Cluster({
+                    distance: clusterDistance,
+                    minDistance: clusterMinDistance,
+                    source: vectorSource,
+                });
+
+                const visibleFeatures = markersFeatures.filter(
+                    ({ data: { visible = false } }) => visible,
+                );
+
+                const styleCache = {};
+                const layer = new VectorImage({
+                    source: withoutCluster ? vectorSource : clusterSource,
+                    style: function (feature) {
+                        const features = feature.get('features');
+                        const { length = 0 } = features || [];
+                        let style = styleCache[length];
+                        if (!style) {
+                            const img =
+                                src === undefined
+                                    ? markerIconsRef.current[`${icon}${color}`]
+                                    : undefined;
+                            style = new Style({
+                                image: new Icon({
+                                    anchor: [0.5, 1],
+                                    anchorXUnits: 'fraction',
+                                    anchorYUnits: 'fraction',
+                                    src,
+                                    img,
+                                    imgSize:
+                                        src === undefined ? [img.width, img.height] : undefined,
+                                    scale: scale,
+                                }),
+                                text:
+                                    length > 1
+                                        ? new Text({
+                                              text: length.toString(),
+                                              offsetX: 6,
+                                              offsetY: -3,
+                                              scale: scale * 2,
+                                              font: '12px Arial',
+                                              fill: new Fill({
+                                                  color: '#FFF',
+                                              }),
+                                              stroke: new Stroke({
+                                                  color,
+                                                  width: 5,
+                                              }),
+                                          })
+                                        : undefined,
+                            });
+                            styleCache[length] = style;
                         }
-                        return foundFeature;
-                    });
-                    features.forEach((object) => {
-                        const { data } = object;
-                        const { id, visible = false } = data;
-                        const existingFeatureIndex =
-                            cacheGroup.features.findIndex(({ id: featureId }) => id === featureId);
-                        const existing = existingFeatureIndex > -1 ? cacheGroup.features[existingFeatureIndex] : null;
-                        if (visible) {
-                            if (existing === null) {
-                                const feature = addFeature(object);
-                                source.addFeature(feature);
-                                cacheGroup.features.push({ feature, id });
-                            }
-                        } else if (existing !== null) {
-                            const { feature } = existing;
-                            source.removeFeature(feature);
-                            cacheGroup.features.splice(existingFeatureIndex, 1);
-                        }
-                    });
+                        return style;
+                    },
+                });
 
-                    // const visibleFeatures = features.filter(
-                    //     ({ data: { visible = false } }) => visible,
-                    // );
-                    // layer.setVisible(visibleFeatures.length > 0);
-                } else {
-                    
-                    
+                visibleFeatures.forEach((object) => {
+                    vectorSource.addFeature(addFeature(object));
+                });
 
-                    const {
-                        features: markersFeatures,
-                        src,
-                        icon,
-                        scale,
-                        withoutCluster = false,
-                        color,
-                    } = markers || {};
-
-                    const vectorSource = new VectorSource();
-
-                    const clusterSource = new Cluster({
-                        distance: clusterDistance,
-                        minDistance: clusterMinDistance,
-                        source: vectorSource,
-                    });
-
-                    const visibleFeatures = markersFeatures.filter(
-                        ({ data: { visible = false } }) => visible,
-                    );
-
-                    const styleCache = {};
-                    const layer = new VectorImage({
-                        // visible: visibleFeatures.length > 0,
-                        source: withoutCluster ? vectorSource : clusterSource,
-                        style: function (feature) {
-                            const features = feature.get('features');
-                            const { length = 0 } = features || [];
-                            let style = styleCache[length];
-                            if (!style) {
-                                const img =
-                                    src === undefined
-                                        ? markerIconsRef.current[`${icon}${color}`]
-                                        : undefined;
-                                style = new Style({
-                                    image: new Icon({
-                                        anchor: [0.5, 1],
-                                        anchorXUnits: 'fraction',
-                                        anchorYUnits: 'fraction',
-                                        src,
-                                        img,
-                                        imgSize:
-                                            src === undefined ? [img.width, img.height] : undefined,
-                                        scale: scale,
-                                    }),
-                                    text:
-                                        length > 1
-                                            ? new Text({
-                                                  text: length.toString(),
-                                                  offsetX: 6,
-                                                  offsetY: -3,
-                                                  scale: scale * 2,
-                                                  font: '12px Arial',
-                                                  fill: new Fill({
-                                                      color: '#FFF',
-                                                  }),
-                                                  stroke: new Stroke({
-                                                      color,
-                                                      width: 5,
-                                                  }),
-                                              })
-                                            : undefined,
-                                });
-                                styleCache[length] = style;
-                            }
-                            return style;
-                            // return visibleFeatures.length > 0 ? style : new Style({});
-                        },
-                    });
-
-                    mapRef.current.addLayer(layer);
-                    markerLayers.current.push(layer);
-                    storedMarkers.current[groupIndex] = {
-                        layer,
-                        source: vectorSource,
-                        features: visibleFeatures.map((object) => {
-                            const { data } = object;
-                            const { id } = data;
-                            const feature = addFeature(object);
-                            vectorSource.addFeature(feature);
-                            return { feature, id };
-                        }),
-                    };
-                }
+                mapRef.current.addLayer(layer);
+                markerLayers.current.push(layer);
             });
         },
         [clusterDistance, clusterMinDistance],
