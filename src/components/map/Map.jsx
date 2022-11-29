@@ -110,6 +110,7 @@ function Map({
 
     const storedLines = useRef([]);
     const storedMarkers = useRef([]);
+    const markerLayers = useRef([]);
 
     const [iconsLoaded, setIconLoaded] = useState(
         getColoredIcons().map(({ icon, color }) => ({ key: `${icon}${color}`, loaded: false })),
@@ -321,8 +322,14 @@ function Map({
                 return feature;
             }
 
+            // removing all then re-adding seems faster?
+            markerLayers.current.forEach((layer) => {
+                mapRef.current.removeLayer(layer);
+            });
+            markerLayers.current = [];
+
             markerGroups.forEach((markers, groupIndex) => {
-                const cacheGroup = storedMarkers.current[groupIndex] || null;
+                const cacheGroup = null // storedMarkers.current[groupIndex] || null;
                 if (cacheGroup !== null) {
                     const { source /* , layer */ } = cacheGroup;
                     const { features } = markers;
@@ -360,6 +367,9 @@ function Map({
                     // );
                     // layer.setVisible(visibleFeatures.length > 0);
                 } else {
+                    
+                    
+
                     const {
                         features: markersFeatures,
                         src,
@@ -431,6 +441,7 @@ function Map({
                     });
 
                     mapRef.current.addLayer(layer);
+                    markerLayers.current.push(layer);
                     storedMarkers.current[groupIndex] = {
                         layer,
                         source: vectorSource,
