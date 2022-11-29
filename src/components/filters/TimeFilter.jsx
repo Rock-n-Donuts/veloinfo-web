@@ -107,9 +107,9 @@ function TimeFilter({ className, opened, onOpen, onClose }) {
                             ))}
                             <button
                                 type="button"
-                                className={classNames([{ [styles.selected]: fromTime === null }])}
+                                className={classNames([{ [styles.selected]: fromTime === 'all' }])}
                                 onClick={() => {
-                                    setDateFilter(null);
+                                    setDateFilter('all');
                                 }}
                             >
                                 <FormattedMessage id="time-filter-all" />

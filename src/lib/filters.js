@@ -1,4 +1,4 @@
-import { addDays, addHours } from 'date-fns';
+import { addDays, addHours, isBefore } from 'date-fns';
 
 import { parseDate } from './utils';
 import timeChoices from '../data/time-filter-choices.json';
@@ -23,14 +23,15 @@ export const getFilteredContributions = (contributions, filters) => {
     const fromTime = timeChoices.find(({ key }) => key === fromTimeKey) || null;
 
     return [...(contributions || [])].map((contribution) => {
-        const { issue_id, created_at } = contribution;
+        const { issue_id, updated_at } = contribution;
         const validType = contributionTypes.indexOf(`${issue_id}`) > -1;
         const { days = 0, hours = 0 } = fromTime || {};
 
         const validStatefromTime =
             `${issue_id}` !== `${1}` ||
             fromTime === null ||
-            addDays(addHours(new Date(), -hours), -days) < parseDate(created_at);
+            isBefore(addDays(addHours(new Date(), -hours), -days), parseDate(updated_at));
+        
         const visible = validType && validStatefromTime;
         return { ...contribution, visible };
     });

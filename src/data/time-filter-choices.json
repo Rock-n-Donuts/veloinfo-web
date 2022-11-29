@@ -43,7 +43,7 @@
         "key": "1day",
         "days": 1,
         "label": {
-            "fr": "Dernier 24h",
+            "fr": "Dernières 24h",
             "en": "Last 24h"
         }
     },

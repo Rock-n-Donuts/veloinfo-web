@@ -316,13 +316,15 @@ function Map({
                     geometry: new Point(fromLonLat(coords)),
                     attributes: { ...data, clickable },
                 });
+                // const { visible = false} = data;
+                // feature.setStyle(visible ? undefined : new Style({}));
                 return feature;
             }
 
             markerGroups.forEach((markers, groupIndex) => {
                 const cacheGroup = storedMarkers.current[groupIndex] || null;
                 if (cacheGroup !== null) {
-                    const { source, layer } = cacheGroup;
+                    const { source /* , layer */ } = cacheGroup;
                     const { features } = markers;
                     cacheGroup.features = cacheGroup.features.filter((featureObject) => {
                         const { id: featureId, feature } = featureObject;
@@ -336,22 +338,27 @@ function Map({
                     });
                     features.forEach((object) => {
                         const { data } = object;
-                        const { id } = data;
-                        const existingFeature =
-                            cacheGroup.features.find(({ id: featureId }) => id === featureId) ||
-                            null;
-
-                        if (existingFeature === null) {
-                            const feature = addFeature(object);
-                            source.addFeature(feature);
-                            cacheGroup.features.push({ feature, id });
+                        const { id, visible = false } = data;
+                        const existingFeatureIndex =
+                            cacheGroup.features.findIndex(({ id: featureId }) => id === featureId);
+                        const existing = existingFeatureIndex > -1 ? cacheGroup.features[existingFeatureIndex] : null;
+                        if (visible) {
+                            if (existing === null) {
+                                const feature = addFeature(object);
+                                source.addFeature(feature);
+                                cacheGroup.features.push({ feature, id });
+                            }
+                        } else if (existing !== null) {
+                            const { feature } = existing;
+                            source.removeFeature(feature);
+                            cacheGroup.features.splice(existingFeatureIndex, 1);
                         }
                     });
 
-                    const visibleFeatures = features.filter(
-                        ({ data: { visible = false } }) => visible,
-                    );
-                    layer.setVisible(visibleFeatures.length > 0);
+                    // const visibleFeatures = features.filter(
+                    //     ({ data: { visible = false } }) => visible,
+                    // );
+                    // layer.setVisible(visibleFeatures.length > 0);
                 } else {
                     const {
                         features: markersFeatures,
@@ -376,7 +383,7 @@ function Map({
 
                     const styleCache = {};
                     const layer = new VectorImage({
-                        visible: visibleFeatures.length > 0,
+                        // visible: visibleFeatures.length > 0,
                         source: withoutCluster ? vectorSource : clusterSource,
                         style: function (feature) {
                             const features = feature.get('features');
@@ -419,6 +426,7 @@ function Map({
                                 styleCache[length] = style;
                             }
                             return style;
+                            // return visibleFeatures.length > 0 ? style : new Style({});
                         },
                     });
 
@@ -426,7 +434,7 @@ function Map({
                     storedMarkers.current[groupIndex] = {
                         layer,
                         source: vectorSource,
-                        features: markersFeatures.map((object) => {
+                        features: visibleFeatures.map((object) => {
                             const { data } = object;
                             const { id } = data;
                             const feature = addFeature(object);
