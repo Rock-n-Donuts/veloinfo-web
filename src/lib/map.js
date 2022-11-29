@@ -9,7 +9,8 @@ export function getLinesFromTroncons(troncons) {
     );
 
     const clearedPaths = troncons.filter(
-        ({ side_one_state: s1, side_two_state: s2 }) => s1 === 1 && s2 === 1,
+        ({ side_one_state: s1, side_two_state: s2 }) =>
+            (s1 === 1 || s1 === 10) && (s2 === 1 || s2 === 10),
     );
     const snowyPaths = troncons.filter(
         ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
@@ -19,11 +20,9 @@ export function getLinesFromTroncons(troncons) {
             s1 === 2 ||
             s1 === 3 ||
             s1 === 4 ||
-            s1 === 10 ||
             s2 === 2 ||
             s2 === 3 ||
-            s2 === 4 ||
-            s2 === 10,
+            s2 === 4
     );
 
     const clearingPaths = troncons.filter(
@@ -31,7 +30,7 @@ export function getLinesFromTroncons(troncons) {
     );
 
     // console.log(
-    //     troncons.length,
+    //     troncons,
     //     unknownPaths.length +
     //         clearedPaths.length +
     //         snowyPaths.length +
