@@ -8,6 +8,14 @@
         }
     },
     {
+        "key": "partially-cleared",
+        "color": "#439666",
+        "label": {
+            "fr": "Un côté déneigé",
+            "en": "One side cleared"
+        }
+    },
+    {
         "key": "snowy",
         "color": "#367c98",
         "label": {

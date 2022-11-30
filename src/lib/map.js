@@ -4,78 +4,49 @@ import contributionTypes from '../data/contribution-types.json';
 import tronconStates from '../data/troncon-states.json';
 
 export function getLinesFromTroncons(troncons) {
-    const unknownPaths = troncons.filter(
-        ({ side_one_state: s1, side_two_state: s2 }) => s1 === null && s2 === null,
+    // 0 Enneigé,
+    // 1 Déneigé, (seulement après un code 0)
+    // 2 Planifié
+    // 3 Replanifié (déplacé?)
+    // 4 Sera planifié ulterieurement
+    // 5 Chargement en cours
+    // 10 Dégagé (entre 2 chargements) (entre 2 saisons aussi)
+
+    const groupedFeatures = troncons.reduce(
+        (all, curr) => {
+            const { side_one_state: s1, side_two_state: s2 } = curr;
+            const newObj = { ...all };
+
+            if (s1 === 1 || s1 === 10 || s2 === 1 || s2 === 10) {
+                if ((s1 === 1 || s1 === 10) && (s2 === 1 || s2 === 10)) {
+                    newObj['cleared'].push(curr);
+                } else {
+                    newObj['partially-cleared'].push(curr);
+                }
+            } else if (s1 === 0 || s2 === 0) {
+                newObj['snowy'].push(curr);
+            } else if (s1 === 2 || s1 === 3 || s1 === 4 || s2 === 2 || s2 === 3 || s2 === 4) {
+                newObj['planified'].push(curr);
+            } else if (s1 === 5 || s2 === 5) {
+                newObj['clearing'].push(curr);
+            } else {
+                newObj['unknown'].push(curr);
+            }
+            return newObj;
+        },
+        tronconStates.reduce(
+            (acc, { key }) => ({
+                ...acc,
+                [key]: [],
+            }),
+            {},
+        ),
     );
 
-    const clearedPaths = troncons.filter(
-        ({ side_one_state: s1, side_two_state: s2 }) =>
-            (s1 === 1 || s1 === 10) && (s2 === 1 || s2 === 10),
-    );
-    const snowyPaths = troncons.filter(
-        ({ side_one_state: s1, side_two_state: s2 }) => s1 === 0 || s2 === 0,
-    );
-    const planifiedPaths = troncons.filter(
-        ({ side_one_state: s1, side_two_state: s2 }) =>
-            s1 === 2 ||
-            s1 === 3 ||
-            s1 === 4 ||
-            s2 === 2 ||
-            s2 === 3 ||
-            s2 === 4
-    );
-
-    const clearingPaths = troncons.filter(
-        ({ side_one_state: s1, side_two_state: s2 }) => s1 === 5 || s2 === 5,
-    );
-
-    // console.log(
-    //     troncons,
-    //     unknownPaths.length +
-    //         clearedPaths.length +
-    //         snowyPaths.length +
-    //         planifiedPaths.length +
-    //         clearingPaths.length,
-    //     `Unknown: ${unknownPaths.length} Cleared: ${clearedPaths.length} Snowy: ${snowyPaths.length} Planified: ${planifiedPaths.length} Clearing: ${clearingPaths.length}`,
-    // );
-
-    return [
-        {
-            features: unknownPaths.map(({ coords, ...troncon }) => ({
-                coords,
-                data: troncon,
-            })),
-            color: tronconStates.find(({ key }) => key === 'unknown').color,
-        },
-        {
-            features: clearedPaths.map(({ coords, ...troncon }) => ({
-                coords,
-                data: troncon,
-            })),
-            color: tronconStates.find(({ key }) => key === 'cleared').color,
-        },
-        {
-            features: snowyPaths.map(({ coords, ...troncon }) => ({
-                coords,
-                data: troncon,
-            })),
-            color: tronconStates.find(({ key }) => key === 'snowy').color,
-        },
-        {
-            features: planifiedPaths.map(({ coords, ...troncon }) => ({
-                coords,
-                data: troncon,
-            })),
-            color: tronconStates.find(({ key }) => key === 'planified').color,
-        },
-        {
-            features: clearingPaths.map(({ coords, ...troncon }) => ({
-                coords,
-                data: troncon,
-            })),
-            color: tronconStates.find(({ key }) => key === 'clearing').color,
-        },
-    ];
+    return tronconStates.map(({ key, color }) => ({
+        color,
+        features: groupedFeatures[key].map(({ coords, ...data }) => ({ coords, data })),
+    }));
 }
 
 export function getColoredIcons() {
