@@ -26,28 +26,28 @@
         },
         "qualities": [
             {
+                "value": 1,
                 "label": {
                     "fr": "Positive",
                     "en": "Positive"
                 },
-                "color": "#439666",
-                "value": -1
+                "color": "#439666"                
             },
             {
+                "value": 0,
                 "label": {
                     "fr": "Neutre",
                     "en": "Neutral"
                 },
-                "color": "#367c99",
-                "value": 0
+                "color": "#367c99"                
             },
             {
+                "value": -1,
                 "label": {
                     "fr": "Négative",
                     "en": "Negative"
                 },
-                "color": "#f09035",
-                "value": 1
+                "color": "#f09035"
             }
         ]
     },
