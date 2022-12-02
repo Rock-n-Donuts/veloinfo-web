@@ -21,7 +21,7 @@ const contributions = features.map(
         properties: { nid, titre, 'url-image-en-direct': liveUrl },
     }) => ({
         coords: coordinates.join(','),
-        external_id: nid,
+        external_id: `camera/${nid}`,
         issue_id: 2,
         name: 'Ville de Montréal',
         comment: titre,

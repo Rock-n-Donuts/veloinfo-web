@@ -18,7 +18,7 @@ const contributions = data.map(({ INV_ID, LONG, LAT, MARQ, DATE_INSPECTION, PARC
 
     return {
         coords: `${LONG},${LAT}`,
-        external_id: INV_ID,
+        external_id: `rack/${INV_ID}`,
         issue_id: 3,
         name: 'Ville de Montréal',
         comment: `${description}${inPark}`,

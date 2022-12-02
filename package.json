@@ -58,6 +58,8 @@
         "build": "react-scripts build",
         "import-cameras": "node src/tools/import/cameras",
         "import-racks": "node src/tools/import/racks",
+        "import-stations": "node src/tools/import/stations",
+        "import-shops": "node src/tools/import/shops",
         "infoneige": "node src/tools/infoneige"
     },
     "eslintConfig": {
