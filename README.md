@@ -1,8 +1,12 @@
 # Vélo info web
 
-Frontend
+## Installation
 
-## Dev scripts
+### `npm install`
+
+Puis créer un fichier `.env` à la racine du projet à partir de `.env.example`
+
+## Développement
 
 ### `npm start`
 
@@ -19,4 +23,12 @@ Converti un geojson de caméras en body pour /import
 
 ### `npm run import-racks`
 
-Converti un array d'arceaux à vélo en body pour /import
+Converti un array de racks à vélo en body pour /import
+
+### `npm run import-stations`
+
+Converti un geojson de stations de réparations en body pour /import
+
+### `npm run import-shops`
+
+Converti un geojson de boutiques à vélos en body pour /import
