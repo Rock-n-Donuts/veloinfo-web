@@ -58,12 +58,12 @@ export const DataProvider = ({ children }) => {
                     contributions: newContributions,
                 } = newData || {};
                 if (dateRef.current === null) {
-                    console.log('Initial data received', newData);
+                    // console.log('Initial data received', newData);
                     setReady(true);
                     dateRef.current = newDate;
                     setData(newData);
                 } else {
-                    console.log('Updated data received.', newData);
+                    // console.log('Updated data received.', newData);
                     if (dateRef.current !== newDate) {
                         dateRef.current = newDate;
                     }
@@ -111,10 +111,10 @@ export const DataProvider = ({ children }) => {
         let interval = null;
 
         if (user !== null) {
-            console.log('Getting initial data...');
+            // console.log('Getting initial data...');
             getData();
             interval = setInterval(() => {
-                console.log('Updating data...');
+                // console.log('Updating data...');
                 getData();
             }, [pollingDelay * 1000]);
         }
