@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import axios from 'axios';
 
 import { useUser } from './AuthContext';
@@ -15,12 +23,23 @@ export const DataProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(data);
-    const [date, setDate] = useState(null);
     const [mapData, setMapData] = useState({ lines: [], markers: [] });
     const user = useUser();
     const selectedFilters = useSelectedFilters();
 
-    const getData = useCallback((date = null) => {
+    const dateRef = useRef(null);
+
+    const filterData = useCallback((newData, newFilters) => {
+        const { troncons = null, contributions = null } = newData;
+
+        return {
+            ...newData,
+            troncons: getFilteredTroncons(troncons, newFilters),
+            contributions: getFilteredContributions(contributions, newFilters),
+        };
+    }, []);
+
+    const getData = useCallback(() => {
         setLoading(true);
         setError(null);
         axios
@@ -28,7 +47,7 @@ export const DataProvider = ({ children }) => {
                 url: '/update',
                 method: 'get',
                 params: {
-                    from: date,
+                    from: dateRef.current,
                 },
             })
             .then((res) => {
@@ -38,15 +57,15 @@ export const DataProvider = ({ children }) => {
                     troncons: newTroncons,
                     contributions: newContributions,
                 } = newData || {};
-                if (date === null) {
-                    // console.log('Initial data received', newData);
+                if (dateRef.current === null) {
+                    console.log('Initial data received', newData);
                     setReady(true);
-                    setDate(newDate);
+                    dateRef.current = newDate;
                     setData(newData);
                 } else {
-                    // console.log('Updated data received.', newData);
-                    if (date !== newDate) {
-                        setDate(newDate);
+                    console.log('Updated data received.', newData);
+                    if (dateRef.current !== newDate) {
+                        dateRef.current = newDate;
                     }
 
                     if (newTroncons.length > 0 || newContributions.length > 0) {
@@ -89,30 +108,24 @@ export const DataProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        if (user !== null) {
-            // console.log('Getting initial data...');
-            getData();
-        }
-    }, [getData, user]);
+        let interval = null;
 
-    useEffect(() => {
-        if (date !== null) {
-            setTimeout(() => {
-                // console.log('Updating data...');
-                getData(date);
+        if (user !== null) {
+            console.log('Getting initial data...');
+            getData();
+            interval = setInterval(() => {
+                console.log('Updating data...');
+                getData();
             }, [pollingDelay * 1000]);
         }
-    }, [getData, date]);
 
-    const filterData = useCallback((newData, newFilters) => {
-        const { troncons = null, contributions = null } = newData;
-
-        return {
-            ...newData,
-            troncons: getFilteredTroncons(troncons, newFilters),
-            contributions: getFilteredContributions(contributions, newFilters),
+        return () => {
+            if (interval !== null) {
+                clearInterval(interval);
+                interval = null;
+            }
         };
-    }, []);
+    }, [getData, user]);
 
     useEffect(() => {
         if (data !== null) {
