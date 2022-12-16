@@ -1,4 +1,5 @@
 // import PropTypes from 'prop-types';
+import { Analytics } from '@vercel/analytics/react';
 import { IntlProvider } from 'react-intl';
 import { Route, Routes } from 'react-router-dom';
 import RelativeTimeFormat from 'relative-time-format';
@@ -12,6 +13,7 @@ import HomePage from './pages/Home';
 import ErrorPage from './pages/Error';
 import messagesFr from '../translations/fr.json';
 import messagesEn from '../translations/en.json';
+
 
 import '../styles/index.scss';
 
@@ -40,6 +42,7 @@ function App() {
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </MainLayout>
+            <Analytics />
         </IntlProvider>
     );
 }

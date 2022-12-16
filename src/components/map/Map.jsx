@@ -11,7 +11,7 @@ import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 import { defaults as defaultInteractions } from 'ol/interaction/defaults';
-import {asArray} from 'ol/color';
+import { asArray } from 'ol/color';
 
 import { getColoredIcons } from '../../lib/map';
 import MapMarker from './MapMarker';
@@ -237,8 +237,8 @@ function Map({
                         source: isDev
                             ? new OSM()
                             : new XYZ({
-                                url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-                            }),
+                                  url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                              }),
                     }),
                 ],
             });
@@ -287,11 +287,11 @@ function Map({
 
                 const { features: linesFeatures, color = '#0000FF', width = 5 } = lines || {};
                 const rgba = [...asArray(color)];
-                rgba[3] = 0.8;
+                rgba[3] = 0.9;
                 const layer = new VectorImage({
                     source: vectorSource,
                     style: new Style({
-                        stroke: new Stroke({ color: rgba, width, }),
+                        stroke: new Stroke({ color: rgba, width }),
                     }),
                 });
 
