@@ -28,7 +28,7 @@
         "color": "#f09035",
         "label": {
             "fr": "Déneigement planifié",
-            "en": "Clearing planified"
+            "en": "Clearing planned"
         }
     },
     {
@@ -44,7 +44,7 @@
         "color": "#666666",
         "label": {
             "fr": "Non planifié",
-            "en": "Not planified"
+            "en": "Not planned"
         }
     }
 ]
