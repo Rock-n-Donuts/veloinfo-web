@@ -1,4 +1,5 @@
 // import PropTypes from 'prop-types';
+import { Analytics } from '@vercel/analytics/react';
 import { IntlProvider } from 'react-intl';
 import { Route, Routes } from 'react-router-dom';
 import RelativeTimeFormat from 'relative-time-format';
@@ -40,6 +41,7 @@ function App() {
                     <Route path="*" element={<ErrorPage />} />
                 </Routes>
             </MainLayout>
+            <Analytics />
         </IntlProvider>
     );
 }
