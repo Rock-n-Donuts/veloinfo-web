@@ -189,7 +189,20 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
                                 ))}
                             </div>
                             <div className={styles.note}>
-                                <FormattedMessage id="troncons-status-note" />
+                                <FormattedMessage
+                                    id="troncons-status-note"
+                                    values={{
+                                        a: (chunks) => (
+                                            <a
+                                                href="https://services.montreal.ca/deneigement/carte"
+                                                target="_blank"
+                                                rel="noreferrer"
+                                            >
+                                                {chunks}
+                                            </a>
+                                        ),
+                                    }}
+                                />
                             </div>
                         </div>
                     </div>
