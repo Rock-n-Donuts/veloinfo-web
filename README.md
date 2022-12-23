@@ -4,7 +4,7 @@
 
 ### `npm install`
 
-Puis créer un fichier `.env` à la racine du projet à partir de `.env.example`
+Puis créer un fichier `.env` à la racine du projet à partir de `.env.example` 
 
 ## Développement
 
