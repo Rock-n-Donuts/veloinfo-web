@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 import {
     useCompleteUserContribution,
@@ -107,6 +108,9 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
                 const { data } = res || {};
                 const { success = false, contribution = null } = data || {};
                 if (success) {
+                    if ((name || '').length > 0) {
+                        Cookies.set('name', name, { expires: 3650 });
+                    }
                     setSuccess(true);
                     setTimeout(() => {
                         completeUserContribution();

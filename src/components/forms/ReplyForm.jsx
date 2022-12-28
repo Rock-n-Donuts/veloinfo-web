@@ -76,7 +76,9 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     const { data } = res || {};
                     const { success = false, contribution = null } = data || {};
                     if (success && contribution !== null) {
-                        Cookies.set('name', name, { expires: 3650 });
+                        if ((name || '').length > 0) {
+                            Cookies.set('name', name, { expires: 3650 });
+                        }                       
                         resetForm();
                         if (onSuccess !== null) {
                             onSuccess(contribution);
