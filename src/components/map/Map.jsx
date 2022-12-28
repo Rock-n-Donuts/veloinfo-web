@@ -596,24 +596,26 @@ function Map({
     const watchPositionId = useRef(null);
 
     useEffect(() => {
-        if (gpsPosition !== null) {
-            const { coords } = gpsPosition || {};
-            const { latitude, longitude /*, accuracy */ } = coords || {};
-            const point = new Point(fromLonLat([longitude, latitude]));
+        if (currentPositionFeatureBg.current !== null && currentPositionFeature.current !== null) {
+            if (gpsPosition !== null) {
+                const { coords } = gpsPosition || {};
+                const { latitude, longitude /*, accuracy */ } = coords || {};
+                const point = new Point(fromLonLat([longitude, latitude]));
 
-            // const rgba = [...asArray( '#367c99')];
-            //     rgba[3] = 0.25;
-            // currentPositionLayerBg.current.setStyle(new Style({
-            //     image: new Circle({
-            //         radius: 40,
-            //         fill: new Fill({ color: rgba }),
-            //     }),
-            // }))
-            currentPositionFeatureBg.current.setGeometry(point);
-            currentPositionFeature.current.setGeometry(point);
-        } else {
-            currentPositionFeatureBg.current.setGeometry(null);
-            currentPositionFeature.current.setGeometry(null);
+                // const rgba = [...asArray( '#367c99')];
+                //     rgba[3] = 0.25;
+                // currentPositionLayerBg.current.setStyle(new Style({
+                //     image: new Circle({
+                //         radius: 40,
+                //         fill: new Fill({ color: rgba }),
+                //     }),
+                // }))
+                currentPositionFeatureBg.current.setGeometry(point);
+                currentPositionFeature.current.setGeometry(point);
+            } else {
+                currentPositionFeatureBg.current.setGeometry(null);
+                currentPositionFeature.current.setGeometry(null);
+            }
         }
     }, [gpsPosition]);
 
