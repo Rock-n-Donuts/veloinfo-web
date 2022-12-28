@@ -129,6 +129,8 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         locale,
     ]);
 
+    const reversedReplies = useMemo(() => [...replies].reverse(), [replies]);
+
     const { label: lastActionLabel = null, author: lastActionAuthor = null } = lastAction || {};
 
     const [now, setNow] = useState(new Date());
@@ -354,13 +356,15 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         </span>
                     </div>
                     <div className={styles.replies}>
-                        {replies.map(
-                            (
-                                { created_at: replyDate, name: replyName, message: replyMessage },
-                                replyIndex,
-                            ) => (
+                        {reversedReplies.map(
+                            ({
+                                created_at: replyDate,
+                                name: replyName,
+                                message: replyMessage,
+                                id: replyId,
+                            }) => (
                                 <ContributionReply
-                                    key={`reply-${replyIndex}`}
+                                    key={`reply-${replyId}`}
                                     className={styles.reply}
                                     date={replyDate}
                                     name={replyName}

@@ -91,6 +91,7 @@
             "fr": "Supports à vélos",
             "en": "Bike racks"
         },
+        "disableAdd": true,
         "icon": "parking",
         "color": "#439667"
     },
@@ -104,6 +105,7 @@
             "fr": "Bornes de réparation",
             "en": "Repair stops"
         },
+        "disableAdd": true,
         "icon": "repair",
         "color": "#439667"
     },
@@ -117,6 +119,7 @@
             "fr": "Boutiques vélo",
             "en": "Bike shops"
         },
+        "disableAdd": true,
         "icon": "heart",
         "color": "#439667"
     }

@@ -24,7 +24,6 @@ const defaultProps = {
 
 function ReplyForm({ contributionId, className, onSuccess }) {
     const intl = useIntl();
-    const captchaRef = useRef();
     const nameCookie = Cookies.get('name') || null;
     const [name, setName] = useState(nameCookie);
     const [comment, setComment] = useState(null);
@@ -32,12 +31,13 @@ function ReplyForm({ contributionId, className, onSuccess }) {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
 
+    const [captchaToken, setCaptchaToken] = useState(null);
+
     const setNameValue = useCallback((e) => setName(e.target.value), [setName]);
     const setCommentValue = useCallback((e) => setComment(e.target.value), [setComment]);
     // const setPhotoValue = useCallback((file) => setPhoto(file), [setPhoto]);
 
     const resetForm = useCallback(() => {
-        captchaRef.current.reset();
         setName(null);
         setComment(null);
         // setPhoto(null);
@@ -47,9 +47,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
         (e) => {
             e.preventDefault();
 
-            const token = captchaRef.current.getValue();
-
-            if (token.length <= 0) {
+            if ((captchaToken || '').length === 0) {
                 setErrors(intl.formatMessage({ id: 'error-captcha' }));
                 return;
             }
@@ -68,9 +66,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
             //     formData.append('photo', photo);
             // }
 
-            if (token.length > 0) {
-                formData.append('token', token);
-            }
+            formData.append('token', captchaToken);
 
             axios
                 .post(`/contribution/${contributionId}/reply`, formData)
@@ -78,7 +74,9 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     const { data } = res || {};
                     const { success = false, contribution = null } = data || {};
                     if (success && contribution !== null) {
-                        Cookies.set('name', name, { expires: 3650 });
+                        if ((name || '').length > 0) {
+                            Cookies.set('name', name, { expires: 3650 });
+                        }                       
                         resetForm();
                         if (onSuccess !== null) {
                             onSuccess(contribution);
@@ -97,6 +95,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                 });
         },
         [
+            captchaToken,
             contributionId,
             name,
             comment,
@@ -107,6 +106,10 @@ function ReplyForm({ contributionId, className, onSuccess }) {
             intl,
         ],
     );
+
+    const onCaptchaSuccess = useCallback((token) => {
+        setCaptchaToken(token);
+    }, []);
 
     return (
         <div
@@ -121,14 +124,14 @@ function ReplyForm({ contributionId, className, onSuccess }) {
             <form className={styles.form} onSubmit={submit}>
                 <div className={styles.content}>
                     {/* {nameCookie.length === 0 ? ( */}
-                        <FormGroup className={styles.name}>
-                            <input
-                                type="text"
-                                value={name || ''}
-                                placeholder={intl.formatMessage({ id: 'name-placeholder' })}
-                                onChange={setNameValue}
-                            />
-                        </FormGroup>
+                    <FormGroup className={styles.name}>
+                        <input
+                            type="text"
+                            value={name || ''}
+                            placeholder={intl.formatMessage({ id: 'name-placeholder' })}
+                            onChange={setNameValue}
+                        />
+                    </FormGroup>
                     {/* ) : null} */}
                     <FormGroup className={styles.comment}>
                         <textarea
@@ -144,10 +147,8 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                             label={intl.formatMessage({ id: 'upload-photo' })}
                         />
                     </FormGroup> */}
-                    <div className={styles.captchaContainer}>
-                        <div className={styles.captcha}>
-                            <ReCAPTCHA ref={captchaRef} />
-                        </div>
+                    <div className={styles.captcha}>
+                        <ReCAPTCHA onVerify={onCaptchaSuccess} />
                     </div>
                     {errors !== null ? <div className={styles.errors}>{errors}</div> : null}
                 </div>

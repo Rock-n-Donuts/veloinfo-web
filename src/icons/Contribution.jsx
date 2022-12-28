@@ -42,9 +42,9 @@ function ContributionIcon({ icon, color, withoutMarker, className }) {
                     xmlnsXlink="http://www.w3.org/1999/xlink"
                     x="0px"
                     y="0px"
-                    width={42}
+                    width={41}
                     height={51}
-                    viewBox="0 0 42 51"
+                    viewBox="0 0 41 51"
                     fill="none"
                 >
                     <mask id="path-1-inside-1_333_1482" fill="white">

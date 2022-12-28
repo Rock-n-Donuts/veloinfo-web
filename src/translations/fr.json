@@ -2,6 +2,7 @@
     "app-title": "Vélo info",
     "app-description": "Informations sur l’état des pistes cyclables en temps réel basées sur le déneigement à Montréal et les commentaires des utilisateurs.{br}L’hiver, on vous indique la piste à prendre!",
     "add": "Ajouter",
+    "add-comment": "Ajouter un {br}commentaire",
     "add-contribution": "Ajouter une contribution",
     "add-contribution-title": "Ajouter une contribution à la carte",
     "close": "Fermer",
@@ -29,7 +30,7 @@
     "vote-positive": "Oui",
     "vote-negative": "Non",
     "troncons-status-title": "Statut des rues*",
-    "troncons-status-note": "*Données Planif-Neige",
+    "troncons-status-note": "*Données de <a>Planif-Neige</a>",
     "time-filter-all": "Depuis toujours",
     "menu": "Menu",
     "no-comments": "Aucun commentaire",
@@ -37,5 +38,7 @@
     "voted": "Voté",
     "replied": "Répondu",
     "ok": "OK",
-    "report": "Signaler"
+    "report": "Signaler",
+    "send": "Envoyer",
+    "retry": "Réessayer"
 }

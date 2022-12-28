@@ -1,8 +1,7 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { useIntl } from 'react-intl';
 
-import loadingImage from '../../assets/images/loading.svg';
+import LoadingIcon from '../../icons/Loading';
 
 import styles from '../../styles/partials/loading.module.scss';
 
@@ -17,7 +16,6 @@ const defaultProps = {
 };
 
 function Loading({ className, loading }) {
-    const intl = useIntl();
     return (
         <div
             className={classNames([
@@ -25,10 +23,8 @@ function Loading({ className, loading }) {
                 { [className]: className !== null, [styles.loading]: loading },
             ])}
         >
-            <img
+            <LoadingIcon
                 className={styles.icon}
-                src={loadingImage}
-                alt={intl.formatMessage({ id: 'loading' })}
             />
         </div>
     );

@@ -20,8 +20,8 @@ import Loading from '../partials/Loading';
 import styles from '../../styles/map/map.module.scss';
 
 const isDev = process.env.NODE_ENV !== 'production';
-// const jawgId = process.env.REACT_APP_JAWG_ID;
-// const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
+const jawgId = process.env.REACT_APP_JAWG_ID;
+const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 
 const propTypes = {
     className: PropTypes.string,
@@ -237,8 +237,9 @@ function Map({
                         source: isDev
                             ? new OSM()
                             : new XYZ({
-                                  url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-                              }),
+                                // url: `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`,
+                                url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                            }),
                     }),
                 ],
             });
@@ -285,7 +286,7 @@ function Map({
             } else {
                 const vectorSource = new VectorSource();
 
-                const { features: linesFeatures, color = '#0000FF', width = 5 } = lines || {};
+                const { features: linesFeatures, color = '#0000FF', width = 3.5 } = lines || {};
                 const rgba = [...asArray(color)];
                 rgba[3] = 0.9;
                 const layer = new VectorImage({
