@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import Cookie from 'js-cookie';
 import { v1 as uuid } from 'uuid';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import DeviceDetector from 'device-detector-js';
 
 import {
     useUpdateContribution,
@@ -26,6 +25,7 @@ import ReportLinksButton from '../buttons/ReportLinks';
 import MenuButton from '../buttons/Menu';
 import TimeFilter from '../filters/TimeFilter';
 import LayersFilter from '../filters/LayersFilter';
+import { isDeviceMobile } from '../../lib/utils';
 
 import styles from '../../styles/pages/home.module.scss';
 
@@ -198,13 +198,7 @@ function HomePage({ addContribution = false, report = false }) {
         goHome();
     }, [goHome]);
 
-    const geolocate = useMemo(() => {
-        const deviceDetector = new DeviceDetector();
-        const result = deviceDetector.parse(navigator.userAgent);
-        const { device } = result || {};
-        const { type } = device || {};
-        return type !== 'desktop';
-    }, []);
+    const geolocate = useMemo(() => isDeviceMobile(), []);
 
     const [geolocating, setGeolocating] = useState(false);
     const onContributionTypeSelected = useCallback(() => {

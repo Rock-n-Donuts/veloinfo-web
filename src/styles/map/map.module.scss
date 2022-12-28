@@ -14,6 +14,32 @@
         display: none;
     }
 
+    .geolocateButton {
+        position: absolute;
+        top: 60px;
+        left: 8px;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid rgba(128, 128, 128, 0.25);
+        border-radius: 2px 2px 0 0;
+        color: $color-blue;
+    }
+
+    &.isMobile {
+        .geolocateButton {
+            top: 85px;
+            left: 10px;
+            font-size: 22px;
+        }
+    }
+
+    &.gpsActive {
+        .geolocateButton {
+            background-color: $color-blue;
+            color: #fff;
+        }
+    }
+
     &.isHover{
         cursor: pointer;
     }
