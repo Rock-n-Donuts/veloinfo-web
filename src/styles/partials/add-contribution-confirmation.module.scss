@@ -1,0 +1,89 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: $color-white;
+
+    .closeButton {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 18px 10px;
+        color: $color-gray;
+        transition: opacity 0.25s;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        margin: auto 0;
+    }
+
+    .captcha {
+        margin: 20px 0;
+    }
+
+    .errors {
+        text-align: center;
+        color: red;
+        min-height: 1em;
+    }
+
+    .retryLink {
+        margin-top: 10px;
+        text-align: center;
+        
+        button {
+            text-decoration: underline;
+        }
+    }
+
+    .success {
+        @extend %fullscreen;
+
+        position: fixed;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: block;
+            margin: 0 auto;
+            width: 40%;
+            transform: translate(-50%, -50%);
+        }
+
+        pointer-events: none;
+    }
+
+    .loading {
+        color: rgba($color-black, 0.25);
+    }
+
+    &.loading {
+        .content {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+
+    &.success {
+        .content {
+            opacity: 0;
+        }
+
+        .success {
+            opacity: 0.25;
+        }
+
+        .closeButton {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+}

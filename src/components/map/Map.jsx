@@ -286,7 +286,7 @@ function Map({
             } else {
                 const vectorSource = new VectorSource();
 
-                const { features: linesFeatures, color = '#0000FF', width = 5 } = lines || {};
+                const { features: linesFeatures, color = '#0000FF', width = 3.5 } = lines || {};
                 const rgba = [...asArray(color)];
                 rgba[3] = 0.8;
                 const layer = new VectorImage({
