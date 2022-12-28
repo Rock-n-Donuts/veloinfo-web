@@ -47,4 +47,4 @@ function ReCAPTCHA({ className, onVerify }) {
 ReCAPTCHA.propTypes = propTypes;
 ReCAPTCHA.defaultProps = defaultProps;
 
-export default React.forwardRef((props, ref) => <ReCAPTCHA {...props} captchaRef={ref} />);
+export default ReCAPTCHA;

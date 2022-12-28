@@ -24,7 +24,6 @@ const defaultProps = {
 
 function ReplyForm({ contributionId, className, onSuccess }) {
     const intl = useIntl();
-    const captchaRef = useRef();
     const nameCookie = Cookies.get('name') || null;
     const [name, setName] = useState(nameCookie);
     const [comment, setComment] = useState(null);
@@ -39,7 +38,6 @@ function ReplyForm({ contributionId, className, onSuccess }) {
     // const setPhotoValue = useCallback((file) => setPhoto(file), [setPhoto]);
 
     const resetForm = useCallback(() => {
-        captchaRef.current.reset();
         setName(null);
         setComment(null);
         // setPhoto(null);

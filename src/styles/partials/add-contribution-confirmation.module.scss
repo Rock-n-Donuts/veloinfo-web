@@ -35,6 +35,9 @@
     .retryLink {
         margin-top: 10px;
         text-align: center;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        pointer-events: none;
         
         button {
             text-decoration: underline;
@@ -84,6 +87,13 @@
         .closeButton {
             opacity: 0;
             pointer-events: none;
+        }
+    }
+
+    &.hasErrors {
+        .retryLink {
+            opacity: 1;
+            pointer-events: auto;
         }
     }
 }

@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faPaperPlane, faPencil, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faPaperPlane, faPencil, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
 import FormGroup from '../forms/FormGroup';
