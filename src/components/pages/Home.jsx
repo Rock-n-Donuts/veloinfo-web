@@ -274,7 +274,7 @@ function HomePage({ addContribution = false, report = false }) {
                     onPositionRefused={onPositionUpdate}
                 />
                 <div className={styles.mapMarkerContainer}>
-                    <PhotoUploadMarker className={styles.mapMarker} />
+                    <PhotoUploadMarker className={styles.mapMarker} key={contributionKey} />
                 </div>
             </div>
             <AddContributionButton
