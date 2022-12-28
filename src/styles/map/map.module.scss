@@ -8,6 +8,7 @@
         @extend %fullscreen;
 
         touch-action: none;
+        transition: opacity 0.25s ease;
     }
 
     .markers {
@@ -43,4 +44,11 @@
     &.isHover{
         cursor: pointer;
     }
+
+    // &.loadingUserPosition {
+    //     .map {
+    //         opacity: 0.5;
+    //         pointer-events: none;
+    //     }
+    // }
 }

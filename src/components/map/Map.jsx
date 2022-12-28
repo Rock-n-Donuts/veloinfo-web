@@ -18,7 +18,6 @@ import Cookies from 'js-cookie';
 
 import { getColoredIcons } from '../../lib/map';
 import MapMarker from './MapMarker';
-import Loading from '../partials/Loading';
 import { isDeviceMobile } from '../../lib/utils';
 
 import styles from '../../styles/map/map.module.scss';
@@ -56,6 +55,8 @@ const propTypes = {
     onMoveEnded: PropTypes.func,
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
+    onGeolocating: PropTypes.func,
+    onPositionSuccess: PropTypes.func,
     onPositionRefused: PropTypes.func,
     onMarkerClick: PropTypes.func,
     onLineClick: PropTypes.func,
@@ -78,6 +79,8 @@ const defaultProps = {
     onMoveEnded: null,
     onCenterChanged: null,
     onZoomChanged: null,
+    onGeolocating: null,
+    onPositionSuccess: null,
     onPositionRefused: null,
     onMarkerClick: null,
     onLineClick: null,
@@ -100,6 +103,8 @@ function Map({
     onMoveEnded,
     onCenterChanged,
     onZoomChanged,
+    onGeolocating,
+    onPositionSuccess,
     onPositionRefused,
     onMarkerClick,
     onLineClick,
@@ -224,7 +229,9 @@ function Map({
     );
 
     const currentPositionLayer = useRef(null);
+    const currentPositionLayerBg = useRef(null);
     const currentPositionFeature = useRef(null);
+    const currentPositionFeatureBg = useRef(null);
 
     const initMap = useCallback(
         (target) => {
@@ -233,6 +240,15 @@ function Map({
                 center: fromLonLat(mapCenter || defaultMapCenter),
                 zoom: zoom !== null ? zoom : defaultZoom,
                 maxZoom,
+            });
+
+            const rgba = [...asArray('#367c99')];
+            rgba[3] = 0.25;
+            const iconStyleBg = new Style({
+                image: new Circle({
+                    radius: 40,
+                    fill: new Fill({ color: rgba }),
+                }),
             });
 
             const iconStyle = new Style({
@@ -246,8 +262,18 @@ function Map({
                 }),
             });
             currentPositionFeature.current = new Feature();
+            currentPositionFeatureBg.current = new Feature();
+
+            const iconSourceBg = new VectorSource({
+                features: [currentPositionFeatureBg.current],
+            });
+
             const iconSource = new VectorSource({
                 features: [currentPositionFeature.current],
+            });
+            currentPositionLayerBg.current = new LayerVector({
+                source: iconSourceBg,
+                style: iconStyleBg,
             });
             currentPositionLayer.current = new LayerVector({
                 source: iconSource,
@@ -267,6 +293,7 @@ function Map({
                                   // url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
                               }),
                     }),
+                    currentPositionLayerBg.current,
                     currentPositionLayer.current,
                 ],
             });
@@ -491,7 +518,17 @@ function Map({
     }, [zoom]);
 
     useEffect(() => {
+        const hasWatchPosition = watchPositionId.current !== null;
+
         const success = (position) => {
+            if (hasWatchPosition) {
+                watchPositionId.current = navigator.geolocation.watchPosition((position) => {
+                    setGpsPosition(position);
+                });
+            }
+            if (onGeolocating !== null) {
+                onGeolocating();
+            }
             setLoadingUserPosition(false);
             mapRef.current
                 .getView()
@@ -502,6 +539,9 @@ function Map({
                         'EPSG:3857',
                     ),
                 );
+            if (onPositionSuccess !== null) {
+                onPositionSuccess([position.coords.longitude, position.coords.latitude]);
+            }
         };
 
         const onNoPosition = () => {
@@ -518,12 +558,15 @@ function Map({
         if (askForPosition && ready) {
             if (navigator.geolocation) {
                 setLoadingUserPosition(true);
+                if (hasWatchPosition && navigator.geolocation.clearWatch) {
+                    navigator.geolocation.clearWatch(watchPositionId.current);
+                }
                 navigator.geolocation.getCurrentPosition(success, error);
             } else {
                 onNoPosition();
             }
         }
-    }, [askForPosition, ready, onPositionRefused]);
+    }, [askForPosition, ready, onPositionSuccess, onPositionRefused, onGeolocating]);
 
     useEffect(() => {
         if (ready && lines !== null) {
@@ -554,22 +597,44 @@ function Map({
 
     useEffect(() => {
         if (gpsPosition !== null) {
-            console.log(gpsPosition);
-            currentPositionFeature.current.setGeometry(new Point(fromLonLat(gpsPosition)));
+            const { coords } = gpsPosition || {};
+            const { latitude, longitude /*, accuracy */ } = coords || {};
+            const point = new Point(fromLonLat([longitude, latitude]));
+
+            // const rgba = [...asArray( '#367c99')];
+            //     rgba[3] = 0.25;
+            // currentPositionLayerBg.current.setStyle(new Style({
+            //     image: new Circle({
+            //         radius: 40,
+            //         fill: new Fill({ color: rgba }),
+            //     }),
+            // }))
+            currentPositionFeatureBg.current.setGeometry(point);
+            currentPositionFeature.current.setGeometry(point);
+        } else {
+            currentPositionFeatureBg.current.setGeometry(null);
+            currentPositionFeature.current.setGeometry(null);
         }
     }, [gpsPosition]);
 
     useEffect(() => {
         if (gpsActive) {
             if (navigator.geolocation) {
+                if (currentPositionLayerBg.current !== null) {
+                    currentPositionLayerBg.current.setVisible(true);
+                }
                 if (currentPositionLayer.current !== null) {
                     currentPositionLayer.current.setVisible(true);
                 }
 
-                // setLoadingUserPosition(true);
+                if (onGeolocating !== null) {
+                    onGeolocating();
+                }
+                setLoadingUserPosition(true);
+                setGpsPosition(null);
                 function success(position) {
-                    // console.log('got')
-                    // setLoadingUserPosition(false);
+                    setGpsPosition(position);
+                    setLoadingUserPosition(false);
                     mapRef.current
                         .getView()
                         .setCenter(
@@ -581,29 +646,36 @@ function Map({
                         );
                 }
                 function error() {
+                    if (onPositionRefused !== null) {
+                        onPositionRefused();
+                    }
                     setLoadingUserPosition(false);
                 }
-                // console.log('get...');
+                if (watchPositionId.current !== null && navigator.geolocation.clearWatch) {
+                    navigator.geolocation.clearWatch(watchPositionId.current);
+                }
                 navigator.geolocation.getCurrentPosition(success, error);
                 watchPositionId.current = navigator.geolocation.watchPosition((position) => {
-                    // console.log('watch');
-                    setGpsPosition([position.coords.longitude, position.coords.latitude]);
+                    setLoadingUserPosition(false);
+                    setGpsPosition(position);
                 });
             }
         } else {
+            if (currentPositionLayerBg.current !== null) {
+                currentPositionLayerBg.current.setVisible(false);
+            }
             if (currentPositionLayer.current !== null) {
                 currentPositionLayer.current.setVisible(false);
             }
 
             if (watchPositionId.current !== null) {
-                // console.log('clear watch')
                 setGpsPosition(null);
-                if (navigator.clearWatch) {
-                    navigator.clearWatch(watchPositionId.current);
+                if (navigator.geolocation.clearWatch) {
+                    navigator.geolocation.clearWatch(watchPositionId.current);
                 }
             }
         }
-    }, [gpsActive]);
+    }, [gpsActive, onPositionRefused, onGeolocating]);
 
     const onGeolocateClick = useCallback(() => {
         setGpsActive((old) => {
@@ -621,6 +693,7 @@ function Map({
                     [styles.isHover]: isHover,
                     [styles.isMobile]: isMobile,
                     [styles.gpsActive]: gpsActive,
+                    [styles.loadingUserPosition]: loadingUserPosition,
                 },
             ])}
         >
@@ -644,7 +717,6 @@ function Map({
             <button className={styles.geolocateButton} type="button" onClick={onGeolocateClick}>
                 <FontAwesomeIcon icon={faLocation} />
             </button>
-            <Loading loading={loadingUserPosition} />
         </div>
     );
 }

@@ -202,23 +202,20 @@ function HomePage({ addContribution = false, report = false }) {
 
     const [geolocating, setGeolocating] = useState(false);
     const onContributionTypeSelected = useCallback(() => {
-        if (geolocate && navigator.geolocation) {
+        if (geolocate) {
             setGeolocating(true);
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { coords } = position || {};
-                    const { latitude, longitude } = coords || {};
-                    setMainMapCenter([longitude, latitude]);
-                    setGeolocating(false);
-                },
-                () => {
-                    setGeolocating(false);
-                },
-            );
         }
     }, [geolocate]);
 
     const loading = !ready || geolocating;
+
+    const onPositionUpdate = useCallback( () => {
+        setGeolocating(false);
+    }, []);
+
+    const onGeolocating = useCallback( () => {
+        setGeolocating(true);
+    }, [])
 
     return (
         <div
@@ -271,6 +268,10 @@ function HomePage({ addContribution = false, report = false }) {
                     zoom={mapZoom}
                     onMoveEnded={onMapMoved}
                     onMarkerClick={selectContribution}
+                    askForPosition={geolocating}
+                    onGeolocating={onGeolocating}
+                    onPositionSuccess={onPositionUpdate}
+                    onPositionRefused={onPositionUpdate}
                 />
                 <div className={styles.mapMarkerContainer}>
                     <PhotoUploadMarker className={styles.mapMarker} />
