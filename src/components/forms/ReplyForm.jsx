@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -76,7 +76,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                     if (success && contribution !== null) {
                         if ((name || '').length > 0) {
                             Cookies.set('name', name, { expires: 3650 });
-                        }                       
+                        }
                         resetForm();
                         if (onSuccess !== null) {
                             onSuccess(contribution);
@@ -157,7 +157,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                         <FormattedMessage id="publish" />
                     </button>
                 </div>
-            </form>{' '}
+            </form>
         </div>
     );
 }
