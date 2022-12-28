@@ -145,7 +145,7 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                             <div className={styles.lol} key={`type-${typeIndex}`}>
                                 {hasQualities ? (
                                     <>
-                                        {qualities.map((quality) => {
+                                        {qualities.map((quality, qualityIndex) => {
                                             const {
                                                 value: qualityValue,
                                                 color: qualityColor,
@@ -155,6 +155,7 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
 
                                             return (
                                                 <div
+                                                    key={`quality-${qualityIndex}`}
                                                     className={classNames([
                                                         styles.type,
                                                         {

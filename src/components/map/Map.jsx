@@ -3,19 +3,22 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { fromLonLat, transform } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
-import { VectorImage, Tile as TileLayer } from 'ol/layer';
+import { VectorImage, Tile as TileLayer, Vector as LayerVector } from 'ol/layer';
 import { Cluster, Vector as VectorSource, XYZ, OSM } from 'ol/source';
-import { Style, Stroke, Icon, Fill, Text } from 'ol/style';
+import { Style, Stroke, Icon, Fill, Text, Circle } from 'ol/style';
 import { boundingExtent } from 'ol/extent';
 import View from 'ol/View';
 import { default as OlMap } from 'ol/Map';
 import Feature from 'ol/Feature';
 import { defaults as defaultInteractions } from 'ol/interaction/defaults';
 import { asArray } from 'ol/color';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLocation } from '@fortawesome/free-solid-svg-icons';
+import Cookies from 'js-cookie';
 
 import { getColoredIcons } from '../../lib/map';
 import MapMarker from './MapMarker';
-import Loading from '../partials/Loading';
+import { isDeviceMobile } from '../../lib/utils';
 
 import styles from '../../styles/map/map.module.scss';
 
@@ -52,6 +55,8 @@ const propTypes = {
     onMoveEnded: PropTypes.func,
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
+    onGeolocating: PropTypes.func,
+    onPositionSuccess: PropTypes.func,
     onPositionRefused: PropTypes.func,
     onMarkerClick: PropTypes.func,
     onLineClick: PropTypes.func,
@@ -74,6 +79,8 @@ const defaultProps = {
     onMoveEnded: null,
     onCenterChanged: null,
     onZoomChanged: null,
+    onGeolocating: null,
+    onPositionSuccess: null,
     onPositionRefused: null,
     onMarkerClick: null,
     onLineClick: null,
@@ -96,6 +103,8 @@ function Map({
     onMoveEnded,
     onCenterChanged,
     onZoomChanged,
+    onGeolocating,
+    onPositionSuccess,
     onPositionRefused,
     onMarkerClick,
     onLineClick,
@@ -219,6 +228,11 @@ function Map({
         [onMarkerClick, onLineClick],
     );
 
+    const currentPositionLayer = useRef(null);
+    const currentPositionLayerBg = useRef(null);
+    const currentPositionFeature = useRef(null);
+    const currentPositionFeatureBg = useRef(null);
+
     const initMap = useCallback(
         (target) => {
             const view = new View({
@@ -226,6 +240,44 @@ function Map({
                 center: fromLonLat(mapCenter || defaultMapCenter),
                 zoom: zoom !== null ? zoom : defaultZoom,
                 maxZoom,
+            });
+
+            const rgba = [...asArray('#367c99')];
+            rgba[3] = 0.25;
+            const iconStyleBg = new Style({
+                image: new Circle({
+                    radius: 40,
+                    fill: new Fill({ color: rgba }),
+                }),
+            });
+
+            const iconStyle = new Style({
+                image: new Circle({
+                    radius: 10,
+                    fill: new Fill({ color: '#367c99' }),
+                    stroke: new Stroke({
+                        color: '#fff',
+                        width: 3,
+                    }),
+                }),
+            });
+            currentPositionFeature.current = new Feature();
+            currentPositionFeatureBg.current = new Feature();
+
+            const iconSourceBg = new VectorSource({
+                features: [currentPositionFeatureBg.current],
+            });
+
+            const iconSource = new VectorSource({
+                features: [currentPositionFeature.current],
+            });
+            currentPositionLayerBg.current = new LayerVector({
+                source: iconSourceBg,
+                style: iconStyleBg,
+            });
+            currentPositionLayer.current = new LayerVector({
+                source: iconSource,
+                style: iconStyle,
             });
 
             mapRef.current = new OlMap({
@@ -237,10 +289,12 @@ function Map({
                         source: isDev
                             ? new OSM()
                             : new XYZ({
-                                // url: `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`,
-                                url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-                            }),
+                                //   url: `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`,
+                                  url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                              }),
                     }),
+                    currentPositionLayerBg.current,
+                    currentPositionLayer.current,
                 ],
             });
             setReady(true);
@@ -464,7 +518,17 @@ function Map({
     }, [zoom]);
 
     useEffect(() => {
+        const hasWatchPosition = watchPositionId.current !== null;
+
         const success = (position) => {
+            if (hasWatchPosition) {
+                watchPositionId.current = navigator.geolocation.watchPosition((position) => {
+                    setGpsPosition(position);
+                });
+            }
+            if (onGeolocating !== null) {
+                onGeolocating();
+            }
             setLoadingUserPosition(false);
             mapRef.current
                 .getView()
@@ -475,6 +539,9 @@ function Map({
                         'EPSG:3857',
                     ),
                 );
+            if (onPositionSuccess !== null) {
+                onPositionSuccess([position.coords.longitude, position.coords.latitude]);
+            }
         };
 
         const onNoPosition = () => {
@@ -491,12 +558,15 @@ function Map({
         if (askForPosition && ready) {
             if (navigator.geolocation) {
                 setLoadingUserPosition(true);
+                if (hasWatchPosition && navigator.geolocation.clearWatch) {
+                    navigator.geolocation.clearWatch(watchPositionId.current);
+                }
                 navigator.geolocation.getCurrentPosition(success, error);
             } else {
                 onNoPosition();
             }
         }
-    }, [askForPosition, ready, onPositionRefused]);
+    }, [askForPosition, ready, onPositionSuccess, onPositionRefused, onGeolocating]);
 
     useEffect(() => {
         if (ready && lines !== null) {
@@ -520,6 +590,100 @@ function Map({
 
     const markerIcons = useMemo(() => getColoredIcons(), []);
 
+    const isMobile = useMemo(() => isDeviceMobile(), []);
+    const [gpsActive, setGpsActive] = useState(Cookies.get('gpsActive') === 'true');
+    const [gpsPosition, setGpsPosition] = useState(null);
+    const watchPositionId = useRef(null);
+
+    useEffect(() => {
+        if (gpsPosition !== null) {
+            const { coords } = gpsPosition || {};
+            const { latitude, longitude /*, accuracy */ } = coords || {};
+            const point = new Point(fromLonLat([longitude, latitude]));
+
+            // const rgba = [...asArray( '#367c99')];
+            //     rgba[3] = 0.25;
+            // currentPositionLayerBg.current.setStyle(new Style({
+            //     image: new Circle({
+            //         radius: 40,
+            //         fill: new Fill({ color: rgba }),
+            //     }),
+            // }))
+            currentPositionFeatureBg.current.setGeometry(point);
+            currentPositionFeature.current.setGeometry(point);
+        } else {
+            currentPositionFeatureBg.current.setGeometry(null);
+            currentPositionFeature.current.setGeometry(null);
+        }
+    }, [gpsPosition]);
+
+    useEffect(() => {
+        if (gpsActive) {
+            if (navigator.geolocation) {
+                if (currentPositionLayerBg.current !== null) {
+                    currentPositionLayerBg.current.setVisible(true);
+                }
+                if (currentPositionLayer.current !== null) {
+                    currentPositionLayer.current.setVisible(true);
+                }
+
+                if (onGeolocating !== null) {
+                    onGeolocating();
+                }
+                setLoadingUserPosition(true);
+                setGpsPosition(null);
+                function success(position) {
+                    setGpsPosition(position);
+                    setLoadingUserPosition(false);
+                    mapRef.current
+                        .getView()
+                        .setCenter(
+                            transform(
+                                [position.coords.longitude, position.coords.latitude],
+                                'EPSG:4326',
+                                'EPSG:3857',
+                            ),
+                        );
+                }
+                function error() {
+                    if (onPositionRefused !== null) {
+                        onPositionRefused();
+                    }
+                    setLoadingUserPosition(false);
+                }
+                if (watchPositionId.current !== null && navigator.geolocation.clearWatch) {
+                    navigator.geolocation.clearWatch(watchPositionId.current);
+                }
+                navigator.geolocation.getCurrentPosition(success, error);
+                watchPositionId.current = navigator.geolocation.watchPosition((position) => {
+                    setLoadingUserPosition(false);
+                    setGpsPosition(position);
+                });
+            }
+        } else {
+            if (currentPositionLayerBg.current !== null) {
+                currentPositionLayerBg.current.setVisible(false);
+            }
+            if (currentPositionLayer.current !== null) {
+                currentPositionLayer.current.setVisible(false);
+            }
+
+            if (watchPositionId.current !== null) {
+                setGpsPosition(null);
+                if (navigator.geolocation.clearWatch) {
+                    navigator.geolocation.clearWatch(watchPositionId.current);
+                }
+            }
+        }
+    }, [gpsActive, onPositionRefused, onGeolocating]);
+
+    const onGeolocateClick = useCallback(() => {
+        setGpsActive((old) => {
+            Cookies.set('gpsActive', !old, { expires: 3600 });
+            return !old;
+        });
+    }, []);
+
     return (
         <div
             className={classNames([
@@ -527,6 +691,9 @@ function Map({
                 {
                     [className]: className !== null,
                     [styles.isHover]: isHover,
+                    [styles.isMobile]: isMobile,
+                    [styles.gpsActive]: gpsActive,
+                    [styles.loadingUserPosition]: loadingUserPosition,
                 },
             ])}
         >
@@ -547,7 +714,9 @@ function Map({
                     />
                 ))}
             </div>
-            <Loading loading={loadingUserPosition} />
+            <button className={styles.geolocateButton} type="button" onClick={onGeolocateClick}>
+                <FontAwesomeIcon icon={faLocation} />
+            </button>
         </div>
     );
 }
