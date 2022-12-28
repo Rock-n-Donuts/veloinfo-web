@@ -339,7 +339,7 @@ function HomePage({ addContribution = false, report = false }) {
                     </TransitionGroup>
                 </div>
             </div>
-            <Loading loading={loading} />
+            <Loading loading/>
         </div>
     );
 }
