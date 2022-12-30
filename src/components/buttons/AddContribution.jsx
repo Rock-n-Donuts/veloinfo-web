@@ -37,11 +37,14 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
     const { locale } = intl;
     const userCurrentContribution = useUserCurrentContribution();
     const {
+        coords: userContributionCoords = null,
         type: userContributionType = null,
         quality: userContributionTypeQuality = null,
         name: userContributionName,
         comment: userContributionComment,
     } = userCurrentContribution || {};
+
+    const hasCoords = userContributionCoords !== null;
 
     const updateUserContribution = useUserUpdateContribution();
 
@@ -250,9 +253,10 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                             </div>
                         );
                     })}
-                </div>                <button type="button" className={styles.safe} onClick={onEditCloseClick} />
+                </div>
+                <button type="button" className={styles.safe} onClick={onEditCloseClick} />
                 <div className={styles.actions}>
-                    <button type="button" className={styles.sendButton} onClick={onSendClick}>
+                    <button type="button" className={styles.sendButton} onClick={onSendClick} disabled={!hasCoords}>
                         <span className={styles.label}>
                             <FormattedMessage id="send" />
                         </span>
@@ -263,7 +267,11 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                     <button type="button" className={styles.editButton} onClick={onEditClick}>
                         <span className={styles.editButtonContent}>
                             <span className={styles.label}>
-                                { (userContributionComment || '').length > 0 ? userContributionComment : <FormattedMessage id="add-comment" values={{ br: <br /> }} /> }
+                                {(userContributionComment || '').length > 0 ? (
+                                    userContributionComment
+                                ) : (
+                                    <FormattedMessage id="add-comment" values={{ br: <br /> }} />
+                                )}
                             </span>
                             <span className={styles.icon}>
                                 <FontAwesomeIcon icon={faPencil} />
@@ -291,7 +299,6 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                         </span>
                     </button>
                 </div>
-
                 <div className={styles.editForm}>
                     <FormGroup className={styles.name}>
                         <input

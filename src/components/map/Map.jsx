@@ -21,6 +21,7 @@ import MapMarker from './MapMarker';
 import { isDeviceMobile } from '../../lib/utils';
 
 import styles from '../../styles/map/map.module.scss';
+import Loading from '../partials/Loading';
 
 const isDev = process.env.NODE_ENV !== 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
@@ -55,9 +56,6 @@ const propTypes = {
     onMoveEnded: PropTypes.func,
     onCenterChanged: PropTypes.func,
     onZoomChanged: PropTypes.func,
-    onGeolocating: PropTypes.func,
-    onPositionSuccess: PropTypes.func,
-    onPositionRefused: PropTypes.func,
     onMarkerClick: PropTypes.func,
     onLineClick: PropTypes.func,
     onReady: PropTypes.func,
@@ -79,9 +77,6 @@ const defaultProps = {
     onMoveEnded: null,
     onCenterChanged: null,
     onZoomChanged: null,
-    onGeolocating: null,
-    onPositionSuccess: null,
-    onPositionRefused: null,
     onMarkerClick: null,
     onLineClick: null,
     onReady: null,
@@ -103,23 +98,19 @@ function Map({
     onMoveEnded,
     onCenterChanged,
     onZoomChanged,
-    onGeolocating,
-    onPositionSuccess,
-    onPositionRefused,
     onMarkerClick,
     onLineClick,
     onReady,
 }) {
-    const markerIconsRef = useRef([]);
-    const mapContainerRef = useRef(null);
-    const mapRef = useRef(null);
+    const isMobile = useMemo(() => isDeviceMobile(), []);
     const [isHover, setIsHover] = useState(false);
-
     const [ready, setReady] = useState(false);
     const [loadingUserPosition, setLoadingUserPosition] = useState(false);
-
-    const storedLines = useRef([]);
-    const markerLayers = useRef([]);
+    const [isFollowingUser, setIsFollowingUser] = useState(false);
+    const [userLocation, setUserLocation] = useState(null);
+    const [acceptedLocation, setAcceptedLocation] = useState(
+        Cookies.get('locationAccepted') === 'true',
+    );
 
     const [iconsLoaded, setIconLoaded] = useState(
         getColoredIcons().map(({ icon, color }) => ({ key: `${icon}${color}`, loaded: false })),
@@ -128,19 +119,49 @@ function Map({
         () => iconsLoaded.filter(({ loaded }) => !loaded).length === 0,
         [iconsLoaded],
     );
+
+    const markerIconsRef = useRef([]);
+    const mapContainerRef = useRef(null);
+    const mapRef = useRef(null);
+    const storedLines = useRef([]);
+    const markerLayers = useRef([]);
+
     const onMarkerIconLoaded = useCallback((icon) => {
         setIconLoaded((old) =>
             old.map(({ key, loaded }) => ({ key, loaded: key === icon ? true : loaded })),
         );
     }, []);
 
+    const getMapCenter = useCallback(
+        () => transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
+        [],
+    );
+
+    const setMapCenter = useCallback((center) => {
+        mapRef.current.getView().setCenter(transform(center, 'EPSG:4326', 'EPSG:3857'));
+    }, []);
+
+    const getMapZoom = useCallback(() => mapRef.current.getView().getZoom(), []);
+    const setMapZoom = useCallback((z) => mapRef.current.getView().setZoom(z), []);
+
+    const isSameLocation = useCallback((location1, location2) => {
+        const diffLon = Math.abs(location1[0] - location2[0]);
+        const diffLat = Math.abs(location1[1] - location2[1]);
+        return diffLon + diffLat < 0.0001;
+    }, []);
+
     const onChangeCenter = useCallback(() => {
-        if (onCenterChanged !== null) {
-            onCenterChanged(
-                transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-            );
+        if (isFollowingUser && userLocation !== null) {
+            const { coords } = userLocation || {};
+            const { latitude, longitude } = coords || {};
+            if (!isSameLocation(getMapCenter(), [longitude, latitude])) {
+                setIsFollowingUser(false);
+            }
         }
-    }, [onCenterChanged]);
+        if (onCenterChanged !== null) {
+            onCenterChanged(getMapCenter());
+        }
+    }, [onCenterChanged, getMapCenter, isFollowingUser, userLocation, isSameLocation]);
 
     const onChangeZoom = useCallback(() => {
         if (onZoomChanged !== null) {
@@ -151,11 +172,11 @@ function Map({
     const onMoveEnd = useCallback(() => {
         if (onMoveEnded !== null) {
             onMoveEnded({
-                center: transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-                zoom: mapRef.current.getView().getZoom(),
+                center: getMapCenter(),
+                zoom: getMapZoom(),
             });
         }
-    }, [onMoveEnded]);
+    }, [onMoveEnded, getMapZoom, getMapCenter]);
 
     const onMapPointerMove = useCallback(
         (e) => {
@@ -317,6 +338,9 @@ function Map({
             return feature;
         }
 
+        const layers = mapRef.current.getLayers();
+        const layersLength = layers.getLength();
+
         linesGroup.forEach((lines, groupIndex) => {
             const cacheGroup = storedLines.current[groupIndex] || null;
             if (cacheGroup !== null) {
@@ -350,7 +374,7 @@ function Map({
                     }),
                 });
 
-                mapRef.current.addLayer(layer);
+                layers.insertAt(layersLength - 1, layer);
                 storedLines.current[groupIndex] = {
                     layer,
                     source: vectorSource,
@@ -381,6 +405,9 @@ function Map({
                 mapRef.current.removeLayer(layer);
             });
             markerLayers.current = [];
+
+            const layers = mapRef.current.getLayers();
+            const layersLength = layers.getLength();
 
             markerGroups.forEach((markers, groupIndex) => {
                 const {
@@ -423,8 +450,7 @@ function Map({
                                     anchorYUnits: 'fraction',
                                     src,
                                     img,
-                                    imgSize:
-                                        src === undefined ? [img.width, img.height] : undefined,
+                                    imgSize: !src && img ? [img.width, img.height] : undefined,
                                     scale: scale,
                                 }),
                                 text:
@@ -455,7 +481,7 @@ function Map({
                     vectorSource.addFeature(addFeature(object));
                 });
 
-                mapRef.current.addLayer(layer);
+                layers.insertAt(layersLength - 1, layer);
                 markerLayers.current.push(layer);
             });
         },
@@ -504,69 +530,18 @@ function Map({
                 'EPSG:4326',
             );
             if (mapCenter[0] !== lastCenter[0] && mapCenter[1] !== lastCenter[1]) {
-                mapRef.current.getView().setCenter(transform(mapCenter, 'EPSG:4326', 'EPSG:3857'));
+                setMapCenter(mapCenter);
             }
         }
-    }, [mapCenter]);
+    }, [mapCenter, setMapCenter]);
 
     useEffect(() => {
         if (mapRef.current !== null && zoom !== null) {
-            if (zoom !== mapRef.current.getView().getZoom()) {
-                mapRef.current.getView().setZoom(zoom);
+            if (zoom !== getMapZoom()) {
+                setMapZoom(zoom);
             }
         }
-    }, [zoom]);
-
-    useEffect(() => {
-        const hasWatchPosition = watchPositionId.current !== null;
-
-        const success = (position) => {
-            if (hasWatchPosition) {
-                watchPositionId.current = navigator.geolocation.watchPosition((position) => {
-                    setGpsPosition(position);
-                });
-            }
-            if (onGeolocating !== null) {
-                onGeolocating();
-            }
-            setLoadingUserPosition(false);
-            mapRef.current
-                .getView()
-                .setCenter(
-                    transform(
-                        [position.coords.longitude, position.coords.latitude],
-                        'EPSG:4326',
-                        'EPSG:3857',
-                    ),
-                );
-            if (onPositionSuccess !== null) {
-                onPositionSuccess([position.coords.longitude, position.coords.latitude]);
-            }
-        };
-
-        const onNoPosition = () => {
-            if (onPositionRefused !== null) {
-                onPositionRefused();
-            }
-        };
-
-        const error = () => {
-            setLoadingUserPosition(false);
-            onNoPosition();
-        };
-
-        if (askForPosition && ready) {
-            if (navigator.geolocation) {
-                setLoadingUserPosition(true);
-                if (hasWatchPosition && navigator.geolocation.clearWatch) {
-                    navigator.geolocation.clearWatch(watchPositionId.current);
-                }
-                navigator.geolocation.getCurrentPosition(success, error);
-            } else {
-                onNoPosition();
-            }
-        }
-    }, [askForPosition, ready, onPositionSuccess, onPositionRefused, onGeolocating]);
+    }, [zoom, getMapZoom, setMapZoom]);
 
     useEffect(() => {
         if (ready && lines !== null) {
@@ -583,22 +558,17 @@ function Map({
     useEffect(() => {
         if (ready) {
             if (onReady !== null) {
-                onReady(mapRef.current);
+                onReady({ map: mapRef.current, mapCenter: getMapCenter(), zoom: getMapZoom() });
             }
         }
-    }, [ready, onReady]);
+    }, [ready, onReady, getMapCenter, getMapZoom]);
 
     const markerIcons = useMemo(() => getColoredIcons(), []);
 
-    const isMobile = useMemo(() => isDeviceMobile(), []);
-    const [gpsActive, setGpsActive] = useState(Cookies.get('gpsActive') === 'true');
-    const [gpsPosition, setGpsPosition] = useState(null);
-    const watchPositionId = useRef(null);
-
     useEffect(() => {
         if (currentPositionFeatureBg.current !== null && currentPositionFeature.current !== null) {
-            if (gpsPosition !== null) {
-                const { coords } = gpsPosition || {};
+            if (userLocation !== null) {
+                const { coords } = userLocation || {};
                 const { latitude, longitude /*, accuracy */ } = coords || {};
                 const point = new Point(fromLonLat([longitude, latitude]));
 
@@ -617,74 +587,79 @@ function Map({
                 currentPositionFeature.current.setGeometry(null);
             }
         }
-    }, [gpsPosition]);
+    }, [userLocation]);
 
     useEffect(() => {
-        if (gpsActive) {
-            if (navigator.geolocation) {
-                if (currentPositionLayerBg.current !== null) {
-                    currentPositionLayerBg.current.setVisible(true);
-                }
-                if (currentPositionLayer.current !== null) {
-                    currentPositionLayer.current.setVisible(true);
-                }
-
-                if (onGeolocating !== null) {
-                    onGeolocating();
-                }
-                setLoadingUserPosition(true);
-                setGpsPosition(null);
-                function success(position) {
-                    setGpsPosition(position);
-                    setLoadingUserPosition(false);
-                    mapRef.current
-                        .getView()
-                        .setCenter(
-                            transform(
-                                [position.coords.longitude, position.coords.latitude],
-                                'EPSG:4326',
-                                'EPSG:3857',
-                            ),
-                        );
-                }
-                function error() {
-                    if (onPositionRefused !== null) {
-                        onPositionRefused();
-                    }
-                    setLoadingUserPosition(false);
-                }
-                if (watchPositionId.current !== null && navigator.geolocation.clearWatch) {
-                    navigator.geolocation.clearWatch(watchPositionId.current);
-                }
-                navigator.geolocation.getCurrentPosition(success, error);
-                watchPositionId.current = navigator.geolocation.watchPosition((position) => {
-                    setLoadingUserPosition(false);
-                    setGpsPosition(position);
-                });
-            }
-        } else {
-            if (currentPositionLayerBg.current !== null) {
-                currentPositionLayerBg.current.setVisible(false);
-            }
-            if (currentPositionLayer.current !== null) {
-                currentPositionLayer.current.setVisible(false);
-            }
-
-            if (watchPositionId.current !== null) {
-                setGpsPosition(null);
-                if (navigator.geolocation.clearWatch) {
-                    navigator.geolocation.clearWatch(watchPositionId.current);
-                }
-            }
+        if (isFollowingUser && userLocation !== null) {
+            const { coords } = userLocation;
+            const { latitude, longitude } = coords || {};
+            setMapCenter([longitude, latitude]);
         }
-    }, [gpsActive, onPositionRefused, onGeolocating]);
+    }, [isFollowingUser, userLocation, setMapCenter]);
+
+    useEffect(() => {
+        if (ready && acceptedLocation && 'geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((location) => {
+                setUserLocation(location);
+                navigator.geolocation.watchPosition(
+                    (location) => {
+                        setUserLocation(location);
+                    },
+                    (error) => {
+                        console.log(error);
+                    },
+                    { enableHighAccuracy: true },
+                );
+            });
+        }
+    }, [ready, acceptedLocation]);
 
     const onGeolocateClick = useCallback(() => {
-        setGpsActive((old) => {
-            Cookies.set('gpsActive', !old, { expires: 3600 });
-            return !old;
-        });
-    }, []);
+        if (userLocation === null) {
+            if ('geolocation' in navigator) {
+                setLoadingUserPosition(true);
+                navigator.geolocation.getCurrentPosition(
+                    (location) => {
+                        const { coords } = location || {};
+                        const { latitude, longitude } = coords || {};
+                        setUserLocation(location);
+                        setLoadingUserPosition(false);
+                        setAcceptedLocation(true);
+                        Cookies.set('locationAccepted', true, { expires: 3600 });
+                        setMapCenter([longitude, latitude]);
+                    },
+                    (error) => {
+                        const { message } = error || {};
+                        window.alert(message);
+                        setLoadingUserPosition(false);
+                    },
+                );
+            }
+        } else {
+            const currentCenter = getMapCenter();
+            const { coords } = userLocation || {};
+            const { latitude, longitude } = coords || {};
+            const newCenter = [longitude, latitude];
+
+            if (!isFollowingUser && isSameLocation(currentCenter, newCenter)) {
+                setIsFollowingUser(true);
+                if (getMapZoom() < 19) {
+                    setMapZoom(19);
+                }
+            } else {
+                setIsFollowingUser(false);
+            }
+            setMapCenter(newCenter);
+        }
+    }, [
+        userLocation,
+        getMapCenter,
+        setMapCenter,
+        isSameLocation,
+        isFollowingUser,
+        getMapZoom,
+        setMapZoom,
+    ]);
 
     return (
         <div
@@ -694,8 +669,7 @@ function Map({
                     [className]: className !== null,
                     [styles.isHover]: isHover,
                     [styles.isMobile]: isMobile,
-                    [styles.gpsActive]: gpsActive,
-                    [styles.loadingUserPosition]: loadingUserPosition,
+                    [styles.isFollowingUser]: isFollowingUser,
                 },
             ])}
         >
@@ -719,6 +693,7 @@ function Map({
             <button className={styles.geolocateButton} type="button" onClick={onGeolocateClick}>
                 <FontAwesomeIcon icon={faLocation} />
             </button>
+            <Loading loading={loadingUserPosition} />
         </div>
     );
 }

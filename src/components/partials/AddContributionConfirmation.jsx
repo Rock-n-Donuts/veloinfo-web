@@ -66,7 +66,7 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
             contributionType || {};
 
         if (coords === null) {
-            setErrors(intl.formatMessage({ id: 'error-captcha' }));
+            setErrors(intl.formatMessage({ id: 'error-coords' }));
             return;
         }
 
@@ -113,7 +113,7 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
                     }
                     setSuccess(true);
                     setTimeout(() => {
-                        completeUserContribution();
+                        completeUserContribution();                        
                         onContributionSubmitted(contribution);
                     }, 1000);
                 } else {
@@ -129,7 +129,6 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
     }, [
         captchaToken,
         userCurrentContribution,
-        setLoading,
         intl,
         completeUserContribution,
         onContributionSubmitted,
@@ -140,10 +139,10 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
     }, []);
 
     useEffect( () => {
-        if (confirmed && captchaToken !== null) {
+        if (confirmed && (captchaToken || '').length > 0) {
             submit();
         }
-    }, [captchaToken, confirmed, submit])
+    }, [captchaToken, confirmed, submit]);
 
     return (
         <div

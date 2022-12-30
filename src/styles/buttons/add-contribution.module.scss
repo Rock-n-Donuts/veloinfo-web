@@ -264,6 +264,11 @@
             // transition-delay: 0.4s;
             opacity: 1;
             pointer-events: auto;
+
+            &[disabled] {
+                opacity: 0.5;
+                pointer-events: none;
+            }
         }
 
         &.loading {
