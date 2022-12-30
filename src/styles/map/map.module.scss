@@ -34,7 +34,7 @@
         }
     }
 
-    &.gpsActive {
+    &.isFollowingUser {
         .geolocateButton {
             background-color: $color-blue;
             color: #fff;
@@ -44,11 +44,4 @@
     &.isHover{
         cursor: pointer;
     }
-
-    // &.loadingUserPosition {
-    //     .map {
-    //         opacity: 0.5;
-    //         pointer-events: none;
-    //     }
-    // }
 }

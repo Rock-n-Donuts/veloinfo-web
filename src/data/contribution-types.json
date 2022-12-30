@@ -119,7 +119,7 @@
             "fr": "Boutiques vélo",
             "en": "Bike shops"
         },
-        "disableAdd": false,
+        "disableAdd": true,
         "icon": "heart",
         "color": "#439667"
     }

@@ -25,7 +25,6 @@ import ReportLinksButton from '../buttons/ReportLinks';
 import MenuButton from '../buttons/Menu';
 import TimeFilter from '../filters/TimeFilter';
 import LayersFilter from '../filters/LayersFilter';
-import { isDeviceMobile } from '../../lib/utils';
 
 import styles from '../../styles/pages/home.module.scss';
 
@@ -200,24 +199,7 @@ function HomePage({ addContribution = false, report = false }) {
         goHome();
     }, [goHome]);
 
-    const geolocate = useMemo(() => isDeviceMobile(), []);
-
-    const [geolocating, setGeolocating] = useState(false);
-    const onContributionTypeSelected = useCallback(() => {
-        if (geolocate) {
-            setGeolocating(true);
-        }
-    }, [geolocate]);
-
-    const loading = !ready || geolocating;
-
-    const onPositionUpdate = useCallback( () => {
-        setGeolocating(false);
-    }, []);
-
-    const onGeolocating = useCallback( () => {
-        setGeolocating(true);
-    }, [])
+    const loading = !ready
 
     return (
         <div
@@ -230,7 +212,7 @@ function HomePage({ addContribution = false, report = false }) {
                     [styles.confirmationOpened]: confirmationOpened,
                     [styles.contributionSubmited]: contributionSubmited,
                     [styles.contributionSelected]: isContributionSelected,
-                    [styles.mapMarkerDropped]: addContribution && hasType && !geolocating,
+                    [styles.mapMarkerDropped]: addContribution && hasType,
                     [styles.loading]: loading,
                 },
             ])}
@@ -270,10 +252,6 @@ function HomePage({ addContribution = false, report = false }) {
                     zoom={mapZoom}
                     onMoveEnded={onMapMoved}
                     onMarkerClick={selectContribution}
-                    askForPosition={geolocating}
-                    onGeolocating={onGeolocating}
-                    onPositionSuccess={onPositionUpdate}
-                    onPositionRefused={onPositionUpdate}
                 />
                 <div className={styles.mapMarkerContainer}>
                     <PhotoUploadMarker className={styles.mapMarker} />
@@ -282,11 +260,9 @@ function HomePage({ addContribution = false, report = false }) {
             <AddContributionButton
                 className={styles.addContributionButton}
                 opened={addContribution}
-                loading={geolocating}
                 onOpen={onInitAddContribution}
                 onClose={onCancelAddContribution}
                 onSend={openAddContribution}
-                onSelect={onContributionTypeSelected}
             />
             <ReportLinksButton
                 className={styles.reportLinksButton}
