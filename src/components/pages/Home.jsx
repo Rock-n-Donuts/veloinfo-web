@@ -199,7 +199,11 @@ function HomePage({ addContribution = false, report = false }) {
         goHome();
     }, [goHome]);
 
-    const loading = !ready
+    const onPhotoLocated = useCallback( coords => {
+        setMainMapCenter(coords);
+    }, []);
+
+    const loading = !ready;
 
     return (
         <div
@@ -254,7 +258,7 @@ function HomePage({ addContribution = false, report = false }) {
                     onMarkerClick={selectContribution}
                 />
                 <div className={styles.mapMarkerContainer}>
-                    <PhotoUploadMarker className={styles.mapMarker} />
+                    <PhotoUploadMarker className={styles.mapMarker} onPhotoLocated={onPhotoLocated} />
                 </div>
             </div>
             <AddContributionButton
