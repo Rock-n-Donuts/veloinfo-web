@@ -57,7 +57,8 @@ function ImageUpload({ className, onChange, children }) {
             <input
                 ref={fileUploadRef}
                 type="file"
-                accept={".jpg, .jpeg, .png. .heic, capture=camera"}
+                accept=".jpg, .jpeg, .png. .heic"
+                capture="environment"
                 onChange={onChangePrivate}
             />
             <button type="button" className={styles.close} onClick={onCloseClick}>
