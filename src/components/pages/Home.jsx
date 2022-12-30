@@ -111,9 +111,11 @@ function HomePage({ addContribution = false, report = false }) {
     const storeCenter = useCallback(
         (center) => {
             Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
-            userUpdateContribution({ coords: center });
+            if (!confirmed) {
+                userUpdateContribution({ coords: center });
+            }            
         },
-        [userUpdateContribution],
+        [userUpdateContribution, confirmed],
     );
 
     const storeZoom = useCallback((zoom) => {
@@ -274,7 +276,7 @@ function HomePage({ addContribution = false, report = false }) {
                     onPositionRefused={onPositionUpdate}
                 />
                 <div className={styles.mapMarkerContainer}>
-                    <PhotoUploadMarker className={styles.mapMarker} key={contributionKey} />
+                    <PhotoUploadMarker className={styles.mapMarker} />
                 </div>
             </div>
             <AddContributionButton

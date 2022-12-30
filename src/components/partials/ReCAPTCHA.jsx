@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { GoogleReCaptchaProvider, GoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { GoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 import styles from '../../styles/partials/recaptcha.module.scss';
 
@@ -35,11 +35,9 @@ function ReCAPTCHA({ className, onVerify }) {
                 { [className]: className !== null, [styles.ready]: ready },
             ])}
         >
-            <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY}>
             {ready ? (
                 <GoogleReCaptcha onVerify={onVerify} />
             ) : null}
-            </GoogleReCaptchaProvider>
         </div>
     );
 }

@@ -129,7 +129,6 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
     }, [
         captchaToken,
         userCurrentContribution,
-        setLoading,
         intl,
         completeUserContribution,
         onContributionSubmitted,
