@@ -134,13 +134,17 @@ function Map({
         );
     }, []);
 
+    const getMapCenter = useCallback(
+        () => transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
+        [],
+    );
+    const getMapZoom = useCallback(() => mapRef.current.getView().getZoom(), []);
+
     const onChangeCenter = useCallback(() => {
         if (onCenterChanged !== null) {
-            onCenterChanged(
-                transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-            );
+            onCenterChanged(getMapCenter());
         }
-    }, [onCenterChanged]);
+    }, [onCenterChanged, getMapCenter]);
 
     const onChangeZoom = useCallback(() => {
         if (onZoomChanged !== null) {
@@ -151,11 +155,11 @@ function Map({
     const onMoveEnd = useCallback(() => {
         if (onMoveEnded !== null) {
             onMoveEnded({
-                center: transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-                zoom: mapRef.current.getView().getZoom(),
+                center: getMapCenter(),
+                zoom: getMapZoom(),
             });
         }
-    }, [onMoveEnded]);
+    }, [onMoveEnded, getMapZoom, getMapCenter]);
 
     const onMapPointerMove = useCallback(
         (e) => {
@@ -583,10 +587,10 @@ function Map({
     useEffect(() => {
         if (ready) {
             if (onReady !== null) {
-                onReady(mapRef.current);
+                onReady({ map: mapRef.current, mapCenter: getMapCenter(), zoom: getMapZoom() });
             }
         }
-    }, [ready, onReady]);
+    }, [ready, onReady, getMapCenter, getMapZoom]);
 
     const markerIcons = useMemo(() => getColoredIcons(), []);
 

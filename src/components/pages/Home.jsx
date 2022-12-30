@@ -108,6 +108,13 @@ function HomePage({ addContribution = false, report = false }) {
         setLayersFilterOpened(false);
     }, []);
 
+    const onMapReady = useCallback( ({ mapCenter }) => {
+        if (!confirmed) {
+            userUpdateContribution({ coords: mapCenter });
+        }
+        
+    }, [userUpdateContribution, confirmed]);
+
     const storeCenter = useCallback(
         (center) => {
             Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
@@ -274,6 +281,7 @@ function HomePage({ addContribution = false, report = false }) {
                     onGeolocating={onGeolocating}
                     onPositionSuccess={onPositionUpdate}
                     onPositionRefused={onPositionUpdate}
+                    onReady={onMapReady}
                 />
                 <div className={styles.mapMarkerContainer}>
                     <PhotoUploadMarker className={styles.mapMarker} />
