@@ -65,5 +65,9 @@ export function exifToCoords(exif) {
     const lngDir = GPSLongitudeRef;
     const lng = DMS2DD(lngDeg, lngMin, lngSec, lngDir);
 
-    return !isNaN(lat) && !isNaN(lng) ? [lng, lat] : null;
+    if (isNaN(lat) || isNaN(lng) || latDeg === 0 || lngDeg === 0) {
+        return null;
+    }
+
+    return [lng, lat];
 }

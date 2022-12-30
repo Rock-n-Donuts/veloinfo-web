@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import classNames from 'classnames';
@@ -28,7 +29,20 @@ import LayersFilter from '../filters/LayersFilter';
 
 import styles from '../../styles/pages/home.module.scss';
 
-function HomePage({ addContribution = false, report = false }) {
+
+const propTypes = {
+    addContribution: PropTypes.bool,
+    report: PropTypes.bool,
+    mapLocationZoom: PropTypes.number,
+}
+
+const defaultProps = {
+    addContribution: false,
+    report: false,
+    mapLocationZoom: 17,
+}
+
+function HomePage({ addContribution, report, mapLocationZoom, }) {
     const intl = useIntl();
     const { id: selectedContributionId = null } = useParams();
     const initialSelectedContributionId = useRef(selectedContributionId);
@@ -60,12 +74,15 @@ function HomePage({ addContribution = false, report = false }) {
         const cookieCenter = Cookie.get('mapCenter') || null;
         return cookieCenter !== null ? JSON.parse(cookieCenter) : null;
     }, []);
-    const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
 
     const mapZoom = useMemo(() => {
         const cookieZoom = Cookie.get('mapZoom') || null;
         return cookieZoom !== null ? parseFloat(cookieZoom) : null;
     }, []);
+
+    const mainMap = useRef(null);
+    const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
+    const [mainMapZoom, setMainMapZoom] = useState(mapZoom);
 
     // const openMenu = useCallback(() => {
     //     setMenuOpened(true);
@@ -201,9 +218,16 @@ function HomePage({ addContribution = false, report = false }) {
 
     const onPhotoLocated = useCallback( coords => {
         setMainMapCenter(coords);
-    }, []);
+        if (mainMap.current.getView().getZoom() < mapLocationZoom) {
+            setMainMapZoom(mapLocationZoom);
+        }        
+    }, [mapLocationZoom]);
 
     const loading = !ready;
+    
+    const onMapReady = useCallback( ({ map }) => {
+        mainMap.current = map;
+    }, []);
 
     return (
         <div
@@ -253,9 +277,11 @@ function HomePage({ addContribution = false, report = false }) {
                     lines={lines}
                     markers={markers}
                     mapCenter={mainMapCenter}
-                    zoom={mapZoom}
+                    zoom={mainMapZoom}
+                    followUserZoom={mapLocationZoom}
                     onMoveEnded={onMapMoved}
                     onMarkerClick={selectContribution}
+                    onReady={onMapReady}
                 />
                 <div className={styles.mapMarkerContainer}>
                     <PhotoUploadMarker className={styles.mapMarker} onPhotoLocated={onPhotoLocated} />
@@ -320,5 +346,8 @@ function HomePage({ addContribution = false, report = false }) {
         </div>
     );
 }
+
+HomePage.propTypes = propTypes;
+HomePage.defaultProps = defaultProps;
 
 export default HomePage;
