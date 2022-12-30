@@ -1,11 +1,11 @@
-import { useCallback, /* useMemo, */ useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import styles from '../../styles/partials/image-upload.module.scss';
-// import { isDeviceMobile } from '../../lib/utils';
+import { isDeviceMobile } from '../../lib/utils';
 
 const propTypes = {
     className: PropTypes.string,
@@ -20,7 +20,7 @@ const defaultProps = {
 };
 
 function ImageUpload({ className, onChange, children }) {
-    // const isMobile = useMemo(() => isDeviceMobile(), []);
+    const isMobile = useMemo(() => isDeviceMobile(), []);
     const [blob, setBlob] = useState(null);
     const hasFile = blob !== null;
     const fileUploadRef = useRef(null);
@@ -57,7 +57,7 @@ function ImageUpload({ className, onChange, children }) {
             <input
                 ref={fileUploadRef}
                 type="file"
-                accept="image/*"
+                accept={isMobile ? 'capture=camera' : 'image/jpeg, image/png, capture=camera'}
                 onChange={onChangePrivate}
             />
             <button type="button" className={styles.close} onClick={onCloseClick}>
