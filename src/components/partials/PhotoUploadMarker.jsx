@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
-import EXIF from 'exif-js';
+import exifr from 'exifr';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,7 +13,6 @@ import MarkerIcon from '../../icons/Marker';
 import contributionTypes from '../../data/contribution-types.json';
 
 import styles from '../../styles/partials/photo-upload-marker.module.scss';
-import { exifToCoords } from '../../lib/utils';
 
 const propTypes = {
     className: PropTypes.string,
@@ -44,15 +43,13 @@ function PhotoUploadMarker({ className, onPhotoLocated }) {
     const setPhotoValue = useCallback(
         (photo) => {
             if (photo) {
-                EXIF.getData(photo, () => {
-                    const exif = EXIF.getAllTags(photo);
-                    const coords = exifToCoords(exif);
-                    if (coords !== null && onPhotoLocated !== null) {
-                        onPhotoLocated(coords);
+                exifr.gps(photo).then(coords => {
+                    const { latitude = null, longitude = null } = coords || {};
+                    if (latitude !== null && longitude !== null && onPhotoLocated !== null) {
+                        onPhotoLocated([longitude, latitude]);
                     }
                 });
             }
-
             updateContribution({ photo });
         },
         [updateContribution, onPhotoLocated],
