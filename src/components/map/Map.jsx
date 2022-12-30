@@ -213,12 +213,12 @@ function Map({
                 }) || null;
             if (clickedFeature !== null) {
                 const clickedFeaturePropreties = clickedFeature.getProperties();
-                const { geometry: clickedGeometry, features: clickedFeatures } =
+                const { geometry: clickedGeometry, features: clickedFeatures = [] } =
                     clickedFeaturePropreties;
                 const type = clickedGeometry.getType();
 
                 if (type === 'Point') {
-                    if (clickedFeatures.length) {
+                    if (clickedFeatures.length > 0) {
                         if (clickedFeatures.length > 1) {
                             const extent = boundingExtent(
                                 clickedFeatures.map((r) => r.getGeometry().getCoordinates()),
