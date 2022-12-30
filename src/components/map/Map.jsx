@@ -30,11 +30,11 @@ const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 const propTypes = {
     className: PropTypes.string,
     disableInteractions: PropTypes.bool,
-    askForPosition: PropTypes.bool,
     mapCenter: PropTypes.arrayOf(PropTypes.number),
     defaultMapCenter: PropTypes.arrayOf(PropTypes.number),
     zoom: PropTypes.number,
     defaultZoom: PropTypes.number,
+    followUserZoom: PropTypes.number,
     maxZoom: PropTypes.number,
     lines: PropTypes.arrayOf(
         PropTypes.shape({
@@ -64,11 +64,11 @@ const propTypes = {
 const defaultProps = {
     className: null,
     disableInteractions: false,
-    askForPosition: false,
     mapCenter: null,
     defaultMapCenter: [-73.561668, 45.508888],
     zoom: null,
     defaultZoom: 15,
+    followUserZoom: 17,
     maxZoom: 20,
     lines: null,
     markers: null,
@@ -85,11 +85,11 @@ const defaultProps = {
 function Map({
     className,
     disableInteractions,
-    askForPosition,
     mapCenter,
     defaultMapCenter,
     zoom,
     defaultZoom,
+    followUserZoom,
     maxZoom,
     lines,
     markers,
@@ -643,8 +643,8 @@ function Map({
 
             if (!isFollowingUser && isSameLocation(currentCenter, newCenter)) {
                 setIsFollowingUser(true);
-                if (getMapZoom() < 19) {
-                    setMapZoom(19);
+                if (getMapZoom() < followUserZoom) {
+                    setMapZoom(followUserZoom);
                 }
             } else {
                 setIsFollowingUser(false);
@@ -657,6 +657,7 @@ function Map({
         setMapCenter,
         isSameLocation,
         isFollowingUser,
+        followUserZoom,
         getMapZoom,
         setMapZoom,
     ]);
