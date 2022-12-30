@@ -113,7 +113,7 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
                     }
                     setSuccess(true);
                     setTimeout(() => {
-                        completeUserContribution();
+                        completeUserContribution();                        
                         onContributionSubmitted(contribution);
                     }, 1000);
                 } else {
