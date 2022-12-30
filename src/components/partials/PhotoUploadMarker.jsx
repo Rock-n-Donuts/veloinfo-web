@@ -46,8 +46,9 @@ function PhotoUploadMarker({ className, onPhotoLocated }) {
             if (photo) {
                 EXIF.getData(photo, () => {
                     const coords = exifToCoords(EXIF.getAllTags(photo));
+                    console.log('photo coords?', coords)
                     if (coords !== null && onPhotoLocated !== null) {
-                        onPhotoLocated(coords);
+                        // onPhotoLocated(coords);
                     }
                 });
             }
