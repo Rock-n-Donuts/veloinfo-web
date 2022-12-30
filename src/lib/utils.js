@@ -37,3 +37,33 @@ export function isDeviceMobile() {
     const { type } = device || {};
     return type !== 'desktop';
 }
+
+export function DMS2DD(degrees, minutes, seconds, direction) {
+    let dd = degrees + minutes / 60 + seconds / 3600;
+    if (direction === 'S' || direction === 'W') {
+        dd = dd * -1;
+    }
+    return dd;
+}
+
+export function exifToCoords(exif) {
+    const { GPSLatitude = null, GPSLongitude = null, GPSLatitudeRef = null, GPSLongitudeRef = null } = exif || {};
+
+    if (GPSLatitude === null || GPSLongitude === null || GPSLatitudeRef === null || GPSLongitudeRef === null) {
+        return null;
+    }
+
+    const latDeg = GPSLatitude[0].numerator;
+    const latMin = GPSLatitude[1].numerator;
+    const latSec = GPSLatitude[2].numerator;
+    const latDir = GPSLatitudeRef;
+    const lat = DMS2DD(latDeg, latMin, latSec, latDir);
+
+    const lngDeg = GPSLongitude[0].numerator;
+    const lngMin = GPSLongitude[1].numerator;
+    const lngSec = GPSLongitude[2].numerator;
+    const lngDir = GPSLongitudeRef;
+    const lng = DMS2DD(lngDeg, lngMin, lngSec, lngDir);
+
+    return [lng, lat];
+}
