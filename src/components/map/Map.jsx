@@ -68,7 +68,7 @@ const defaultProps = {
     defaultMapCenter: [-73.561668, 45.508888],
     zoom: null,
     defaultZoom: 15,
-    followUserZoom: 17,
+    followUserZoom: 18,
     maxZoom: 20,
     lines: null,
     markers: null,
