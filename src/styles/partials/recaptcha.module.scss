@@ -2,8 +2,15 @@
 @import '../placeholders';
 
 .container {
+    display: flex;
+
     opacity: 0;
     transition: opacity .25s ease;
+
+
+    .inner {
+        margin-left: auto;
+    }
 
     &.ready {
         opacity: 1

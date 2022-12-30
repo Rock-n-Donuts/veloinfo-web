@@ -35,9 +35,7 @@ function ReCAPTCHA({ className, onVerify }) {
                 { [className]: className !== null, [styles.ready]: ready },
             ])}
         >
-            {ready ? (
-                <GoogleReCaptcha onVerify={onVerify} />
-            ) : null}
+            {ready ? <GoogleReCaptcha onVerify={onVerify} /> : null}
         </div>
     );
 }

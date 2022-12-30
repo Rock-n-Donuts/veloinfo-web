@@ -33,7 +33,7 @@ function App() {
     const locale = useLocale();
     return (
         <IntlProvider locale={locale} messages={messages[locale]}>
-            <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY}>
+            <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY} language={locale}>
                 <MainLayout>
                     <Routes>
                         <Route path="/" exact element={<HomePage />} />
