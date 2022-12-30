@@ -53,15 +53,15 @@ export function exifToCoords(exif) {
         return null;
     }
 
-    const latDeg = GPSLatitude[0].numerator;
-    const latMin = GPSLatitude[1].numerator;
-    const latSec = GPSLatitude[2].numerator;
+    const latDeg = GPSLatitude[0];
+    const latMin = GPSLatitude[1];
+    const latSec = GPSLatitude[2];
     const latDir = GPSLatitudeRef;
     const lat = DMS2DD(latDeg, latMin, latSec, latDir);
 
-    const lngDeg = GPSLongitude[0].numerator;
-    const lngMin = GPSLongitude[1].numerator;
-    const lngSec = GPSLongitude[2].numerator;
+    const lngDeg = GPSLongitude[0];
+    const lngMin = GPSLongitude[1];
+    const lngSec = GPSLongitude[2];
     const lngDir = GPSLongitudeRef;
     const lng = DMS2DD(lngDeg, lngMin, lngSec, lngDir);
 
