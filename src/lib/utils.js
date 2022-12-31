@@ -37,3 +37,9 @@ export function isDeviceMobile() {
     const { type } = device || {};
     return type !== 'desktop';
 }
+
+export function isSameLocation(location1, location2) {
+    const diffLon = Math.abs(location1[0] - location2[0]);
+    const diffLat = Math.abs(location1[1] - location2[1]);
+    return diffLon + diffLat < 0.00001;
+}

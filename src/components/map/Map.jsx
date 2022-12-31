@@ -16,9 +16,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocation } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 
+import { useResizeObserver } from '../../hooks/useObserver';
 import { getColoredIcons } from '../../lib/map';
+import { isDeviceMobile, isSameLocation } from '../../lib/utils';
 import MapMarker from './MapMarker';
-import { isDeviceMobile } from '../../lib/utils';
 
 import styles from '../../styles/map/map.module.scss';
 import Loading from '../partials/Loading';
@@ -69,11 +70,11 @@ const defaultProps = {
     zoom: null,
     defaultZoom: 15,
     followUserZoom: 18,
-    maxZoom: 20,
+    maxZoom: 50,
     lines: null,
     markers: null,
-    clusterDistance: 25,
-    clusterMinDistance: 20,
+    clusterDistance: 35,
+    clusterMinDistance: 25,
     onMoveEnded: null,
     onCenterChanged: null,
     onZoomChanged: null,
@@ -126,6 +127,10 @@ function Map({
     const storedLines = useRef([]);
     const markerLayers = useRef([]);
 
+    const { ref: elRef, entry: elEntry } = useResizeObserver();
+    const { contentRect } = elEntry;
+    const { width = 0, height = 0 } = contentRect || {};
+
     const onMarkerIconLoaded = useCallback((icon) => {
         setIconLoaded((old) =>
             old.map(({ key, loaded }) => ({ key, loaded: key === icon ? true : loaded })),
@@ -144,12 +149,6 @@ function Map({
     const getMapZoom = useCallback(() => mapRef.current.getView().getZoom(), []);
     const setMapZoom = useCallback((z) => mapRef.current.getView().setZoom(z), []);
 
-    const isSameLocation = useCallback((location1, location2) => {
-        const diffLon = Math.abs(location1[0] - location2[0]);
-        const diffLat = Math.abs(location1[1] - location2[1]);
-        return diffLon + diffLat < 0.0001;
-    }, []);
-
     const onChangeCenter = useCallback(() => {
         if (isFollowingUser && userLocation !== null) {
             const { coords } = userLocation || {};
@@ -161,7 +160,7 @@ function Map({
         if (onCenterChanged !== null) {
             onCenterChanged(getMapCenter());
         }
-    }, [onCenterChanged, getMapCenter, isFollowingUser, userLocation, isSameLocation]);
+    }, [onCenterChanged, getMapCenter, isFollowingUser, userLocation]);
 
     const onChangeZoom = useCallback(() => {
         if (onZoomChanged !== null) {
@@ -223,10 +222,11 @@ function Map({
                             const extent = boundingExtent(
                                 clickedFeatures.map((r) => r.getGeometry().getCoordinates()),
                             );
+                            const paddingX = width / 2.75;
+                            const paddingY = height / 2.75;
                             mapRef.current.getView().fit(extent, {
-                                maxZoom: 22,
-                                duration: 750,
-                                padding: [100, 100, 100, 100],
+                                duration: 600,
+                                padding: [paddingY, paddingX, paddingY, paddingX],
                             });
                         } else {
                             const feature = clickedFeatures[0];
@@ -246,7 +246,7 @@ function Map({
                 }
             }
         },
-        [onMarkerClick, onLineClick],
+        [onMarkerClick, onLineClick, width, height],
     );
 
     const currentPositionLayer = useRef(null);
@@ -673,6 +673,7 @@ function Map({
                     [styles.isFollowingUser]: isFollowingUser,
                 },
             ])}
+            ref={elRef}
         >
             <div ref={mapContainerRef} className={styles.map} touch-action="none" />
             <div className={styles.markers}>
