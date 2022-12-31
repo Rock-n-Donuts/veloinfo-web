@@ -28,10 +28,14 @@ function ImageUpload({ className, onChange, children }) {
     const onChangePrivate = useCallback(
         (e) => {
             const file = e.target.files[0] || null;
-            setBlob(file ? URL.createObjectURL(file) : null);
+            if (['image/jpeg', 'image/jpg', 'image/png', 'image/heic'].indexOf(file.type) === -1) {
+                window.alert('Veuillez sélectionner une image svp');
+            } else {
+                setBlob(file ? URL.createObjectURL(file) : null);
 
-            if (onChange !== null) {
-                onChange(file);
+                if (onChange !== null) {
+                    onChange(file);
+                }
             }
         },
         [onChange],

@@ -45,7 +45,7 @@ function PhotoUploadMarker({ className, onPhotoLocated }) {
             if (photo) {
                 exifr.gps(photo).then(coords => {
                     const { latitude = null, longitude = null } = coords || {};
-                    alert(`${photo.type}, coords: [${latitude}, ${longitude}]`)
+                    // alert(`${photo.type}, coords: [${latitude}, ${longitude}]`)
                     const isValid = !isNaN(latitude) && latitude !== null && latitude !== 0 && !isNaN(longitude) && longitude !== null && longitude !== 0;
                     if (isValid && onPhotoLocated !== null) {
                         onPhotoLocated([longitude, latitude]);
