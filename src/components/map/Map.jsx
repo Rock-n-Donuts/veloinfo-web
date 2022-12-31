@@ -655,7 +655,6 @@ function Map({
         userLocation,
         getMapCenter,
         setMapCenter,
-        isSameLocation,
         isFollowingUser,
         followUserZoom,
         getMapZoom,
