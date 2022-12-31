@@ -40,5 +40,6 @@
     "ok": "OK",
     "report": "Report",
     "send": "Send",
-    "retry": "Retry"
+    "retry": "Retry",
+    "select-image-only": "Please select an image in the JPG/PNG format"
 }

@@ -6,6 +6,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import styles from '../../styles/partials/image-upload.module.scss';
 import { isDeviceMobile } from '../../lib/utils';
+import { useIntl } from 'react-intl';
 
 const propTypes = {
     className: PropTypes.string,
@@ -20,6 +21,7 @@ const defaultProps = {
 };
 
 function ImageUpload({ className, onChange, children }) {
+    const intl = useIntl();
     const isMobile = useMemo(() => isDeviceMobile(), []);
     const [blob, setBlob] = useState(null);
     const hasFile = blob !== null;
@@ -29,7 +31,7 @@ function ImageUpload({ className, onChange, children }) {
         (e) => {
             const file = e.target.files[0] || null;
             if (['image/jpeg', 'image/jpg', 'image/png', 'image/heic'].indexOf(file.type) === -1) {
-                window.alert('Veuillez sélectionner une image svp');
+                window.alert(intl.formatMessage({ id: 'select-image-only' }));
             } else {
                 setBlob(file ? URL.createObjectURL(file) : null);
 
@@ -38,7 +40,7 @@ function ImageUpload({ className, onChange, children }) {
                 }
             }
         },
-        [onChange],
+        [onChange, intl],
     );
 
     const onCloseClick = useCallback(() => {
