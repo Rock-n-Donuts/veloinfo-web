@@ -12,8 +12,10 @@ import {
     useContribution,
     useMapData,
     useReady,
+    useContributions,
 } from '../../contexts/DataContext';
 import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
+import { isSameLocation } from '../../lib/utils';
 import Map from '../map/Map';
 import Meta from '../partials/Meta';
 import HomeMenu from '../partials/HomeMenu';
@@ -69,6 +71,8 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
     const ready = useReady();
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
+    const contributions = useContributions();
+    const contributionsCoords = useMemo( () => (contributions || []).map(({ coords }) => coords), [contributions]);
 
     const mapCenter = useMemo(() => {
         const cookieCenter = Cookie.get('mapCenter') || null;
@@ -126,15 +130,18 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
 
     const storeCenter = useCallback(
         (center) => {
+            setMainMapCenter(center);
             Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
-            if (!confirmed) {
-                userUpdateContribution({ coords: center });
+            if (ready && !confirmed) {
+                const foundSame = contributionsCoords.find((coords) => isSameLocation(coords, center)) || null;
+                userUpdateContribution({ coords: foundSame !== null ? null : center });
             }            
         },
-        [userUpdateContribution, confirmed],
+        [ready, userUpdateContribution, confirmed, contributionsCoords],
     );
 
     const storeZoom = useCallback((zoom) => {
+        setMainMapZoom(zoom);
         Cookie.set('mapZoom', zoom, { expires: 3650 });
     }, []);
 
@@ -201,6 +208,13 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
             setLayersFilterOpened(false);
         }
     }, [contributionSelected, addContribution, report]);
+
+    useEffect( () => {
+        if (ready) {
+            const foundSame = contributionsCoords.find((coords) => isSameLocation(coords, mainMapCenter)) || null;
+            userUpdateContribution({ coords: foundSame !== null ? null : mainMapCenter });
+        }        
+    }, [ready, contributionsCoords, mainMapCenter, userUpdateContribution]);
 
     const openReportLinks = useCallback(() => {
         navigate('/signaler');
