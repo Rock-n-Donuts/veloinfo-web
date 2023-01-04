@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import RelativeTimeFormat from 'relative-time-format';
 import fr from 'relative-time-format/locale/fr';
 import en from 'relative-time-format/locale/en';
+import { GoogleReCaptchaProvider } from 'react-google-recaptcha-v3';
 
 // import * as AppPropTypes from '../lib/PropTypes';
 import { useLocale } from '../contexts/SiteContext';
@@ -32,16 +33,18 @@ function App() {
     const locale = useLocale();
     return (
         <IntlProvider locale={locale} messages={messages[locale]}>
-            <MainLayout>
-                <Routes>
-                    <Route path="/" exact element={<HomePage />} />
-                    <Route path="/contribution/:id" exact element={<HomePage />} />
-                    <Route path="/ajouter" exact element={<HomePage addContribution />} />
-                    <Route path="/signaler" exact element={<HomePage report />} />
-                    <Route path="*" element={<ErrorPage />} />
-                </Routes>
-            </MainLayout>
-            <Analytics />
+            <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY} language={locale}>
+                <MainLayout>
+                    <Routes>
+                        <Route path="/" exact element={<HomePage />} />
+                        <Route path="/contribution/:id" exact element={<HomePage />} />
+                        <Route path="/ajouter" exact element={<HomePage addContribution />} />
+                        <Route path="/signaler" exact element={<HomePage report />} />
+                        <Route path="*" element={<ErrorPage />} />
+                    </Routes>
+                    { process.env.NODE_ENV === 'production' ? <Analytics /> : null }
+                </MainLayout>
+            </GoogleReCaptchaProvider>
         </IntlProvider>
     );
 }

@@ -102,6 +102,5 @@ export function getMarkersFromContributions(contributions) {
             // src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
             //     getContributionSvg({ icon, color, withoutMarker }),
             // )}`
-        }))
-        .reverse();
+        }));
 }

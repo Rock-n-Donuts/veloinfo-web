@@ -77,7 +77,7 @@ const getContributionSvg = ({
     return withoutMarker
         ? iconSvg
         : `
-        <svg width="42" height="51" viewBox="0 0 42 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="41" height="51" viewBox="0 0 41 51" fill="none" xmlns="http://www.w3.org/2000/svg">
             <mask id="path-1-inside-1_333_1482" fill="white">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M6 0C2.68629 0 0 2.68629 0 6V36C0 39.3137 2.68628 42 5.99999 42H12.1317L20.1818 50.2219L28.2319 42H35.1224C38.4361 42 41.1224 39.3137 41.1224 36V6C41.1224 2.68629 38.4361 0 35.1224 0H6Z"/>
             </mask>

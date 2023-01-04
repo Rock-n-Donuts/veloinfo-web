@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import classNames from 'classnames';
@@ -11,15 +12,17 @@ import {
     useContribution,
     useMapData,
     useReady,
+    useContributions,
 } from '../../contexts/DataContext';
 import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
+import { isSameLocation } from '../../lib/utils';
 import Map from '../map/Map';
 import Meta from '../partials/Meta';
 import HomeMenu from '../partials/HomeMenu';
 import Loading from '../partials/Loading';
-import AddContributionModal from '../partials/AddContributionModal';
+import AddContributionConfirmation from '../partials/AddContributionConfirmation';
 import ContributionDetails from '../partials/ContributionDetails';
-import ContributionCoordsSelector from '../partials/ContributionCoordsSelector';
+import PhotoUploadMarker from '../partials/PhotoUploadMarker';
 import AddContributionButton from '../buttons/AddContribution';
 import ReportLinksButton from '../buttons/ReportLinks';
 import MenuButton from '../buttons/Menu';
@@ -28,7 +31,20 @@ import LayersFilter from '../filters/LayersFilter';
 
 import styles from '../../styles/pages/home.module.scss';
 
-function HomePage({ addContribution = false, report = false }) {
+
+const propTypes = {
+    addContribution: PropTypes.bool,
+    report: PropTypes.bool,
+    mapLocationZoom: PropTypes.number,
+}
+
+const defaultProps = {
+    addContribution: false,
+    report: false,
+    mapLocationZoom: 17,
+}
+
+function HomePage({ addContribution, report, mapLocationZoom, }) {
     const intl = useIntl();
     const { id: selectedContributionId = null } = useParams();
     const initialSelectedContributionId = useRef(selectedContributionId);
@@ -47,25 +63,30 @@ function HomePage({ addContribution = false, report = false }) {
 
     const userCurrentContribution = useUserCurrentContribution();
     const userUpdateContribution = useUserUpdateContribution();
-    const { confirmed = false } = userCurrentContribution || {};
-    const formOpened = addContribution && confirmed;
+    const { confirmed = false, type = null } = userCurrentContribution || {};
+    const hasType = type !== null;
+    const confirmationOpened = addContribution && confirmed;
 
     const isContributionSelected = selectedContributionId !== null;
     const ready = useReady();
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
+    const contributions = useContributions();
+    const contributionsCoords = useMemo( () => (contributions || []).map(({ coords }) => coords), [contributions]);
 
     const mapCenter = useMemo(() => {
         const cookieCenter = Cookie.get('mapCenter') || null;
         return cookieCenter !== null ? JSON.parse(cookieCenter) : null;
     }, []);
-    const lastMapCenter = useRef(mapCenter);
-    const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
 
     const mapZoom = useMemo(() => {
         const cookieZoom = Cookie.get('mapZoom') || null;
         return cookieZoom !== null ? parseFloat(cookieZoom) : null;
     }, []);
+
+    const mainMap = useRef(null);
+    const [mainMapCenter, setMainMapCenter] = useState(mapCenter);
+    const [mainMapZoom, setMainMapZoom] = useState(mapZoom);
 
     // const openMenu = useCallback(() => {
     //     setMenuOpened(true);
@@ -109,16 +130,18 @@ function HomePage({ addContribution = false, report = false }) {
 
     const storeCenter = useCallback(
         (center) => {
-            lastMapCenter.current = center;
+            setMainMapCenter(center);
             Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
-            if (addContribution) {
-                userUpdateContribution({ coords: center });
-            }
+            if (ready && !confirmed) {
+                const foundSame = contributionsCoords.find((coords) => isSameLocation(coords, center)) || null;
+                userUpdateContribution({ coords: foundSame !== null ? null : center });
+            }            
         },
-        [addContribution, userUpdateContribution],
+        [ready, userUpdateContribution, confirmed, contributionsCoords],
     );
 
     const storeZoom = useCallback((zoom) => {
+        setMainMapZoom(zoom);
         Cookie.set('mapZoom', zoom, { expires: 3650 });
     }, []);
 
@@ -128,25 +151,6 @@ function HomePage({ addContribution = false, report = false }) {
             storeZoom(zoom);
         },
         [storeCenter, storeZoom],
-    );
-
-    useEffect(() => {
-        if (!formOpened) {
-            setMainMapCenter(lastMapCenter.current);
-        }
-    }, [formOpened]);
-
-    useEffect(() => {
-        if (addContribution) {
-            userUpdateContribution({ coords: lastMapCenter.current });
-        }
-    }, [addContribution, userUpdateContribution]);
-
-    const onMinimapMoved = useCallback(
-        ({ center }) => {
-            storeCenter(center);
-        },
-        [storeCenter],
     );
 
     const onContributionAdded = useCallback(
@@ -205,6 +209,13 @@ function HomePage({ addContribution = false, report = false }) {
         }
     }, [contributionSelected, addContribution, report]);
 
+    useEffect( () => {
+        if (ready) {
+            const foundSame = contributionsCoords.find((coords) => isSameLocation(coords, mainMapCenter)) || null;
+            userUpdateContribution({ coords: foundSame !== null ? null : mainMapCenter });
+        }        
+    }, [ready, contributionsCoords, mainMapCenter, userUpdateContribution]);
+
     const openReportLinks = useCallback(() => {
         navigate('/signaler');
     }, [navigate]);
@@ -219,6 +230,19 @@ function HomePage({ addContribution = false, report = false }) {
         goHome();
     }, [goHome]);
 
+    const onPhotoLocated = useCallback( coords => {
+        setMainMapCenter(coords);
+        if (mainMap.current.getView().getZoom() < mapLocationZoom) {
+            setMainMapZoom(mapLocationZoom);
+        }        
+    }, [mapLocationZoom]);
+
+    const loading = !ready;
+    
+    const onMapReady = useCallback( ({ map }) => {
+        mainMap.current = map;
+    }, []);
+
     return (
         <div
             className={classNames([
@@ -227,9 +251,11 @@ function HomePage({ addContribution = false, report = false }) {
                     [styles.menuOpened]: menuOpened,
                     [styles.reportLinksOpened]: report,
                     [styles.addContribution]: addContribution,
-                    [styles.formOpened]: formOpened,
+                    [styles.confirmationOpened]: confirmationOpened,
                     [styles.contributionSubmited]: contributionSubmited,
                     [styles.contributionSelected]: isContributionSelected,
+                    [styles.mapMarkerDropped]: addContribution && hasType,
+                    [styles.loading]: loading,
                 },
             ])}
         >
@@ -265,21 +291,22 @@ function HomePage({ addContribution = false, report = false }) {
                     lines={lines}
                     markers={markers}
                     mapCenter={mainMapCenter}
-                    zoom={mapZoom}
+                    zoom={mainMapZoom}
+                    followUserZoom={mapLocationZoom}
                     onMoveEnded={onMapMoved}
                     onMarkerClick={selectContribution}
+                    onReady={onMapReady}
                 />
-                <ContributionCoordsSelector
-                    className={styles.contributionCoordsSelector}
-                    opened={addContribution}
-                />
+                <div className={styles.mapMarkerContainer}>
+                    <PhotoUploadMarker className={styles.mapMarker} onPhotoLocated={onPhotoLocated} />
+                </div>
             </div>
             <AddContributionButton
                 className={styles.addContributionButton}
                 opened={addContribution}
                 onOpen={onInitAddContribution}
                 onClose={onCancelAddContribution}
-                onNext={openAddContribution}
+                onSend={openAddContribution}
             />
             <ReportLinksButton
                 className={styles.reportLinksButton}
@@ -288,11 +315,11 @@ function HomePage({ addContribution = false, report = false }) {
                 onClose={closeReportLinks}
             />
             <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
-            <AddContributionModal
+            <AddContributionConfirmation
                 key={contributionKey}
                 className={styles.addContribution}
+                confirmed={confirmationOpened}
                 onClose={closeAddContribution}
-                onMinimapMoved={onMinimapMoved}
                 onContributionAdded={onContributionAdded}
             />
             <div className={styles.contributionDetailsContainer}>
@@ -329,9 +356,12 @@ function HomePage({ addContribution = false, report = false }) {
                     </TransitionGroup>
                 </div>
             </div>
-            <Loading loading={!ready} />
+            <Loading loading={loading} />
         </div>
     );
 }
+
+HomePage.propTypes = propTypes;
+HomePage.defaultProps = defaultProps;
 
 export default HomePage;

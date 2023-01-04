@@ -59,9 +59,9 @@ export const DataProvider = ({ children }) => {
                 } = newData || {};
                 if (dateRef.current === null) {
                     // console.log('Initial data received', newData);
-                    setReady(true);
                     dateRef.current = newDate;
                     setData(newData);
+                    setReady(true);
                 } else {
                     // console.log('Updated data received.', newData);
                     if (dateRef.current !== newDate) {
@@ -161,6 +161,20 @@ export const useData = () => {
     const { data = null } = ctx || {};
 
     return data;
+};
+
+export const useContributions = () => {
+    const data = useData();
+    const { contributions = null } = data || {};
+
+    return contributions;
+};
+
+export const useTroncons = () => {
+    const data = useData();
+    const { troncons = null } = data || {};
+
+    return troncons;
 };
 
 export const useReady = () => {

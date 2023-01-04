@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import ReCaptCha from 'react-google-recaptcha';
+import { GoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 import styles from '../../styles/partials/recaptcha.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
+    onVerify: PropTypes.func,
 };
 
 const defaultProps = {
     className: null,
+    onVerify: undefined,
 };
 
-function ReCAPTCHA({ className, captchaRef }) {
+function ReCAPTCHA({ className, onVerify }) {
     const [ready, setReady] = useState(false);
 
     useEffect(() => {
@@ -33,9 +35,7 @@ function ReCAPTCHA({ className, captchaRef }) {
                 { [className]: className !== null, [styles.ready]: ready },
             ])}
         >
-            {ready ? (
-                <ReCaptCha sitekey={process.env.REACT_APP_RECAPTCHA_V2_SITE_KEY} ref={captchaRef} />
-            ) : null}
+            {ready ? <GoogleReCaptcha onVerify={onVerify} /> : null}
         </div>
     );
 }
@@ -43,4 +43,4 @@ function ReCAPTCHA({ className, captchaRef }) {
 ReCAPTCHA.propTypes = propTypes;
 ReCAPTCHA.defaultProps = defaultProps;
 
-export default React.forwardRef((props, ref) => <ReCAPTCHA {...props} captchaRef={ref} />);
+export default ReCAPTCHA;

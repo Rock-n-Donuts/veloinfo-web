@@ -4,10 +4,15 @@
 .container {
     position: relative;
 
+    .inner {
+        position: relative;
+    }
+
     .types {
         position: absolute;
         right: 0;
         bottom: 100%;
+        // margin-bottom: 5px;
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -33,6 +38,20 @@
         opacity: 0;
         transform: translateY(10px);
         transition: opacity 0.3s ease-in, transform 0.25s ease;
+        // transition: opacity 0.3s ease-in;
+
+        .label {
+            padding: 5px 25px 5px 10px;
+        }
+
+        .close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            opacity: 0;
+            font-size: 14px;
+            transition: opacity 0.25s ease;
+        }
     }
 
     .typeButton {
@@ -53,41 +72,139 @@
     }
 
     .icon {
-        width: 28px;
-        height: 28px;
+        position: relative;
+        width: 25px;
+        height: 25px;
+
+        svg {
+            @extend %fullscreen;
+        }
     }
 
     .label {
-        white-space: nowrap;
-        padding: 10px;
+        display: inline-block;
+    }
+
+    .actions {
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            height: 34px;
+            color: $color-white;
+            border-radius: 5px;
+
+            &.editButton {
+                .label {
+                    display: -webkit-box;
+                    -webkit-box-orient: vertical;
+                    -webkit-line-clamp: 1;
+                    line-clamp: 1;
+                    overflow: hidden;
+                    width: 160px;
+                    text-align: left;
+
+                    br {
+                        display: none;
+                    }
+                }
+
+                .editButtonCloseContent {
+                    .label {
+                        min-width: auto;
+                        width: auto;
+                        height: auto;
+                    }
+                }
+
+                @media screen and (max-width: 410px) {
+                    padding: 5px 10px;
+                    .label {
+                        line-clamp: 2;
+                        -webkit-line-clamp: 2;
+
+                        font-size: 12px;
+                        letter-spacing: -0.5px;
+                        width: 70px;
+
+                        br {
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+
+        .label {
+            font-size: 14px;
+            min-width: 55px;
+        }
+
+        .icon {
+            position: relative;
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin-left: 5px;
+
+            svg {
+                @extend %fullscreen;
+            }
+        }
     }
 
     .actions {
         position: relative;
         display: flex;
         align-items: center;
-        margin-top: 5px;
-
-        button {
-            padding: 10px;
-            min-width: 100px;
-            color: $color-white;
-            border-radius: 5px;
-        }
+        justify-content: flex-end;
     }
 
-    .nextButton {
-        position: absolute;
-        right: 100%;
-        margin-right: 10px;
-        background-color: $color-green;
+    .editButton,
+    .sendButton {
+        background-color: $color-blue-background;
+    }
+
+    .editButton,
+    .sendButton {
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.5s ease;
+        margin-right: 5px;
+        transition: opacity 0.25s ease;
+        // background-color: $color-green;
+    }
+
+    .editButton {
+        position: relative;
+    }
+
+    .editButtonContent {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.25s ease;
+    }
+
+    .editButtonCloseContent {
+        @extend %fullscreen;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
     }
 
     .toggleOpenButton {
         background-color: $color-blue-background;
+        transition: background-color 0.25s ease, opacity 0.25s ease;
+
+        .icon {
+            transition: transform 0.25s ease;
+        }
     }
 
     &.opened {
@@ -100,28 +217,165 @@
             transform: translateY(0);
             opacity: 1;
         }
+
+        .toggleOpenButton {
+            .icon {
+                transform: rotate(45deg);
+            }
+        }
     }
 
-    &.opened.typeSelected {
+    &.typeSelected {
+        // width: 100%;
+
+        .types {
+            pointer-events: none;
+        }
+
         .type {
             transition: height 0.35s 0.1s ease;
 
+            .typeContent {
+                opacity: 0;
+            }
+
+            &.selected {
+                .typeContent {
+                    pointer-events: all;
+                    opacity: 1;
+                }
+            }
+
             &:not(.selected) {
                 height: 0;
-
-                .typeContent {
-                    opacity: 0;
-                }
             }
         }
 
         .typeContent {
             transition: opacity 0.25s ease, transform 0.25s ease;
-        }
 
-        .nextButton {
+            .close {
+                opacity: 1;
+            }
+        }
+        
+        .editButton,
+        .sendButton {
+            // transition-delay: 0.4s;
             opacity: 1;
             pointer-events: auto;
+
+            &[disabled] {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+        }
+
+        &.loading {
+            .editButton,
+            .sendButton {
+                transition-delay: 0.4s;
+                opacity: 0.5;
+                pointer-events: none;
+            }
+        }
+    }
+
+    .editForm {
+        position: absolute;
+        left: 0;
+        bottom: 100%;
+        width: 100%;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.25s ease;
+        background-color: $color-blue-background;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+
+        .name {
+            padding-bottom: 10px;
+        }
+
+        .comment {
+            padding-bottom: 0;
+        }
+
+        .name,
+        .comment {
+            input,
+            textarea {
+                display: block;
+                width: 100%;
+                padding: 10px;
+                font-size: 18px;
+                border: none;
+            }
+
+            textarea {
+                height: 100px;
+            }
+        }
+
+        .arrow {
+            position: absolute;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-left: 18px solid transparent;
+            border-right: 18px solid transparent;
+            transform: translateX(-50%);
+            border-top: 18px solid $color-blue-background;
+        }
+    }
+
+    .editActions {
+        text-align: center;
+
+        button {
+            background-color: $color-white;
+            color: $color-blue-background;
+            border-radius: 10px;
+            padding: 10px;
+        }
+    }
+
+    .safe {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba($color-white, 0.5);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+    }
+
+    &.isEditing {
+        .types {
+            opacity: 0;
+        }
+
+        .editForm,
+        .safe {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .toggleOpenButton,
+        .sendButton {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .editButtonContent {
+            opacity: 0;
+        }
+
+        .editButtonCloseContent {
+            opacity: 1;
         }
     }
 }

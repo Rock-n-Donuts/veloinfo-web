@@ -1,5 +1,6 @@
 import RelativeTimeFormat from 'relative-time-format';
 import { parseISO } from 'date-fns';
+import DeviceDetector from 'device-detector-js';
 
 export function parseDate(date, asUTC = true) {
     return parseISO(asUTC ? `${date.substr(0, 10)}T${date.substr(11, 18)}Z` : date);
@@ -27,4 +28,18 @@ export function getRelativeTime(locale, date, now = new Date()) {
     }
 
     return newString;
+}
+
+export function isDeviceMobile() {
+    const deviceDetector = new DeviceDetector();
+    const result = deviceDetector.parse(navigator.userAgent);
+    const { device } = result || {};
+    const { type } = device || {};
+    return type !== 'desktop';
+}
+
+export function isSameLocation(location1, location2) {
+    const diffLon = Math.abs(location1[0] - location2[0]);
+    const diffLat = Math.abs(location1[1] - location2[1]);
+    return diffLon + diffLat < 0.00001;
 }

@@ -1,7 +1,7 @@
 [
     {
         "key": "cleared",
-        "color": "#4fae77",
+        "color": "#439666",
         "label": {
             "fr": "Déneigé",
             "en": "Cleared"
@@ -9,7 +9,7 @@
     },
     {
         "key": "partially-cleared",
-        "color": "#439666",
+        "color": "#367c99",
         "label": {
             "fr": "Un côté déneigé",
             "en": "One side cleared"
@@ -17,7 +17,7 @@
     },
     {
         "key": "snowy",
-        "color": "#367c98",
+        "color": "#f09035",
         "label": {
             "fr": "Enneigé",
             "en": "Snowy"
@@ -25,7 +25,7 @@
     },
     {
         "key": "planified",
-        "color": "#f09035",
+        "color": "#83b5e0",
         "label": {
             "fr": "Déneigement planifié",
             "en": "Clearing planned"
@@ -33,7 +33,7 @@
     },
     {
         "key": "clearing",
-        "color": "#8962c7",
+        "color": "#ff0000",
         "label": {
             "fr": "Déneigement en cours",
             "en": "Clearing in progress"

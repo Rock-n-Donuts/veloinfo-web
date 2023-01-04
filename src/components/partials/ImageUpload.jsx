@@ -1,24 +1,24 @@
 import { useCallback, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-
-import trashImage from '../../assets/images/trash-can.svg';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import styles from '../../styles/partials/image-upload.module.scss';
 
 const propTypes = {
     className: PropTypes.string,
-    label: PropTypes.string,
     onChange: PropTypes.func,
+    children: PropTypes.node,
 };
 
 const defaultProps = {
     className: null,
-    label: null,
     onChange: null,
+    children: null,
 };
 
-function ImageUpload({ className, label, onChange }) {
+function ImageUpload({ className, onChange, children }) {
     const [blob, setBlob] = useState(null);
     const hasFile = blob !== null;
     const fileUploadRef = useRef(null);
@@ -35,7 +35,7 @@ function ImageUpload({ className, label, onChange }) {
         [onChange],
     );
 
-    const onCloseClick = useCallback( () => {
+    const onCloseClick = useCallback(() => {
         setBlob(null);
         fileUploadRef.current.value = '';
         if (onChange !== null) {
@@ -50,11 +50,16 @@ function ImageUpload({ className, label, onChange }) {
                 { [className]: className !== null, [styles.hasFile]: hasFile },
             ])}
         >
-            <span className={styles.label}>{label}</span>
+            <div className={styles.content}>{children}</div>
             <img className={styles.selectedImage} src={blob} alt="preview" />
-            <input ref={fileUploadRef} type="file" accept="capture=camera, image/jpeg, image/png" onChange={onChangePrivate} />
+            <input
+                ref={fileUploadRef}
+                type="file"
+                accept="capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png"
+                onChange={onChangePrivate}
+            />
             <button type="button" className={styles.close} onClick={onCloseClick}>
-                <img src={trashImage} alt="Remove" />
+                <FontAwesomeIcon icon={faTrash} />
             </button>
         </label>
     );
