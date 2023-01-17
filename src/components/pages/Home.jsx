@@ -262,7 +262,7 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
             <Meta
                 title={intl.formatMessage({ id: 'app-title' })}
                 description={intl.formatMessage({ id: 'app-description' })}
-                image="/og-image.jpg"
+                image="/share-image.jpg"
             />
             <div className={styles.mapHeader}>
                 <div className={styles.left}>
