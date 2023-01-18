@@ -1,0 +1,45 @@
+version: "3.4"
+services:
+  backend:
+    build:
+      target: dev
+      context: backend/
+    volumes:
+      - ./backend:/app
+    ports:
+      - 3001:3001
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: veloinfo
+      DB_USER: veloinfo
+      DB_PWD: veloinfo
+      RECPATCHA_SECRET: ${RECPATCHA_SECRET}
+      PORT: 3001
+  db:
+    image: mysql
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - veloinfo-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: veloinfo
+      MYSQL_DATABASE: veloinfo
+      MYSQL_USER: veloinfo
+      MYSQL_PASSWORD: veloinfo
+  web:
+    build:
+      context: ../veloinfo-web/.
+    volumes:
+      - ../veloinfo-web/:/app
+    ports:
+      - 3000:3000
+    environment:
+      REACT_APP_API_URL: /
+      REACT_APP_API_PROXY_URL: http://localhost:8081
+      REACT_APP_RECAPTCHA_V3_SITE_KEY: 6LfFp8wjAAAAAPiE0ng60miVu00sE_-DgVnVT0tt
+      REACT_APP_JAWG_ID: ""
+      REACT_APP_JAWG_TOKEN: ""
+      API_IMPORT_KEY = ""volumes:
+  
+volumes:
+  veloinfo-data:
