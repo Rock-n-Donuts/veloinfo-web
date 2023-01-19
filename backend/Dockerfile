@@ -1,12 +1,13 @@
 FROM node as dev
 WORKDIR /app
 
-CMD bash -c "npm i && npm run dev"
+CMD bash -c "npm i && npx prisma generate && npx prisma migrate && npm run dev"
 
 ##########################
 FROM dev as prod
 COPY . .
 RUN npm i
+RUN npx prisma generate
 RUN npm build
 
-CMD npm start
+CMD bash -c "npx prisma migrate && npm start"
