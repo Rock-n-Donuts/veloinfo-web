@@ -30,7 +30,8 @@ services:
       MYSQL_PASSWORD: veloinfo
   web:
     build:
-      context: ../veloinfo-web/.
+      context: .
+      target: dev
     volumes:
       - ../veloinfo-web/:/app
     ports:
