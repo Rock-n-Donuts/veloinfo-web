@@ -20,7 +20,6 @@ services:
   db:
     image: mysql
     volumes:
-      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - veloinfo-data:/var/lib/mysql
     ports:
       - 3306:3306
