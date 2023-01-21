@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client'
+import { contributions, PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -48,38 +48,50 @@ const getContributionsTroncons = async (req: Request, res: Response) => {
     }
   });
 
-  const contributionResponses = contributions.map((contribution): ContributionResponse => {
-    return {
-      id: contribution.id,
-      created_at: contribution.created_at,
-      issue_id: contribution.issue_id,
-      comment: contribution.comment,
-      user_id: contribution.user_id,
-      name: contribution.name,
-      quality: contribution.quality,
-      external_id: 0,
-      is_external: false,
-      is_deleted: contribution.is_deleted,
-      replies: [],
-      coords: contribution.location?.split(",").map(c => parseFloat(c)),
-      score: {
-        positive: 0, negative: 0, last_vote: "", last_vote_date: ""
-      },
-      updated_at: "",
-      image: {
-        url: contribution.photo_path,
-        width: contribution.photo_width,
-        height: contribution.photo_height,
-        is_external: true
-      }
-    }
-  });
+  const contributionResponses = contributions.map(mapContributionsToContributionResponse);
   res.send({ contributions: contributionResponses, troncons })
 }
 
 const postContribution = async (req: Request, resp: Response) => {
-  resp.send({success: true, contributions: []});
+  const m = req.headers['authorization']?.match(/Bearer (.*)/);
+  const user_id = m ? m[1] : "undefined";
+
+  const contribution = await prisma.contributions.create({
+    data: {
+      name: req.body.name,
+      quality: parseInt(req.body.quality),
+      location: req.body.coords[0],
+      user_id
+    }
+  })
+
+  resp.send({ success: true, contributions: [contribution] });
 }
+
+const mapContributionsToContributionResponse = (contribution: contributions): ContributionResponse => ({
+  id: contribution.id,
+  created_at: contribution.created_at,
+  issue_id: contribution.issue_id,
+  comment: contribution.comment,
+  user_id: contribution.user_id,
+  name: contribution.name,
+  quality: contribution.quality,
+  external_id: 0,
+  is_external: false,
+  is_deleted: contribution.is_deleted,
+  replies: [],
+  coords: contribution.location?.split(",").map(c => parseFloat(c)),
+  score: {
+    positive: 0, negative: 0, last_vote: "", last_vote_date: ""
+  },
+  updated_at: "",
+  image: {
+    url: contribution.photo_path,
+    width: contribution.photo_width,
+    height: contribution.photo_height,
+    is_external: true
+  }
+})
 
 export {
   getContributionsTroncons,
