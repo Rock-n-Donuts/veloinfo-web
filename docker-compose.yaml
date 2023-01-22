@@ -33,7 +33,7 @@ services:
       context: .
       target: dev
     volumes:
-      - ../veloinfo-web/:/app
+      - .:/app
     ports:
       - 3000:3000
     environment:
