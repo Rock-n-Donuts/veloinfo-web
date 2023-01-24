@@ -16,11 +16,11 @@ model contribution_replies {
   id              Int           @id @default(autoincrement()) @db.UnsignedInt
   user_id         String        @db.VarChar(256)
   name            String?       @db.VarChar(256)
-  contribution_id String        @db.VarChar(256)
+  contribution_id Int           @db.UnsignedInt
   message         String?       @db.Text
   created_at      DateTime?     @default(now()) @db.DateTime(0)
   is_deleted      Int?          @default(0) @db.TinyInt
-  contributions   contributions @relation(fields: [contribution_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "contribution_reply")
+  contributions   contributions @relation(fields: [contribution_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contribution_reply")
   users           users         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "reply_user")
 
   @@index([contribution_id], map: "contribution_reply")
@@ -29,11 +29,11 @@ model contribution_replies {
 
 model contribution_votes {
   id              Int           @id @default(autoincrement()) @db.UnsignedInt
-  contribution_id String        @db.VarChar(256)
+  contribution_id Int           @db.UnsignedInt
   user_id         String        @db.VarChar(256)
   score           Int?
   created_at      DateTime?     @default(now()) @db.DateTime(0)
-  contributions   contributions @relation(fields: [contribution_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "contribution_vote")
+  contributions   contributions @relation(fields: [contribution_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "contribution_vote")
   users           users         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "vote_user")
 
   @@index([contribution_id], map: "contribution_vote")
@@ -49,7 +49,7 @@ model contributions {
   photo_width          Int?                   @db.UnsignedInt
   photo_height         Int?                   @db.UnsignedInt
   location             String?                @db.Text
-  user_id              String                 @unique @db.VarChar(256)
+  user_id              String                 @db.VarChar(256)
   name                 String?                @db.VarChar(256)
   quality              Int?
   is_deleted           Int?                   @default(0) @db.TinyInt

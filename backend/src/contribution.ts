@@ -56,13 +56,14 @@ const postContribution = async (req: Request, resp: Response) => {
   const m = req.headers['authorization']?.match(/Bearer (.*)/);
   const user_id = m ? m[1] : "undefined";
 
-  const contribution = await prisma.contributions.create({
-    data: {
+  const data = {
       name: req.body.name,
       quality: parseInt(req.body.quality),
       location: req.body.coords[0],
       user_id
-    }
+  }
+  const contribution = await prisma.contributions.create({
+    data 
   })
 
   resp.send({ success: true, contributions: [contribution] });

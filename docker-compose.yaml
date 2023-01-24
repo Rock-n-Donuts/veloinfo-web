@@ -12,11 +12,11 @@ services:
       DB_HOST: db
       DB_PORT: 3306
       DB_NAME: veloinfo
-      DB_USER: veloinfo
+      DB_USER: root
       DB_PWD: veloinfo
       RECPATCHA_SECRET: ${RECPATCHA_SECRET}
       PORT: 3001
-      DATABASE_URL: "mysql://veloinfo:veloinfo@db:3306/veloinfo"      
+      DATABASE_URL: "mysql://root:veloinfo@db:3306/veloinfo"      
   db:
     image: mysql
     volumes:
