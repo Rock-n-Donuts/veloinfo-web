@@ -48,6 +48,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         is_video,
         score,
         updated_at,
+        external_id = null,
     } = contribution || {};
 
     const intl = useIntl();
@@ -240,12 +241,17 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         [id, updateContribution, setFormKey],
     );
 
-    const { url: imageUrl, width: imageWidth = null, height: imageHeight = null } = image || {};
+    const { url: imageUrl = null, width: imageWidth = null, height: imageHeight = null } = image || {};
 
     const finalMediaUrl = useMemo(() => {
-        const { url, is_external = false } = image || {};
+        const { url = null, is_external = false } = image || {};
+        if (is_video && url === null && external_id !== null) {
+            return `https://www.youtube.com/embed/${external_id}?controls=0&autoplay=1&mute=1&playsinline=1&rel=0`;
+        }
         return is_external && !is_video && url !== null ? `${url}?${new Date().getTime()}` : url;
-    }, [image, is_video]);
+    }, [image, is_video, external_id]);
+
+    const hasMedia = finalMediaUrl !== null;
 
     const fsHandle = useFullScreenHandle();
     const { active: isFullScreen } = fsHandle || {};
@@ -319,7 +325,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     {comment !== null && comment.length > 0 ? (
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
-                    {image !== null && finalMediaUrl !== null ? (
+                    {hasMedia ? (
                         <button type="button" className={styles.media} onClick={onMediaClick}>
                             {is_video ? (
                                 <div className={styles.videoContainer}>
