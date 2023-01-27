@@ -273,7 +273,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         },
                     },
                     playerVars: {
-                        controls: 0,
+                        modestbranding: 1,
                         autoplay: 1,
                         mute: 1,
                         playsinline: 1,
