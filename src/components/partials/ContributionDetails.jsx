@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import CloseButton from '../buttons/Close';
@@ -6,7 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { isAfter, parseISO } from 'date-fns';
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 
 import { useUpdateContribution } from '../../contexts/DataContext';
 import Meta from './Meta';
@@ -241,30 +241,77 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         [id, updateContribution, setFormKey],
     );
 
-    const { url: imageUrl = null, width: imageWidth = null, height: imageHeight = null } = image || {};
+    const {
+        url: imageUrl = null,
+        width: imageWidth = null,
+        height: imageHeight = null,
+    } = image || {};
 
     const finalMediaUrl = useMemo(() => {
         const { url = null, is_external = false } = image || {};
-        if (is_video && url === null && external_id !== null) {
-            return `https://www.youtube.com/embed/${external_id}?controls=0&autoplay=1&mute=1&playsinline=1&rel=0`;
-        }
         return is_external && !is_video && url !== null ? `${url}?${new Date().getTime()}` : url;
-    }, [image, is_video, external_id]);
+    }, [image, is_video]);
 
-    const hasMedia = finalMediaUrl !== null;
+    const hasMedia = finalMediaUrl !== null || (is_video && external_id !== null);
 
     const fsHandle = useFullScreenHandle();
     const { active: isFullScreen } = fsHandle || {};
-    
-    const onMediaClick = useCallback( () => {
+
+    const onMediaClick = useCallback(() => {
         const { active: fsActive, enter: fsEnter, exit: fsExit } = fsHandle || {};
-        
+
         if (fsActive) {
             fsExit();
         } else {
             fsEnter();
         }
     }, [fsHandle]);
+
+    const videoPlayerRef = useRef(null);
+
+    useEffect(() => {
+        let player;
+
+        if (is_video && external_id !== null) {
+            const isYoutubeReady = typeof window.YT !== 'undefined';
+
+            const playVideo = () => {
+                console.log('yt');
+                player = new window.YT.Player(videoPlayerRef.current, {
+                    height: '360',
+                    width: '640',
+                    videoId: external_id,
+                    events: {
+                        onReady: () => {
+                            player.mute();
+                            player.playVideo();
+                        },
+                    },
+                    playerVars: {
+                        controls: 0,
+                        autoplay: 1,
+                        mute: 1,
+                        playsinline: 1,
+                        rel: 0,
+                    },
+                });
+            };
+
+            if (isYoutubeReady) {
+                playVideo();
+            } else {
+                window.onYouTubePlayerAPIReady = playVideo;
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        }
+
+        return () => {
+            player = null;
+        };
+    }, [is_video, external_id]);
 
     return (
         <div
@@ -330,16 +377,20 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             {is_video ? (
                                 <div className={styles.videoContainer}>
                                     <FullScreen handle={fsHandle}>
-                                        <iframe
-                                            className={styles.video}
-                                            src={finalMediaUrl}
-                                            width="560"
-                                            height="315"
-                                            title="Video player"
-                                            frameborder="0"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                            allowfullscreen
-                                        />
+                                        {finalMediaUrl !== null ? (
+                                            <iframe
+                                                className={styles.video}
+                                                src={finalMediaUrl}
+                                                width="560"
+                                                height="315"
+                                                title="Video player"
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
+                                                allowfullscreen
+                                            />
+                                        ) : (
+                                            <div className={styles.video} ref={videoPlayerRef} />
+                                        )}
                                     </FullScreen>
                                 </div>
                             ) : (
