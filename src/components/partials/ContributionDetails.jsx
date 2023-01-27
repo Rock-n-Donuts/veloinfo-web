@@ -6,6 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { isAfter, parseISO } from 'date-fns';
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
 
 import { useUpdateContribution } from '../../contexts/DataContext';
 import Meta from './Meta';
@@ -42,8 +43,9 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         comment = null,
         created_at,
         name = null,
-        image = null,
         replies = [],
+        image = null,
+        is_video,
         score,
         updated_at,
     } = contribution || {};
@@ -240,10 +242,23 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const { url: imageUrl, width: imageWidth = null, height: imageHeight = null } = image || {};
 
-    const finalImageUrl = useMemo(() => {
+    const finalMediaUrl = useMemo(() => {
         const { url, is_external = false } = image || {};
-        return is_external && url !== null ? `${url}?${new Date().getTime()}` : url;
-    }, [image]);
+        return is_external && !is_video && url !== null ? `${url}?${new Date().getTime()}` : url;
+    }, [image, is_video]);
+
+    const fsHandle = useFullScreenHandle();
+    const { active: isFullScreen } = fsHandle || {};
+    
+    const onMediaClick = useCallback( () => {
+        const { active: fsActive, enter: fsEnter, exit: fsExit } = fsHandle || {};
+        
+        if (fsActive) {
+            fsExit();
+        } else {
+            fsEnter();
+        }
+    }, [fsHandle]);
 
     return (
         <div
@@ -253,6 +268,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     [className]: className !== null,
                     [styles.ready]: ready,
                     [styles.voteDisabled]: !canVote || voteLoading,
+                    [styles.isFullScreen]: isFullScreen,
                 },
             ])}
         >
@@ -303,14 +319,35 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     {comment !== null && comment.length > 0 ? (
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
-                    {image !== null && finalImageUrl !== null ? (
-                        <img
-                            className={styles.photo}
-                            src={finalImageUrl}
-                            width={imageWidth}
-                            height={imageHeight}
-                            alt={intl.formatMessage({ id: 'photo' })}
-                        />
+                    {image !== null && finalMediaUrl !== null ? (
+                        <button type="button" className={styles.media} onClick={onMediaClick}>
+                            {is_video ? (
+                                <div className={styles.videoContainer}>
+                                    <FullScreen handle={fsHandle}>
+                                        <iframe
+                                            className={styles.video}
+                                            src={finalMediaUrl}
+                                            width="560"
+                                            height="315"
+                                            title="Video player"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowfullscreen
+                                        />
+                                    </FullScreen>
+                                </div>
+                            ) : (
+                                <FullScreen handle={fsHandle}>
+                                    <img
+                                        className={styles.photo}
+                                        src={finalMediaUrl}
+                                        width={imageWidth}
+                                        height={imageHeight}
+                                        alt={intl.formatMessage({ id: 'photo' })}
+                                    />
+                                </FullScreen>
+                            )}
+                        </button>
                     ) : null}
                     <div className={styles.voteContainer}>
                         <div className={styles.voteButtonContainer}>

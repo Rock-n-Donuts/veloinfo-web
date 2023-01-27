@@ -54,9 +54,29 @@
         margin-bottom: 20px;
     }
 
+    .media {
+        display: block;
+        width: 100%;
+        appearance: none;
+    }
+
     .photo {
         width: 100%;
         height: auto;
+        object-fit: contain;
+        object-position: center;
+    }
+
+    .videoContainer {
+        position: relative;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+
+    .video {
+        @extend %fullscreen;
+
+        pointer-events: none;
     }
 
     .voteContainer {
@@ -102,9 +122,9 @@
     }
 
     // .replies {
-        
+
     // }
-    
+
     .reply {
         margin-bottom: 20px;
     }
@@ -119,6 +139,12 @@
         .voteContainer {
             opacity: 0.5;
             pointer-events: none;
+        }
+    }
+
+    &.isFullScreen {
+        .photo {
+            height: 100%;
         }
     }
 }
