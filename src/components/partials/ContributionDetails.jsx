@@ -6,7 +6,6 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { isAfter, parseISO } from 'date-fns';
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 
 import { useUpdateContribution } from '../../contexts/DataContext';
 import Meta from './Meta';
@@ -254,19 +253,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
 
     const hasMedia = finalMediaUrl !== null || (is_video && external_id !== null);
 
-    const fsHandle = useFullScreenHandle();
-    const { active: isFullScreen } = fsHandle || {};
-
-    const onMediaClick = useCallback(() => {
-        const { active: fsActive, enter: fsEnter, exit: fsExit } = fsHandle || {};
-
-        if (fsActive) {
-            fsExit();
-        } else {
-            fsEnter();
-        }
-    }, [fsHandle]);
-
     const videoPlayerRef = useRef(null);
 
     useEffect(() => {
@@ -276,7 +262,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             const isYoutubeReady = typeof window.YT !== 'undefined';
 
             const playVideo = () => {
-                console.log('yt');
                 player = new window.YT.Player(videoPlayerRef.current, {
                     height: '360',
                     width: '640',
@@ -321,7 +306,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     [className]: className !== null,
                     [styles.ready]: ready,
                     [styles.voteDisabled]: !canVote || voteLoading,
-                    [styles.isFullScreen]: isFullScreen,
                 },
             ])}
         >
@@ -373,38 +357,34 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
                     {hasMedia ? (
-                        <button type="button" className={styles.media} onClick={onMediaClick}>
+                        <div className={styles.media}>
                             {is_video ? (
                                 <div className={styles.videoContainer}>
-                                    <FullScreen handle={fsHandle}>
-                                        {finalMediaUrl !== null ? (
-                                            <iframe
-                                                className={styles.video}
-                                                src={finalMediaUrl}
-                                                width="560"
-                                                height="315"
-                                                title="Video player"
-                                                frameborder="0"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
-                                                allowfullscreen
-                                            />
-                                        ) : (
-                                            <div className={styles.video} ref={videoPlayerRef} />
-                                        )}
-                                    </FullScreen>
+                                    {finalMediaUrl !== null ? (
+                                        <iframe
+                                            className={styles.video}
+                                            src={finalMediaUrl}
+                                            width="560"
+                                            height="315"
+                                            title="Video player"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
+                                            allowfullscreen
+                                        />
+                                    ) : (
+                                        <div className={styles.video} ref={videoPlayerRef} />
+                                    )}
                                 </div>
                             ) : (
-                                <FullScreen handle={fsHandle}>
-                                    <img
-                                        className={styles.photo}
-                                        src={finalMediaUrl}
-                                        width={imageWidth}
-                                        height={imageHeight}
-                                        alt={intl.formatMessage({ id: 'photo' })}
-                                    />
-                                </FullScreen>
+                                <img
+                                    className={styles.photo}
+                                    src={finalMediaUrl}
+                                    width={imageWidth}
+                                    height={imageHeight}
+                                    alt={intl.formatMessage({ id: 'photo' })}
+                                />
                             )}
-                        </button>
+                        </div>
                     ) : null}
                     <div className={styles.voteContainer}>
                         <div className={styles.voteButtonContainer}>
