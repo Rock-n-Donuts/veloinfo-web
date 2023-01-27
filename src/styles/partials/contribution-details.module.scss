@@ -54,9 +54,23 @@
         margin-bottom: 20px;
     }
 
+    // .media {
+        
+    // }
+
     .photo {
         width: 100%;
         height: auto;
+    }
+
+    .videoContainer {
+        position: relative;
+        height: 0;
+        padding-bottom: 56.25%;
+    }
+
+    .video {
+        @extend %fullscreen;
     }
 
     .voteContainer {
@@ -102,9 +116,9 @@
     }
 
     // .replies {
-        
+
     // }
-    
+
     .reply {
         margin-bottom: 20px;
     }
