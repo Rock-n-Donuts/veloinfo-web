@@ -39,7 +39,7 @@
                     "fr": "Neutre",
                     "en": "Neutral"
                 },
-                "color": "#367c99"                
+                "color": "#f09035"                
             },
             {
                 "value": -1,
@@ -47,7 +47,7 @@
                     "fr": "Négative",
                     "en": "Negative"
                 },
-                "color": "#f09035"
+                "color": "#ff0000"
             }
         ]
     },
