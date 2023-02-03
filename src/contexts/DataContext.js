@@ -62,6 +62,7 @@ export const DataProvider = ({ children }) => {
                     dateRef.current = newDate;
                     setData(newData);
                     setReady(true);
+                    setInterval(getData, [pollingDelay * 1000]);
                 } else {
                     // console.log('Updated data received.', newData);
                     if (dateRef.current !== newDate) {
@@ -108,23 +109,10 @@ export const DataProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        let interval = null;
-
         if (user !== null) {
             // console.log('Getting initial data...');
             getData();
-            interval = setInterval(() => {
-                // console.log('Updating data...');
-                getData();
-            }, [pollingDelay * 1000]);
         }
-
-        return () => {
-            if (interval !== null) {
-                clearInterval(interval);
-                interval = null;
-            }
-        };
     }, [getData, user]);
 
     useEffect(() => {
