@@ -19,8 +19,8 @@
     .contributionType {
         display: flex;
         align-items: center;
-        font-size: 20px;
-        font-weight: bold;
+        
+        
         margin: -20px -20px 10px;
         padding: 10px 20px;
 
@@ -30,8 +30,17 @@
             margin-right: 10px;
         }
 
-        .label {
+        .labelContainer {
             color: $color-white;
+        }
+
+        .label {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .qualityLabel {
+            font-size: 14px;
         }
     }
 
@@ -76,18 +85,19 @@
     .voteContainer {
         display: flex;
         align-items: center;
-        margin: 30px -10px;
+        margin: 30px -2px;
 
         .voteButtonContainer {
             flex: 1 1 0;
-            padding: 0 10px;
+            padding: 0 2px;
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 10px 2px;
             border-radius: 5px;
             color: $color-white;
+            font-size: 11px;
 
             &.positive {
                 background-color: $color-green;

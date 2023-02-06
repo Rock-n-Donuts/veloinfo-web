@@ -81,7 +81,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             ? contributionTypeQualities.find(({ value }) => `${value}` === `${quality}`)
             : null;
 
-    const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null } =
+    const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null, label: contributionTypeQualityLabel = null } =
         contributionTypeQuality || {};
     const finalContributionIcon =
         contributionTypeQualityIcon !== null ? contributionTypeQualityColor : contributionTypeIcon;
@@ -312,7 +312,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             {contribution !== null ? (
                 <div className={styles.content}>
                     <Meta
-                        title={`${createdAtParsedTime} - ${contributionTypeLabel[locale]} #${id}`}
+                        title={`${issue_id}` === '1' ? `${createdAtParsedTime} - ${contributionTypeQualityLabel[locale]} #${id}` : `${contributionTypeLabel[locale]} #${id} - ${comment}`}
                         description={`${comment}${
                             name !== null && name.length > 0 ? ` - ${name}` : ``
                         }`}
@@ -327,7 +327,10 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             src={contributionTypesIcons[finalContributionIcon]}
                             alt={finalContributionIcon}
                         />
-                        <span className={styles.label}>{contributionTypeLabel[locale]}</span>
+                        <div className={styles.labelContainer}>
+                            <div className={styles.label}>{contributionTypeLabel[locale]}</div>
+                            { contributionTypeQualityLabel !== null ? <div className={styles.qualityLabel}>{contributionTypeQualityLabel[locale]}</div> : null }
+                        </div>
                     </div>
                     <div className={styles.dates}>
                         {!contributionTypeHideCreatedDate ? (

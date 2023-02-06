@@ -28,24 +28,24 @@
             {
                 "value": 1,
                 "label": {
-                    "fr": "Positive",
-                    "en": "Positive"
+                    "fr": "Praticable",
+                    "en": "Bikable"
                 },
                 "color": "#439666"                
             },
             {
                 "value": 0,
                 "label": {
-                    "fr": "Neutre",
-                    "en": "Neutral"
+                    "fr": "Conduite défensive",
+                    "en": "Defensive biking"
                 },
                 "color": "#f09035"                
             },
             {
                 "value": -1,
                 "label": {
-                    "fr": "Négative",
-                    "en": "Negative"
+                    "fr": "Impraticable",
+                    "en": "Impracticable"
                 },
                 "color": "#D8283C"
             }
