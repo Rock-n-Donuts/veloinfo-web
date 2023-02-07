@@ -19,8 +19,7 @@
     .contributionType {
         display: flex;
         align-items: center;
-        
-        
+
         margin: -20px -20px 10px;
         padding: 10px 20px;
 
@@ -64,7 +63,7 @@
     }
 
     // .media {
-        
+
     // }
 
     .photo {
@@ -143,6 +142,40 @@
         .voteContainer {
             opacity: 0.5;
             pointer-events: none;
+        }
+    }
+
+    @media screen and (min-width: 360px) {
+        .voteContainer {
+            margin: 30px -5px;
+
+            .voteButtonContainer {
+                padding: 0 5px;
+            }
+
+            button {
+                padding: 10px 5px;
+                font-size: 14px;
+            }
+        }
+    }
+
+    @media screen and (min-width: 450px) {
+        .contributionType {
+            .label {
+                display: inline-block;
+            }
+
+            .qualityLabel {
+                display: inline-block;
+                font-size: 16px;
+
+                &:before {
+                    content: '-';
+                    display: inline-block;
+                    margin: 0 0.5em;
+                }
+            }
         }
     }
 }
