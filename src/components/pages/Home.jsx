@@ -298,7 +298,7 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
                     onReady={onMapReady}
                 />
                 <div className={styles.mapMarkerContainer}>
-                    <PhotoUploadMarker className={styles.mapMarker} onPhotoLocated={onPhotoLocated} />
+                    <PhotoUploadMarker className={styles.mapMarker} key={contributionKey} onPhotoLocated={onPhotoLocated} />
                 </div>
             </div>
             <AddContributionButton

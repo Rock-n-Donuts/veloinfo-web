@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import CloseButton from '../buttons/Close';
@@ -42,10 +42,12 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         comment = null,
         created_at,
         name = null,
-        image = null,
         replies = [],
+        image = null,
+        is_video,
         score,
         updated_at,
+        external_id = null,
     } = contribution || {};
 
     const intl = useIntl();
@@ -79,7 +81,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             ? contributionTypeQualities.find(({ value }) => `${value}` === `${quality}`)
             : null;
 
-    const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null } =
+    const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null, label: contributionTypeQualityLabel = null } =
         contributionTypeQuality || {};
     const finalContributionIcon =
         contributionTypeQualityIcon !== null ? contributionTypeQualityColor : contributionTypeIcon;
@@ -238,12 +240,63 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         [id, updateContribution, setFormKey],
     );
 
-    const { url: imageUrl, width: imageWidth = null, height: imageHeight = null } = image || {};
+    const {
+        url: imageUrl = null,
+        width: imageWidth = null,
+        height: imageHeight = null,
+    } = image || {};
 
-    const finalImageUrl = useMemo(() => {
-        const { url, is_external = false } = image || {};
-        return is_external && url !== null ? `${url}?${new Date().getTime()}` : url;
-    }, [image]);
+    const finalMediaUrl = useMemo(() => {
+        const { url = null, is_external = false } = image || {};
+        return is_external && !is_video && url !== null ? `${url}?${new Date().getTime()}` : url;
+    }, [image, is_video]);
+
+    const hasMedia = finalMediaUrl !== null || (is_video && external_id !== null);
+
+    const videoPlayerRef = useRef(null);
+
+    useEffect(() => {
+        let player;
+
+        if (is_video && external_id !== null) {
+            const isYoutubeReady = typeof window.YT !== 'undefined';
+
+            const playVideo = () => {
+                player = new window.YT.Player(videoPlayerRef.current, {
+                    height: '360',
+                    width: '640',
+                    videoId: external_id,
+                    events: {
+                        onReady: () => {
+                            player.mute();
+                            player.playVideo();
+                        },
+                    },
+                    playerVars: {
+                        modestbranding: 1,
+                        autoplay: 1,
+                        mute: 1,
+                        playsinline: 1,
+                        rel: 0,
+                    },
+                });
+            };
+
+            if (isYoutubeReady) {
+                playVideo();
+            } else {
+                window.onYouTubePlayerAPIReady = playVideo;
+                const tag = document.createElement('script');
+                tag.src = 'https://www.youtube.com/iframe_api';
+                const firstScriptTag = document.getElementsByTagName('script')[0];
+                firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            }
+        }
+
+        return () => {
+            player = null;
+        };
+    }, [is_video, external_id]);
 
     return (
         <div
@@ -259,7 +312,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             {contribution !== null ? (
                 <div className={styles.content}>
                     <Meta
-                        title={`${createdAtParsedTime} - ${contributionTypeLabel[locale]} #${id}`}
+                        title={`${issue_id}` === '1' ? `${createdAtParsedTime} - ${contributionTypeQualityLabel[locale]} #${id}` : `${contributionTypeLabel[locale]} #${id} - ${comment}`}
                         description={`${comment}${
                             name !== null && name.length > 0 ? ` - ${name}` : ``
                         }`}
@@ -274,7 +327,10 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                             src={contributionTypesIcons[finalContributionIcon]}
                             alt={finalContributionIcon}
                         />
-                        <span className={styles.label}>{contributionTypeLabel[locale]}</span>
+                        <div className={styles.labelContainer}>
+                            <div className={styles.label}>{contributionTypeLabel[locale]}</div>
+                            { contributionTypeQualityLabel !== null ? <div className={styles.qualityLabel}>{contributionTypeQualityLabel[locale]}</div> : null }
+                        </div>
                     </div>
                     <div className={styles.dates}>
                         {!contributionTypeHideCreatedDate ? (
@@ -303,14 +359,35 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                     {comment !== null && comment.length > 0 ? (
                         <div className={styles.comment}>{comment}</div>
                     ) : null}
-                    {image !== null && finalImageUrl !== null ? (
-                        <img
-                            className={styles.photo}
-                            src={finalImageUrl}
-                            width={imageWidth}
-                            height={imageHeight}
-                            alt={intl.formatMessage({ id: 'photo' })}
-                        />
+                    {hasMedia ? (
+                        <div className={styles.media}>
+                            {is_video ? (
+                                <div className={styles.videoContainer}>
+                                    {finalMediaUrl !== null ? (
+                                        <iframe
+                                            className={styles.video}
+                                            src={finalMediaUrl}
+                                            width="560"
+                                            height="315"
+                                            title="Video player"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;"
+                                            allowfullscreen
+                                        />
+                                    ) : (
+                                        <div className={styles.video} ref={videoPlayerRef} />
+                                    )}
+                                </div>
+                            ) : (
+                                <img
+                                    className={styles.photo}
+                                    src={finalMediaUrl}
+                                    width={imageWidth}
+                                    height={imageHeight}
+                                    alt={intl.formatMessage({ id: 'photo' })}
+                                />
+                            )}
+                        </div>
                     ) : null}
                     <div className={styles.voteContainer}>
                         <div className={styles.voteButtonContainer}>
