@@ -8,6 +8,6 @@ FROM dev as prod
 COPY . .
 RUN npm i
 RUN npx prisma generate
-RUN npm build
+RUN npm run build
 
 CMD bash -c "npx prisma migrate && npm start"

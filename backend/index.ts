@@ -12,7 +12,7 @@ const port = process.env.PORT;
 app.get('/', (req: Request, res: Response) => {
     res.send('Ok');
 });
-app.post("/contribution", multer().none(), postContribution);
+app.post("/contribution", multer().single("photo"), postContribution);
 app.post('/auth', auth);
 app.get("/update", getContributionsTroncons);
 
