@@ -50,6 +50,7 @@ export function getLinesFromTroncons(troncons) {
 }
 
 export function getColoredIcons() {
+    //
     return contributionTypes.reduce((all, curr) => {
         const { qualities = null, id, icon } = curr;
         const gray = '#999';
@@ -60,12 +61,30 @@ export function getColoredIcons() {
                 id,
                 icon,
             }));
+            const qualityPhotoIcons = qualities.map((quality) => ({
+                ...quality,
+                quality: true,
+                id,
+                icon: 'picture',
+            }));
             const grayQualityIcons = qualityIcons.map((icon) => ({
                 ...icon,
                 gray: true,
                 color: gray,
             }));
-            return [...all, ...qualityIcons, grayQualityIcons[0]];
+            const grayQualityPhotoIcons = qualityIcons.map((icon) => ({
+                ...icon,
+                gray: true,
+                color: gray,
+                icon: 'picture'
+            }));
+            return [
+                ...all,
+                ...qualityIcons,
+                ...qualityPhotoIcons,
+                grayQualityIcons[0],
+                grayQualityPhotoIcons[0],
+            ];
         } else {
             return [...all, curr, { ...curr, gray: true, color: gray }];
         }
@@ -73,9 +92,26 @@ export function getColoredIcons() {
 }
 
 export function getMarkersFromContributions(contributions) {
-    return getColoredIcons()
-        .map(({ id, icon, color, quality = false, value, gray = false, withoutMarker }) => ({
+    return getColoredIcons().map(
+        ({
+            id,
+            icon,
+            color,
+            quality = false,
+            value,
+            gray = false,
+            withoutMarker,
+        }) => ({
             features: contributions
+                .filter(({ issue_id }) => `${issue_id}` === `${id}`)
+                .filter(({ image }) => {
+                    const isPicture = icon === 'picture'
+                    if (icon !== 'snow' && !isPicture) {
+                        return true;
+                    }
+                    const { url: imageUrl = null } = image || {};
+                    return (isPicture && imageUrl !== null) || (!isPicture && imageUrl === null);
+                })
                 .filter(
                     ({ quality: contributionQuality, score }) =>
                         !quality ||
@@ -87,7 +123,6 @@ export function getMarkersFromContributions(contributions) {
                         (!gray && `${score.last_vote}` !== '-1') ||
                         (gray && `${score.last_vote}` === '-1'),
                 )
-                .filter(({ issue_id }) => `${issue_id}` === `${id}`)
                 .map(({ coords, ...contribution }) => ({
                     coords,
                     data: contribution,
@@ -102,5 +137,6 @@ export function getMarkersFromContributions(contributions) {
             // src: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
             //     getContributionSvg({ icon, color, withoutMarker }),
             // )}`
-        }));
+        }),
+    );
 }
