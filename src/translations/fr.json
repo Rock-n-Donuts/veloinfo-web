@@ -41,5 +41,14 @@
     "ok": "OK",
     "report": "Signaler",
     "send": "Envoyer",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "legend-separate-cycleway": "Piste cyclable séparée",
+    "legend-path-bikes": "Piste prévue pour les vélos",
+    "legend-cycle-track": "Piste cyclable de ce côté de la route",
+    "legend-cycle-lane": "Voie cyclable de ce côté de la route",
+    "legend-shared-lane": "Voie partagée (avec les bus ou autres véhicules à moteur) de ce côté de la route",
+    "legend-double-way-bikes": "Rue à double sens pour les vélos (sens unique pour les voitures)",
+    "legend-bike-road": "Route prévue pour les bicyclettes",
+    "legend-steps-bike": "Escalier avec une rampe adaptée aux vélos",
+    "legend-cycle-streets": "Rue cyclable"
 }

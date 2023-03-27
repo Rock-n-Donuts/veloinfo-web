@@ -41,5 +41,14 @@
     "ok": "OK",
     "report": "Report",
     "send": "Send",
-    "retry": "Retry"
+    "retry": "Retry",
+    "legend-separate-cycleway": "Separate bike path",
+    "legend-path-bikes": "Path planned for bicycles",
+    "legend-cycle-track": "Bike path on this side of the road",
+    "legend-cycle-lane": "Bike lane on this side of the road",
+    "legend-shared-lane": "Shared lane (with buses or other motor vehicles) on this side of the road",
+    "legend-double-way-bikes": "Two-way street for bicycles (one-way for cars)",
+    "legend-bike-road": "Road planned for bicycles",
+    "legend-steps-bike": "Staircase with a ramp suitable for bicycles",
+    "legend-cycle-streets": "Cycle street"
 }

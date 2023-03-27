@@ -1,0 +1,85 @@
+@import '../variables';
+@import '../placeholders';
+
+.container {
+
+    font-size: 12px;
+
+    .icon {
+        display: inline-block;
+        width: 30px;
+        height: 3px;
+        vertical-align: middle;
+        flex-shrink: 0;
+
+        &.separateCycleway {
+            border-top: solid #0000ce 3px;
+        }
+
+        &.pathBikes {
+            border-top: solid #0060ff 3px;
+        }
+
+        &.cycleTrack {
+            height: 16px;
+            border-top: solid #0000ce 2px;
+            border-bottom: solid #888 2px;
+            background-color: #f6f6f6;
+        }
+
+        &.cycleLane {
+            height: 16px;
+            border-top: dashed #0000ce 2px;
+            border-bottom: solid #888 2px;
+            background-color: #f6f6f6;
+        }
+
+        &.sharedLane {
+            height: 16px;
+            border-bottom: solid #888 2px;
+            background-color: #f6f6f6;
+
+            background-image: linear-gradient(to right, #0000ce 40%, rgba(255,255,255,0) 0%);
+            background-position: top left;
+            background-size: 18px 2px;
+            background-repeat: repeat-x;
+        }
+
+        &.doubleWayBikes {
+            height: 16px;
+        }
+
+        &.bikeRoad {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            height: 16px;
+            border-top: solid #888 1px;
+            border-bottom: solid #888 1px;
+            background-color: rgba(246, 246, 246, 0.5);
+            padding-top: 2px;
+        }
+
+        &.stepsBike {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            height: 16px;
+        }
+
+        &.cycleStreets {
+            height: 16px;
+            background-color: #0060ff;
+        }
+    }
+
+    .text {
+        padding-left: 10px;
+    }
+
+    .row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+}
