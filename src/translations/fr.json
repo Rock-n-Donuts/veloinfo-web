@@ -50,5 +50,6 @@
     "legend-double-way-bikes": "Rue à double sens pour les vélos (sens unique pour les voitures)",
     "legend-bike-road": "Route prévue pour les bicyclettes",
     "legend-steps-bike": "Escalier avec une rampe adaptée aux vélos",
-    "legend-cycle-streets": "Rue cyclable"
+    "legend-cycle-streets": "Rue cyclable",
+    "cyclosm-note": "Carte de <a>CyclOSM</a>"
 }

@@ -50,5 +50,6 @@
     "legend-double-way-bikes": "Two-way street for bicycles (one-way for cars)",
     "legend-bike-road": "Road planned for bicycles",
     "legend-steps-bike": "Staircase with a ramp suitable for bicycles",
-    "legend-cycle-streets": "Cycle street"
+    "legend-cycle-streets": "Cycle street",
+    "cyclosm-note": "Map from <a>CyclOSM</a>"
 }

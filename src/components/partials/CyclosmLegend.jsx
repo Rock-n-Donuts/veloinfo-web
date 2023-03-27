@@ -79,6 +79,22 @@ function CyclosmLegend({ className }) {
                     <FormattedMessage id="legend-cycle-streets" />
                 </span>
             </div>
+            <div className={styles.note}>
+                <FormattedMessage
+                    id="cyclosm-note"
+                    values={{
+                        a: (chunks) => (
+                            <a
+                                href="https://www.cyclosm.org"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                {chunks}
+                            </a>
+                        ),
+                    }}
+                />
+            </div>
         </div>
     );
 }
