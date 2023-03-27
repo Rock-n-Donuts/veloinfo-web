@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocation } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 
+import { useWinterMode } from '../../contexts/SiteContext';
 import { useResizeObserver } from '../../hooks/useObserver';
 import { getColoredIcons } from '../../lib/map';
 import { isDeviceMobile, isSameLocation } from '../../lib/utils';
@@ -24,7 +25,7 @@ import MapMarker from './MapMarker';
 import styles from '../../styles/map/map.module.scss';
 import Loading from '../partials/Loading';
 
-const isDev = process.env.NODE_ENV !== 'production';
+const isProd = process.env.NODE_ENV === 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
 const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 
@@ -103,6 +104,7 @@ function Map({
     onLineClick,
     onReady,
 }) {
+    const winterMode = useWinterMode();
     const isMobile = useMemo(() => isDeviceMobile(), []);
     const [isHover, setIsHover] = useState(false);
     const [ready, setReady] = useState(false);
@@ -307,11 +309,12 @@ function Map({
                 view,
                 layers: [
                     new TileLayer({
-                        source: isDev
+                        source: !isProd
                             ? new OSM()
                             : new XYZ({
-                                  url: `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`,
-                                  // url: 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                                  url: winterMode
+                                      ? `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
+                                      : 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
                               }),
                     }),
                     currentPositionLayerBg.current,
@@ -321,7 +324,7 @@ function Map({
             setReady(true);
             return mapRef.current;
         },
-        [defaultMapCenter, mapCenter, zoom, defaultZoom, maxZoom, disableInteractions],
+        [defaultMapCenter, mapCenter, zoom, defaultZoom, maxZoom, disableInteractions, winterMode],
     );
 
     const drawLines = useCallback((linesGroup) => {
@@ -366,7 +369,7 @@ function Map({
 
                 const { features: linesFeatures, color = '#0000FF', width = 3.5 } = lines || {};
                 const rgba = [...asArray(color)];
-                rgba[3] = 0.8;
+                rgba[3] = 0.9;
                 const layer = new VectorImage({
                     source: vectorSource,
                     style: new Style({

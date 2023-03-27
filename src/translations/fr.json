@@ -2,6 +2,7 @@
     "app-title": "Vélo info",
     "app-description": "Informations sur l’état des pistes cyclables en temps réel basées sur le déneigement à Montréal et les commentaires des utilisateurs.{br}L’hiver, on vous indique la piste à prendre!",
     "add": "Ajouter",
+    "add-state": "Ajouter un état",
     "add-comment": "Ajouter un {br}commentaire",
     "add-contribution": "Ajouter une contribution",
     "add-contribution-title": "Ajouter une contribution à la carte",
@@ -41,5 +42,14 @@
     "report": "Signaler",
     "send": "Envoyer",
     "retry": "Réessayer",
-    "select-image-only": "Veuillez sélectionner une image au format JPG/PNG"
+    "select-image-only": "Veuillez sélectionner une image au format JPG/PNG",
+    "legend-separate-cycleway": "Piste cyclable séparée",
+    "legend-path-bikes": "Piste prévue pour les vélos",
+    "legend-cycle-track": "Piste cyclable de ce côté de la route",
+    "legend-cycle-lane": "Voie cyclable de ce côté de la route",
+    "legend-shared-lane": "Voie partagée (avec les bus ou autres véhicules à moteur) de ce côté de la route",
+    "legend-double-way-bikes": "Rue à double sens pour les vélos (sens unique pour les voitures)",
+    "legend-bike-road": "Route prévue pour les bicyclettes",
+    "legend-steps-bike": "Escalier avec une rampe adaptée aux vélos",
+    "legend-cycle-streets": "Rue cyclable"
 }

@@ -11,6 +11,7 @@ import axios from 'axios';
 
 import { useUser } from './AuthContext';
 import { useSelectedFilters } from './FiltersContext';
+import { useWinterMode } from './SiteContext';
 import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';
 import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
 
@@ -18,6 +19,7 @@ const DataContext = createContext();
 const pollingDelay = 10; // seconds
 
 export const DataProvider = ({ children }) => {
+    const winterMode = useWinterMode();
     const [ready, setReady] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -48,6 +50,7 @@ export const DataProvider = ({ children }) => {
                 method: 'get',
                 params: {
                     from: dateRef.current,
+                    troncons: winterMode
                 },
             })
             .then((res) => {
@@ -106,7 +109,7 @@ export const DataProvider = ({ children }) => {
             })
             .catch((err) => setError(err))
             .finally(() => setLoading(false));
-    }, []);
+    }, [winterMode]);
 
     useEffect(() => {
         if (user !== null) {

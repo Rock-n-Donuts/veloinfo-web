@@ -14,15 +14,15 @@ const defaultProps = {};
 function Container() {
     return (
         <AuthProvider>
-            <FiltersProvider>
-                <DataProvider>
-                    <SiteProvider>
+            <SiteProvider>
+                <FiltersProvider>
+                    <DataProvider>
                         <BrowserRouter>
                             <App />
                         </BrowserRouter>
-                    </SiteProvider>
-                </DataProvider>
-            </FiltersProvider>
+                    </DataProvider>
+                </FiltersProvider>
+            </SiteProvider>
         </AuthProvider>
     );
 }

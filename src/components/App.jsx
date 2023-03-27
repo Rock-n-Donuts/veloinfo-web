@@ -15,6 +15,7 @@ import ErrorPage from './pages/Error';
 import messagesFr from '../translations/fr.json';
 import messagesEn from '../translations/en.json';
 
+
 import '../styles/index.scss';
 
 RelativeTimeFormat.addLocale(fr);

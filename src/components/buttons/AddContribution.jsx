@@ -154,7 +154,6 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                                                 color: qualityColor,
                                                 label: qualityLabel,
                                             } = quality;
-                                            const finalLabel = `${label[locale]} - ${qualityLabel[locale]}`;
 
                                             return (
                                                 <div
@@ -192,7 +191,7 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                                                                 />
                                                             </span>
                                                             <span className={styles.label}>
-                                                                {finalLabel}
+                                                                {qualityLabel[locale]}
                                                             </span>
                                                             <span
                                                                 className={styles.close}
@@ -292,7 +291,7 @@ function AddContributionButton({ className, opened, loading, onOpen, onClose, on
                         onClick={onToggleClick}
                     >
                         <span className={styles.label}>
-                            <FormattedMessage id={opened ? 'cancel' : 'add'} />
+                            <FormattedMessage id={opened ? 'cancel' : 'add-state'} />
                         </span>
                         <span className={styles.icon}>
                             <FontAwesomeIcon icon={faPlus} />

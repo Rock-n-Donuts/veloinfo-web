@@ -14,6 +14,7 @@ export const SiteProvider = ({ children }) => {
         Cookies.get('locale') || navigator.language.split(/[-_]/)[0],
     );
     const [userContributions, setUserContributions] = useState([]);
+    const [winterMode, setWinterMode] = useState(Cookies.get('winterMode') === 'true' || false);
 
     useEffect(() => {
         Cookies.set('locale', locale);
@@ -26,6 +27,8 @@ export const SiteProvider = ({ children }) => {
                 setLocale,
                 userContributions,
                 setUserContributions,
+                winterMode,
+                setWinterMode
             }}
         >
             {children}
@@ -49,6 +52,16 @@ export const useLocale = () => {
 export const useSetLocale = () => {
     const { setLocale } = useSite();
     return setLocale;
+};
+
+export const useWinterMode = () => {
+    const { winterMode } = useSite();
+    return winterMode;
+};
+
+export const useSetWinterMode = () => {
+    const { setWinterMode } = useSite();
+    return setWinterMode;
 };
 
 export const useUserContributions = () => {

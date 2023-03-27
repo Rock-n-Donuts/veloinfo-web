@@ -3,7 +3,9 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
+import { useWinterMode } from '../../contexts/SiteContext';
 import { useFilters } from '../../contexts/FiltersContext';
+import CyclosmLegend from '../partials/CyclosmLegend';
 import ContributionIcon from '../../icons/Contribution';
 import contributionTypes from '../../data/contribution-types.json';
 import tronconTypes from '../../data/troncon-types.json';
@@ -28,6 +30,7 @@ const defaultProps = {
 
 function LayersFilter({ className, opened, onOpen, onClose }) {
     const { locale } = useIntl();
+    const winterMode = useWinterMode();
 
     const {
         contributionTypes: selectedContributionTypes,
@@ -144,66 +147,80 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
                                 },
                             )}
                         </div>
-                        <div className={styles.tronconTypes}>
-                            {tronconTypes.map(({ key, label }, typeIndex) => {
-                                const selected = selectedTronconTypes.indexOf(key) > -1;
-                                return (
-                                    <button
-                                        className={classNames([
-                                            styles.contributionType,
-                                            { [styles.selected]: selected },
-                                        ])}
-                                        type="button"
-                                        key={`type-${typeIndex}`}
-                                        onClick={() => {
-                                            toggleTronconType(key);
-                                        }}
-                                    >
-                                        <input
-                                            className={styles.checkbox}
-                                            type="checkbox"
-                                            checked={selected}
-                                            readOnly
-                                        />
-                                        <span className={styles.label}>{label[locale]}</span>
-                                    </button>
-                                );
-                            })}
-                        </div>
-                        <div className={styles.tronconsStatus}>
-                            <div className={styles.title}>
-                                <FormattedMessage id="troncons-status-title" />
-                            </div>
-                            <div className={styles.tronconStates}>
-                                {tronconStates.map(({ color, label }, stateIndex) => (
-                                    <div
-                                        key={`troncon-state-${stateIndex}`}
-                                        className={styles.tronconState}
-                                    >
-                                        <span
-                                            className={styles.line}
-                                            style={{ backgroundColor: color }}
-                                        />
-                                        <span className={styles.label}>{label[locale]}</span>
+                        <div className={styles.section}>
+                            {winterMode ? (
+                                <div className={styles.winterSection}>
+                                    <div className={styles.tronconTypes}>
+                                        {tronconTypes.map(({ key, label }, typeIndex) => {
+                                            const selected = selectedTronconTypes.indexOf(key) > -1;
+                                            return (
+                                                <button
+                                                    className={classNames([
+                                                        styles.contributionType,
+                                                        { [styles.selected]: selected },
+                                                    ])}
+                                                    type="button"
+                                                    key={`type-${typeIndex}`}
+                                                    onClick={() => {
+                                                        toggleTronconType(key);
+                                                    }}
+                                                >
+                                                    <input
+                                                        className={styles.checkbox}
+                                                        type="checkbox"
+                                                        checked={selected}
+                                                        readOnly
+                                                    />
+                                                    <span className={styles.label}>
+                                                        {label[locale]}
+                                                    </span>
+                                                </button>
+                                            );
+                                        })}
                                     </div>
-                                ))}
-                            </div>
-                            <div className={styles.note}>
-                                <FormattedMessage
-                                    id="troncons-status-note"
-                                    values={{
-                                        a: (chunks) => (
-                                            <a
-                                                href="https://services.montreal.ca/deneigement/carte"
-                                                target="_blank"
-                                                rel="noreferrer"
-                                            >
-                                                {chunks}
-                                            </a>
-                                        ),
-                                    }}
-                                />
-                            </div>
+                                    <div className={styles.tronconsStatus}>
+                                        <div className={styles.title}>
+                                            <FormattedMessage id="troncons-status-title" />
+                                        </div>
+                                        <div className={styles.tronconStates}>
+                                            {tronconStates.map(({ color, label }, stateIndex) => (
+                                                <div
+                                                    key={`troncon-state-${stateIndex}`}
+                                                    className={styles.tronconState}
+                                                >
+                                                    <span
+                                                        className={styles.line}
+                                                        style={{ backgroundColor: color }}
+                                                    />
+                                                    <span className={styles.label}>
+                                                        {label[locale]}
+                                                    </span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className={styles.note}>
+                                            <FormattedMessage
+                                                id="troncons-status-note"
+                                                values={{
+                                                    a: (chunks) => (
+                                                        <a
+                                                            href="https://services.montreal.ca/deneigement/carte"
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                        >
+                                                            {chunks}
+                                                        </a>
+                                                    ),
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className={styles.summerSection}>
+                                    <CyclosmLegend />
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
