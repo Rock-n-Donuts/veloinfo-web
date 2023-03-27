@@ -82,4 +82,11 @@
         align-items: center;
         margin-bottom: 10px;
     }
+
+    .note {
+        padding-top: 10px;
+        border-top: 1px solid rgba($color-black, 0.5);
+        text-align: right;
+        font-size: 10px;
+    }
 }
