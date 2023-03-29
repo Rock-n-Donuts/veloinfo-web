@@ -26,4 +26,14 @@ serviceWorkerRegistration.unregister();
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+reportWebVitals(({ id, name, value }) => {
+    // Assumes the global `gtag()` function exists, see:
+    // https://developers.google.com/analytics/devguides/collection/gtagjs
+    
+    // gtag('event', name, {
+    //     event_category: 'Web Vitals',
+    //     event_label: id,
+    //     value: Math.round(name === 'CLS' ? value * 1000 : value),
+    //     non_interaction: true,
+    // });
+});

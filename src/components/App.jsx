@@ -43,7 +43,7 @@ function App() {
                         <Route path="/signaler" exact element={<HomePage report />} />
                         <Route path="*" element={<ErrorPage />} />
                     </Routes>
-                    <Analytics />
+                    { process.env.NODE_ENV === 'production' ? <Analytics /> : null }
                 </MainLayout>
             </GoogleReCaptchaProvider>
         </IntlProvider>
