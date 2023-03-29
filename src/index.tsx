@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client';
 
 import Container from './components/Container';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
+// import reportWebVitals from './reportWebVitals';
 import './styles/index.scss';
 
 const apiUrl = process.env.REACT_APP_API_URL || 'api';
@@ -26,7 +26,7 @@ serviceWorkerRegistration.unregister();
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals(({ id, name, value }) => {
+// reportWebVitals(({ id, name, value }) => {
     // Assumes the global `gtag()` function exists, see:
     // https://developers.google.com/analytics/devguides/collection/gtagjs
     
@@ -36,4 +36,4 @@ reportWebVitals(({ id, name, value }) => {
     //     value: Math.round(name === 'CLS' ? value * 1000 : value),
     //     non_interaction: true,
     // });
-});
+// });
