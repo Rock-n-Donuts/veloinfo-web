@@ -1,6 +1,6 @@
 {
     "app-title": "Vélo info",
-    "app-description": "Real-time bike path status information based on Montreal snow removal and user feedback.{br}In the winter, we show you which path to take!",
+    "app-description": "Real-time bike path status information based on snow removal and user feedback.{br}We show you which path to take!",
     "add": "Add",
     "add-state": "Add state",
     "add-comment": "Add a {br}comment",
