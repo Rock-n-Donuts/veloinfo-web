@@ -67,9 +67,9 @@ const defaultProps = {
     className: null,
     disableInteractions: false,
     mapCenter: null,
-    defaultMapCenter: [-71.280117, 46.811039], // MTL: [-73.561668, 45.508888]
+    defaultMapCenter: [-71.252131, 46.819584], // MTL: [-73.561668, 45.508888]
     zoom: null,
-    defaultZoom: 12.5,// MTL: 15
+    defaultZoom: 11,// MTL: 15
     followUserZoom: 18,
     maxZoom: 50,
     lines: null,
