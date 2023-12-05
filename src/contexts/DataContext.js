@@ -62,13 +62,13 @@ export const DataProvider = ({ children }) => {
                     contributions: newContributions,
                 } = newData || {};
                 if (dateRef.current === null) {
-                    console.log('Initial data received', newData);
+                    // console.log('Initial data received', newData);
                     dateRef.current = newDate;
                     setData(newData);
                     setReady(true);
                     setInterval(getData, [pollingDelay * 1000]);
                 } else {
-                    console.log('Updated data received.', newData);
+                    // console.log('Updated data received.', newData);
                     if (dateRef.current !== newDate) {
                         dateRef.current = newDate;
                     }
