@@ -1,6 +1,6 @@
 {
     "app-title": "Vélo info",
-    "app-description": "Informations sur l’état des pistes cyclables en temps réel basées sur le déneigement et les contributions des utilisateurs.{br}On vous indique la piste à prendre!",
+    "app-description": "Informations sur l’état des pistes cyclables en temps réel basées sur les contributions des utilisateurs.{br}On vous indique la piste à prendre!",
     "add": "Ajouter",
     "add-state": "Ajouter un état",
     "add-comment": "Ajouter un {br}commentaire",
@@ -32,7 +32,7 @@
     "vote-negative": "Non",
     "troncons-status-title": "Statut des rues*",
     "troncons-status-note": "*Données de <a>Planif-Neige</a>",
-    "time-filter-all": "Depuis toujours",
+    "time-filter-all": "Toute la saison",
     "menu": "Menu",
     "no-comments": "Aucun commentaire",
     "reported": "Signalé",

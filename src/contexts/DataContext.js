@@ -16,7 +16,8 @@ import { getLinesFromTroncons, getMarkersFromContributions } from '../lib/map';
 import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
 
 const DataContext = createContext();
-const pollingDelay = 10; // seconds
+const pollingDelay = 30; // seconds
+const getDataFrom = Date.UTC(2023, 10, 1);
 
 export const DataProvider = ({ children }) => {
     const winterMode = useWinterMode();
@@ -49,7 +50,7 @@ export const DataProvider = ({ children }) => {
                 url: '/update',
                 method: 'get',
                 params: {
-                    from: dateRef.current,
+                    from: dateRef.current || getDataFrom / 1000,
                     troncons: winterMode
                 },
             })
@@ -61,13 +62,13 @@ export const DataProvider = ({ children }) => {
                     contributions: newContributions,
                 } = newData || {};
                 if (dateRef.current === null) {
-                    // console.log('Initial data received', newData);
+                    console.log('Initial data received', newData);
                     dateRef.current = newDate;
                     setData(newData);
                     setReady(true);
                     setInterval(getData, [pollingDelay * 1000]);
                 } else {
-                    // console.log('Updated data received.', newData);
+                    console.log('Updated data received.', newData);
                     if (dateRef.current !== newDate) {
                         dateRef.current = newDate;
                     }
