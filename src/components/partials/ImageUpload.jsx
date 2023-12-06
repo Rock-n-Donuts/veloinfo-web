@@ -34,8 +34,8 @@ function ImageUpload({ className, onChange, children }) {
             const { browser, os } = result || {};
             const { name: browserName } = browser || {};
             const { name: osName, version: osVersion } = os || {};
-            window.alert(browserName + ', ' + osName + ', ' + osVersion + ', ' + (browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13))
-            setIsChromeAndroid13(browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13);
+            window.alert(browserName + ', ' + osName + ', ' + osVersion + ', ' + (browserName === 'Mobile Chrome' && osName === 'Android' && parseFloat(osVersion) >= 13))
+            setIsChromeAndroid13(browserName === 'Mobile Chrome' && osName === 'Android' && parseFloat(osVersion) >= 13);
         });
     }, []);
     
