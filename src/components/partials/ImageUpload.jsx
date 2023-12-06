@@ -3,8 +3,12 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import UAParser from 'ua-parser-js';
 
 import styles from '../../styles/partials/image-upload.module.scss';
+
+const parser = new UAParser();
+const isChromeAndroid = parser !== null && parser.getBrowser()?.name === 'Chrome' && parser.getOS()?.name === 'Android';
 
 const propTypes = {
     className: PropTypes.string,
@@ -26,11 +30,16 @@ function ImageUpload({ className, onChange, children }) {
     const onChangePrivate = useCallback(
         (e) => {
             const file = e.target.files[0] || null;
-            setBlob(file ? URL.createObjectURL(file) : null);
+            if (file.type.includes('image/')) {
+                setBlob(file ? URL.createObjectURL(file) : null);
 
-            if (onChange !== null) {
-                onChange(file);
+                if (onChange !== null) {
+                    onChange(file);
+                }
+            } else {
+                window.alert('Veuillez sélectionner une image ('+file.type+')');
             }
+            
         },
         [onChange],
     );
@@ -42,7 +51,7 @@ function ImageUpload({ className, onChange, children }) {
             onChange(null);
         }
     }, [setBlob, onChange]);
-
+    
     return (
         <label
             className={classNames([
@@ -52,12 +61,7 @@ function ImageUpload({ className, onChange, children }) {
         >
             <div className={styles.content}>{children}</div>
             <img className={styles.selectedImage} src={blob} alt="preview" />
-            <input
-                ref={fileUploadRef}
-                type="file"
-                accept="image/*"
-                onChange={onChangePrivate}
-            />
+            <input ref={fileUploadRef} type="file" accept={isChromeAndroid ? null : 'capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png' } onChange={onChangePrivate} />
             <button type="button" className={styles.close} onClick={onCloseClick}>
                 <FontAwesomeIcon icon={faTrash} />
             </button>
