@@ -29,6 +29,7 @@ function ImageUpload({ className, onChange, children }) {
 
     const onChangePrivate = useCallback(
         (e) => {
+            window.alert(parser.getBrowser().version);
             const file = e.target.files[0] || null;
             if (file.type.includes('image/')) {
                 setBlob(file ? URL.createObjectURL(file) : null);
