@@ -43,14 +43,17 @@ function PhotoUploadMarker({ className, onPhotoLocated }) {
     const setPhotoValue = useCallback(
         (photo) => {
             if (photo) {
-                exifr.gps(photo).then(coords => {
-                    const { latitude = null, longitude = null } = coords || {};
-                    // alert(`${photo.type}, coords: [${latitude}, ${longitude}]`)
-                    const isValid = !isNaN(latitude) && latitude !== null && latitude !== 0 && !isNaN(longitude) && longitude !== null && longitude !== 0;
-                    if (isValid && onPhotoLocated !== null) {
-                        onPhotoLocated([longitude, latitude]);
-                    }
-                });
+                try {
+                    exifr.gps(photo).then(coords => {
+                        const { latitude = null, longitude = null } = coords || {};
+                        const isValid = !isNaN(latitude) && latitude !== null && latitude !== 0 && !isNaN(longitude) && longitude !== null && longitude !== 0;
+                        if (isValid && onPhotoLocated !== null) {
+                            onPhotoLocated([longitude, latitude]);
+                        }
+                    });
+                } catch(e) {
+                    console.error(e);
+                }
             }
             updateContribution({ photo });
         },

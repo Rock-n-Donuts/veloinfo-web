@@ -1,12 +1,12 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { UAParser } from 'ua-parser-js';
 
 import styles from '../../styles/partials/image-upload.module.scss';
-import { isDeviceMobile } from '../../lib/utils';
-import { useIntl } from 'react-intl';
 
 const propTypes = {
     className: PropTypes.string,
@@ -22,21 +22,43 @@ const defaultProps = {
 
 function ImageUpload({ className, onChange, children }) {
     const intl = useIntl();
-    const isMobile = useMemo(() => isDeviceMobile(), []);
     const [blob, setBlob] = useState(null);
     const hasFile = blob !== null;
     const fileUploadRef = useRef(null);
 
+    const [isChromeAndroid13, setIsChromeAndroid13] = useState(false);
+    useEffect(() => {
+        new UAParser()
+            .getResult()
+            .withClientHints()
+            .then(function (result) {
+                const { browser, os } = result || {};
+                const { name: browserName } = browser || {};
+                const { name: osName, version: osVersion } = os || {};
+                setIsChromeAndroid13(
+                    browserName.includes('Chrome') &&
+                        osName === 'Android' &&
+                        parseFloat(osVersion) >= 13,
+                );
+            });
+    }, []);
+
     const onChangePrivate = useCallback(
         (e) => {
             const file = e.target.files[0] || null;
-            if (['image/jpeg', 'image/jpg', 'image/png', 'image/heic'].indexOf(file.type) === -1) {
-                window.alert(intl.formatMessage({ id: 'select-image-only' }));
-            } else {
-                setBlob(file ? URL.createObjectURL(file) : null);
+            if (file !== null) {
+                if (
+                    ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'].indexOf(
+                        file.type,
+                    ) > -1
+                ) {
+                    setBlob(file ? URL.createObjectURL(file) : null);
 
-                if (onChange !== null) {
-                    onChange(file);
+                    if (onChange !== null) {
+                        onChange(file);
+                    }
+                } else {
+                    window.alert(intl.formatMessage({ id: 'select-image-only' }));
                 }
             }
         },
@@ -63,7 +85,11 @@ function ImageUpload({ className, onChange, children }) {
             <input
                 ref={fileUploadRef}
                 type="file"
-                accept={isMobile ? 'capture=camera' : 'image/jpeg, image/png, capture=camera'}
+                accept={
+                    isChromeAndroid13
+                        ? null
+                        : 'capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png'
+                }
                 onChange={onChangePrivate}
             />
             <button type="button" className={styles.close} onClick={onCloseClick}>
