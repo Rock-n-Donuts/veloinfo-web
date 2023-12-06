@@ -42,6 +42,7 @@
     "report": "Report",
     "send": "Send",
     "retry": "Retry",
+    "select-image-only": "Please select an image in the JPG/PNG format",
     "legend-separate-cycleway": "Separate bike path",
     "legend-path-bikes": "Path planned for bicycles",
     "legend-cycle-track": "Bike path on this side of the road",

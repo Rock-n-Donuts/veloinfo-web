@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,8 +8,7 @@ import UAParser from 'ua-parser-js';
 
 import styles from '../../styles/partials/image-upload.module.scss';
 
-const parser = new UAParser();
-const isChromeAndroid = parser !== null && parser.getBrowser()?.name === 'Chrome' && parser.getOS()?.name === 'Android';
+
 
 const propTypes = {
     className: PropTypes.string,
@@ -23,26 +23,37 @@ const defaultProps = {
 };
 
 function ImageUpload({ className, onChange, children }) {
+    const intl = useIntl();
     const [blob, setBlob] = useState(null);
     const hasFile = blob !== null;
     const fileUploadRef = useRef(null);
 
+    const isChromeAndroid13 = useMemo( () => {
+        const parser = new UAParser() || null;
+        const browser = parser !== null ? parser.getBrowser() : null;
+        const { name: browserName } = browser || {};
+        const os = parser !== null ? parser.getOS() : null;
+        const { name: osName, version: osVersion } = os || {};
+        return browserName === 'Chrome' && osName === 'Android' && osVersion === '13';
+    }, []);
+    
+
     const onChangePrivate = useCallback(
         (e) => {
-            window.alert(parser.getBrowser().version);
             const file = e.target.files[0] || null;
-            if (file.type.includes('image/')) {
-                setBlob(file ? URL.createObjectURL(file) : null);
-
-                if (onChange !== null) {
-                    onChange(file);
+            if (file !== null) {
+                if (['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'].indexOf(file.type) > -1) {
+                    setBlob(file ? URL.createObjectURL(file) : null);
+    
+                    if (onChange !== null) {
+                        onChange(file);
+                    }
+                } else {
+                    window.alert(intl.formatMessage({ id: 'select-image-only' }));
                 }
-            } else {
-                window.alert('Veuillez sélectionner une image ('+file.type+')');
             }
-            
         },
-        [onChange],
+        [onChange, intl],
     );
 
     const onCloseClick = useCallback(() => {
@@ -62,7 +73,7 @@ function ImageUpload({ className, onChange, children }) {
         >
             <div className={styles.content}>{children}</div>
             <img className={styles.selectedImage} src={blob} alt="preview" />
-            <input ref={fileUploadRef} type="file" accept={isChromeAndroid ? null : 'capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png' } onChange={onChangePrivate} />
+            <input ref={fileUploadRef} type="file" accept={isChromeAndroid13 ? null : 'capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png' } onChange={onChangePrivate} />
             <button type="button" className={styles.close} onClick={onCloseClick}>
                 <FontAwesomeIcon icon={faTrash} />
             </button>
