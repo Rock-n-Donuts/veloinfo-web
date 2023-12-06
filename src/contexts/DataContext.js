@@ -122,7 +122,7 @@ export const DataProvider = ({ children }) => {
         setError(null);
         axios
             .request({
-                url: useRawData ? '/raw' : useRawData,
+                url: useRawData ? '/raw' : '/update',
                 method: 'get',
                 params: {
                     from: dateRef.current,
