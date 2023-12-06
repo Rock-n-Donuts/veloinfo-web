@@ -17,6 +17,7 @@ import { getFilteredContributions, getFilteredTroncons } from '../lib/filters';
 
 const DataContext = createContext();
 const pollingDelay = 10; // seconds
+const useRawData = true;
 
 export const DataProvider = ({ children }) => {
     const winterMode = useWinterMode();
@@ -40,21 +41,97 @@ export const DataProvider = ({ children }) => {
             contributions: getFilteredContributions(contributions, newFilters),
         };
     }, []);
+    
+    const getParsedData = useCallback((data) => {
+        const { contributions = [], date, replies, votes, urlprefix, troncons = [] } = data || {};
+
+        const votesByContributions = votes.reduce((all, { contribution_id, ...vote }) => {
+            if (typeof all[contribution_id] === 'undefined') {
+                all[contribution_id] = [];
+            }
+            all[contribution_id].push(vote);
+            return all;
+        }, {});
+
+        const repliesByContributions = replies.reduce((all, { contribution_id, ...reply }) => {
+            if (typeof all[contribution_id] === 'undefined') {
+                all[contribution_id] = [];
+            }
+            all[contribution_id].push(reply);
+            return all;
+        }, {});
+
+        return {
+            contributions: contributions.map(({
+                id = null,
+                location = '0,0',
+                is_external = false,
+                external_photo = false,
+                photo_width = null,
+                photo_height = null,
+                photo_path = null,
+                created_at = null,
+                ...c
+            }) => {
+                const imageUrl = is_external ? external_photo : (photo_path !== null ? `${urlprefix}/uploads/${photo_path}` : null);
+                const contributionVotes = votesByContributions[id] || [];
+                const lastVote = contributionVotes.length > 0 ? contributionVotes[contributionVotes.length - 1] : null;
+                const { score: lastVoteScore = null, created_at: lastVoteDate = null } = lastVote || {};
+
+                const contributionReplies = repliesByContributions[id] || [];
+                const lastReply = contributionReplies.length > 0 ? contributionReplies[contributionReplies.length - 1] : null;
+                const { created_at: lastReplyDate = null } = lastReply || {};
+                let updatedAt = created_at;
+                if (lastVoteDate !== null && lastReplyDate !== null) {
+                    updatedAt = (lastVoteDate > lastReplyDate) ? lastVoteDate : lastReplyDate;
+                } else if (lastVoteDate !== null) {
+                    updatedAt = lastVoteDate;
+                } else if (lastReplyDate !== null) {
+                    updatedAt = lastReplyDate;
+                }
+
+                return {
+                    ...c,
+                    id,
+                    coords: location.split(','),
+                    is_external,
+                    image: {
+                        url: imageUrl,
+                        width: photo_width,
+                        height: photo_height,
+                        is_external,
+                    },
+                    score: {
+                        positive: contributionVotes.filter(({ score }) => score > 0).length,
+                        negative: contributionVotes.filter(({ score }) => score < 0).length,
+                        last_vote: lastVoteScore,
+                        last_vote_date: lastVoteDate
+                    },
+                    replies: contributionReplies,
+                    created_at,
+                    updated_at: updatedAt
+                }
+            }),
+            troncons,
+            date,
+        };
+    }, []);
 
     const getData = useCallback(() => {
         setLoading(true);
         setError(null);
         axios
             .request({
-                url: '/update',
+                url: useRawData ? '/raw' : useRawData,
                 method: 'get',
                 params: {
                     from: dateRef.current,
-                    troncons: winterMode
+                    troncons: useRawData ? null : winterMode
                 },
             })
             .then((res) => {
-                const { data: newData = null } = res || {};
+                const { data: receivedData = null } = res || {};
+                const newData = useRawData ? getParsedData(receivedData) : receivedData;
                 const {
                     date: newDate = null,
                     troncons: newTroncons,
@@ -109,7 +186,7 @@ export const DataProvider = ({ children }) => {
             })
             .catch((err) => setError(err))
             .finally(() => setLoading(false));
-    }, [winterMode]);
+    }, [winterMode, getParsedData]);
 
     useEffect(() => {
         if (user !== null) {
