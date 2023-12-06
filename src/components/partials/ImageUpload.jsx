@@ -55,7 +55,7 @@ function ImageUpload({ className, onChange, children }) {
             <input
                 ref={fileUploadRef}
                 type="file"
-                accept="capture=camera,image/*"
+                accept="image/*;capture=camera"
                 capture
                 onChange={onChangePrivate}
             />
