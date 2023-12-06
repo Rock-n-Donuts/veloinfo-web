@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import UAParser from 'ua-parser-js';
+import { UAParser } from 'ua-parser-js';
 
 import styles from '../../styles/partials/image-upload.module.scss';
 
@@ -34,7 +34,7 @@ function ImageUpload({ className, onChange, children }) {
         const { name: browserName } = browser || {};
         const os = parser !== null ? parser.getOS() : null;
         const { name: osName, version: osVersion } = os || {};
-        const isIt = browserName === 'Chrome' && osName === 'Android' && parseInt(osVersion) === 13;
+        const isIt = browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13;
         window.alert(isIt + ', ' + browserName + ', ' + osName + ', ' + osVersion + ', ' + typeof osVersion);
         return isIt;
     }, []);
