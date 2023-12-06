@@ -29,13 +29,19 @@ function ImageUpload({ className, onChange, children }) {
     const fileUploadRef = useRef(null);
 
     const isChromeAndroid13 = useMemo( () => {
+        const ua = new UAParser();
+
+        ua.getResult().withClientHints().then(function (result) {
+            window.alert(JSON.stringify(result));
+        });
+
         const parser = new UAParser() || null;
         const browser = parser !== null ? parser.getBrowser() : null;
         const { name: browserName } = browser || {};
         const os = parser !== null ? parser.getOS() : null;
         const { name: osName, version: osVersion } = os || {};
         const isIt = browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13;
-        window.alert(JSON.stringify(parser.getResult()));
+        
         return isIt;
     }, []);
     
