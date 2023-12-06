@@ -35,7 +35,7 @@ function ImageUpload({ className, onChange, children }) {
         const os = parser !== null ? parser.getOS() : null;
         const { name: osName, version: osVersion } = os || {};
         const isIt = browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13;
-        window.alert(isIt + ', ' + browserName + ', ' + osName + ', ' + osVersion + ', ' + typeof osVersion);
+        window.alert(JSON.stringify(parser.getResult()));
         return isIt;
     }, []);
     
