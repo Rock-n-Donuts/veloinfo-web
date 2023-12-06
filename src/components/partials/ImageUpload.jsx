@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -28,21 +28,15 @@ function ImageUpload({ className, onChange, children }) {
     const hasFile = blob !== null;
     const fileUploadRef = useRef(null);
 
-    const isChromeAndroid13 = useMemo( () => {
-        const ua = new UAParser();
-
-        ua.getResult().withClientHints().then(function (result) {
-            window.alert(JSON.stringify(result));
+    const [isChromeAndroid13, setIsChromeAndroid13] = useState(false);
+    useEffect(() => {
+        new UAParser().getResult().withClientHints().then(function (result) {
+            const { browser, os } = result || {};
+            const { name: browserName } = browser || {};
+            const { name: osName, version: osVersion } = os || {};
+            window.alert(browserName, osName, osVersion)
+            setIsChromeAndroid13(browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13);
         });
-
-        const parser = new UAParser() || null;
-        const browser = parser !== null ? parser.getBrowser() : null;
-        const { name: browserName } = browser || {};
-        const os = parser !== null ? parser.getOS() : null;
-        const { name: osName, version: osVersion } = os || {};
-        const isIt = browserName === 'Mobile Chrome' && osName === 'Android' && parseInt(osVersion) === 13;
-        
-        return isIt;
     }, []);
     
 
