@@ -39,6 +39,9 @@ export function isDeviceMobile() {
 }
 
 export function isSameLocation(location1, location2) {
+    if (location1 === null || location2 === null) {
+        return false;
+    }
     const diffLon = Math.abs(location1[0] - location2[0]);
     const diffLat = Math.abs(location1[1] - location2[1]);
     return diffLon + diffLat < 0.00001;
