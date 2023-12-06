@@ -8,8 +8,6 @@ import { UAParser } from 'ua-parser-js';
 
 import styles from '../../styles/partials/image-upload.module.scss';
 
-
-
 const propTypes = {
     className: PropTypes.string,
     onChange: PropTypes.func,
@@ -30,24 +28,32 @@ function ImageUpload({ className, onChange, children }) {
 
     const [isChromeAndroid13, setIsChromeAndroid13] = useState(false);
     useEffect(() => {
-        new UAParser().getResult().withClientHints().then(function (result) {
-            const { browser, os } = result || {};
-            const { name: browserName } = browser || {};
-            const { name: osName, version: osVersion } = os || {};
-            window.alert(browserName + ', ' + osName + ', ' + osVersion + ', ' + (browserName.includes('Chrome') && osName === 'Android' && parseFloat(osVersion) >= 13));
-            window.alert(JSON.stringify(result));
-            setIsChromeAndroid13(browserName.includes('Chrome') && osName === 'Android' && parseFloat(osVersion) >= 13);
-        });
+        new UAParser()
+            .getResult()
+            .withClientHints()
+            .then(function (result) {
+                const { browser, os } = result || {};
+                const { name: browserName } = browser || {};
+                const { name: osName, version: osVersion } = os || {};
+                setIsChromeAndroid13(
+                    browserName.includes('Chrome') &&
+                        osName === 'Android' &&
+                        parseFloat(osVersion) >= 13,
+                );
+            });
     }, []);
-    
 
     const onChangePrivate = useCallback(
         (e) => {
             const file = e.target.files[0] || null;
             if (file !== null) {
-                if (['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'].indexOf(file.type) > -1) {
+                if (
+                    ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'image/heif'].indexOf(
+                        file.type,
+                    ) > -1
+                ) {
                     setBlob(file ? URL.createObjectURL(file) : null);
-    
+
                     if (onChange !== null) {
                         onChange(file);
                     }
@@ -66,7 +72,7 @@ function ImageUpload({ className, onChange, children }) {
             onChange(null);
         }
     }, [setBlob, onChange]);
-    
+
     return (
         <label
             className={classNames([
@@ -76,7 +82,16 @@ function ImageUpload({ className, onChange, children }) {
         >
             <div className={styles.content}>{children}</div>
             <img className={styles.selectedImage} src={blob} alt="preview" />
-            <input ref={fileUploadRef} type="file" accept={isChromeAndroid13 ? null : 'capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png' } onChange={onChangePrivate} />
+            <input
+                ref={fileUploadRef}
+                type="file"
+                accept={
+                    isChromeAndroid13
+                        ? null
+                        : 'capture=camera, .heic, .heif, image/jpeg, image/jpg, image/png'
+                }
+                onChange={onChangePrivate}
+            />
             <button type="button" className={styles.close} onClick={onCloseClick}>
                 <FontAwesomeIcon icon={faTrash} />
             </button>
