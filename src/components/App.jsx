@@ -1,4 +1,5 @@
 // import PropTypes from 'prop-types';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Analytics } from '@vercel/analytics/react';
 import { IntlProvider } from 'react-intl';
 import { Route, Routes } from 'react-router-dom';
@@ -44,6 +45,7 @@ function App() {
                         <Route path="*" element={<ErrorPage />} />
                     </Routes>
                     { process.env.NODE_ENV === 'production' ? <Analytics /> : null }
+                    { process.env.NODE_ENV === 'production' ? <SpeedInsights /> : null }
                 </MainLayout>
             </GoogleReCaptchaProvider>
         </IntlProvider>
