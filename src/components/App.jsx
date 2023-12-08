@@ -1,6 +1,6 @@
 // import PropTypes from 'prop-types';
-// import { SpeedInsights } from '@vercel/speed-insights/react';
-// import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from '@vercel/analytics/react';
 import { IntlProvider } from 'react-intl';
 import { Route, Routes } from 'react-router-dom';
 import RelativeTimeFormat from 'relative-time-format';
@@ -15,7 +15,6 @@ import HomePage from './pages/Home';
 import ErrorPage from './pages/Error';
 import messagesFr from '../translations/fr.json';
 import messagesEn from '../translations/en.json';
-
 
 import '../styles/index.scss';
 
@@ -35,7 +34,10 @@ function App() {
     const locale = useLocale();
     return (
         <IntlProvider locale={locale} messages={messages[locale]}>
-            <GoogleReCaptchaProvider reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY} language={locale}>
+            <GoogleReCaptchaProvider
+                reCaptchaKey={process.env.REACT_APP_RECAPTCHA_V3_SITE_KEY}
+                language={locale}
+            >
                 <MainLayout>
                     <Routes>
                         <Route path="/" exact element={<HomePage />} />
@@ -44,8 +46,8 @@ function App() {
                         <Route path="/signaler" exact element={<HomePage report />} />
                         <Route path="*" element={<ErrorPage />} />
                     </Routes>
-                    {/* { process.env.NODE_ENV === 'production' ? <Analytics /> : null } */}
-                    {/* { process.env.NODE_ENV === 'production' ? <SpeedInsights /> : null } */}
+                    {process.env.NODE_ENV === 'production' ? <Analytics /> : null}
+                    {process.env.NODE_ENV === 'production' ? <SpeedInsights /> : null}
                 </MainLayout>
             </GoogleReCaptchaProvider>
         </IntlProvider>
