@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from 'react-intl';
-// import exifr from 'exifr';
+import exifr from 'exifr';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 
@@ -44,19 +44,19 @@ function PhotoUploadMarker({ className, onPhotoLocated }) {
         (photo) => {
             if (photo) {
                 // try {
-                // exifr.gps(photo).then((coords) => {
-                //     const { latitude = null, longitude = null } = coords || {};
-                //     const isValid =
-                //         !isNaN(latitude) &&
-                //         latitude !== null &&
-                //         latitude !== 0 &&
-                //         !isNaN(longitude) &&
-                //         longitude !== null &&
-                //         longitude !== 0;
-                //     if (isValid && onPhotoLocated !== null) {
-                //         onPhotoLocated([longitude, latitude]);
-                //     }
-                // });
+                exifr.gps(photo).then((coords) => {
+                    const { latitude = null, longitude = null } = coords || {};
+                    const isValid =
+                        !isNaN(latitude) &&
+                        latitude !== null &&
+                        latitude !== 0 &&
+                        !isNaN(longitude) &&
+                        longitude !== null &&
+                        longitude !== 0;
+                    if (isValid && onPhotoLocated !== null) {
+                        onPhotoLocated([longitude, latitude]);
+                    }
+                });
                 // } catch(e) {
                 // console.error(e);
                 // }
