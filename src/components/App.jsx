@@ -1,6 +1,6 @@
 // import PropTypes from 'prop-types';
-import { SpeedInsights } from '@vercel/speed-insights/react';
-import { Analytics } from '@vercel/analytics/react';
+// import { SpeedInsights } from '@vercel/speed-insights/react';
+// import { Analytics } from '@vercel/analytics/react';
 import { IntlProvider } from 'react-intl';
 import { Route, Routes } from 'react-router-dom';
 import RelativeTimeFormat from 'relative-time-format';
@@ -44,8 +44,8 @@ function App() {
                         <Route path="/signaler" exact element={<HomePage report />} />
                         <Route path="*" element={<ErrorPage />} />
                     </Routes>
-                    { process.env.NODE_ENV === 'production' ? <Analytics /> : null }
-                    { process.env.NODE_ENV === 'production' ? <SpeedInsights /> : null }
+                    {/* { process.env.NODE_ENV === 'production' ? <Analytics /> : null } */}
+                    {/* { process.env.NODE_ENV === 'production' ? <SpeedInsights /> : null } */}
                 </MainLayout>
             </GoogleReCaptchaProvider>
         </IntlProvider>
