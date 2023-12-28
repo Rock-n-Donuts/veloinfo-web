@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
-import ReCAPTCHA from '../partials/ReCAPTCHA';
 import FormGroup from './FormGroup';
 
 import styles from '../../styles/forms/reply.module.scss';
@@ -31,7 +31,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
 
-    const [captchaToken, setCaptchaToken] = useState(null);
+    const { executeRecaptcha } = useGoogleReCaptcha();
 
     const setNameValue = useCallback((e) => setName(e.target.value), [setName]);
     const setCommentValue = useCallback((e) => setComment(e.target.value), [setComment]);
@@ -44,10 +44,11 @@ function ReplyForm({ contributionId, className, onSuccess }) {
     }, [setName, setComment]);
 
     const submit = useCallback(
-        (e) => {
+        async (e) => {
             e.preventDefault();
 
-            if ((captchaToken || '').length === 0) {
+            const captchaToken = await executeRecaptcha('reply');
+            if (!captchaToken) {
                 setErrors(intl.formatMessage({ id: 'error-captcha' }));
                 return;
             }
@@ -95,7 +96,7 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                 });
         },
         [
-            captchaToken,
+            executeRecaptcha,
             contributionId,
             name,
             comment,
@@ -106,10 +107,6 @@ function ReplyForm({ contributionId, className, onSuccess }) {
             intl,
         ],
     );
-
-    const onCaptchaSuccess = useCallback((token) => {
-        setCaptchaToken(token);
-    }, []);
 
     return (
         <div
@@ -147,9 +144,6 @@ function ReplyForm({ contributionId, className, onSuccess }) {
                             label={intl.formatMessage({ id: 'upload-photo' })}
                         />
                     </FormGroup> */}
-                    <div className={styles.captcha}>
-                        <ReCAPTCHA onVerify={onCaptchaSuccess} />
-                    </div>
                     {errors !== null ? <div className={styles.errors}>{errors}</div> : null}
                 </div>
                 <div className={styles.actions}>

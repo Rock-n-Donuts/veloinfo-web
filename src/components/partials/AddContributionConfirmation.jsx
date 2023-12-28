@@ -4,12 +4,12 @@ import classNames from 'classnames';
 import { FormattedMessage, useIntl } from 'react-intl';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 
 import {
     useCompleteUserContribution,
     useUserCurrentContribution,
 } from '../../contexts/SiteContext';
-import ReCAPTCHA from './ReCAPTCHA';
 import Loading from './Loading';
 import CloseButton from '../buttons/Close';
 import contributionTypes from '../../data/contribution-types.json';
@@ -45,13 +45,21 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
     const userCurrentContribution = useUserCurrentContribution();
     const completeUserContribution = useCompleteUserContribution();
 
-    const [captchaToken, setCaptchaToken] = useState(null);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState(null);
     const hasErrors = errors !== null;
     const [success, setSuccess] = useState(false);
 
-    const submit = useCallback(() => {
+    const { executeRecaptcha } = useGoogleReCaptcha();
+
+    const submit = useCallback(async () => {
+
+        const captchaToken = await executeRecaptcha('contribute');
+        if (!captchaToken) {
+            setErrors(intl.formatMessage({ id: 'error-captcha' }));
+            return;
+        }
+
         const {
             type = null,
             coords = null,
@@ -67,11 +75,6 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
 
         if (coords === null) {
             setErrors(intl.formatMessage({ id: 'error-coords' }));
-            return;
-        }
-
-        if ((captchaToken || '').length === 0) {
-            setErrors(intl.formatMessage({ id: 'error-captcha' }));
             return;
         }
 
@@ -127,22 +130,18 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
                 setLoading(false);
             });
     }, [
-        captchaToken,
+        executeRecaptcha,
         userCurrentContribution,
         intl,
         completeUserContribution,
         onContributionSubmitted,
     ]);
 
-    const onCaptchaSuccess = useCallback( (token) => {
-        setCaptchaToken(token);
-    }, []);
-
     useEffect( () => {
-        if (confirmed && (captchaToken || '').length > 0) {
+        if (confirmed) {
             submit();
         }
-    }, [captchaToken, confirmed, submit]);
+    }, [confirmed, submit]);
 
     return (
         <div
@@ -157,9 +156,6 @@ function AddContributionConfirmation({ className, confirmed, onClose, onContribu
             ])}
         >
             <div className={styles.content}>
-                <div className={styles.captcha}>
-                    { confirmed ? <ReCAPTCHA onVerify={onCaptchaSuccess}  /> : null }                        
-                </div>
                 <div className={styles.errors}>
                     {errors}
                 </div>
