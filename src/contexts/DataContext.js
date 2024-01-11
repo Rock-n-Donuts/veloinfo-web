@@ -73,7 +73,7 @@ export const DataProvider = ({ children }) => {
                 created_at = null,
                 ...c
             }) => {
-                const imageUrl = is_external ? external_photo : (photo_path !== null ? `${urlprefix}/${photo_path}` : null);
+                const imageUrl = is_external ? external_photo : (photo_path !== null ? `${urlprefix}${photo_path}` : null);
                 const contributionVotes = votesByContributions[id] || [];
                 const lastVote = contributionVotes.length > 0 ? contributionVotes[contributionVotes.length - 1] : null;
                 const { score: lastVoteScore = null, created_at: lastVoteDate = null } = lastVote || {};
