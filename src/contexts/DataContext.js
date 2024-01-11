@@ -73,7 +73,7 @@ export const DataProvider = ({ children }) => {
                 created_at = null,
                 ...c
             }) => {
-                const imageUrl = is_external ? external_photo : (photo_path !== null ? `${urlprefix}/uploads/${photo_path}` : null);
+                const imageUrl = is_external ? external_photo : (photo_path !== null ? `${urlprefix}/${photo_path}` : null);
                 const contributionVotes = votesByContributions[id] || [];
                 const lastVote = contributionVotes.length > 0 ? contributionVotes[contributionVotes.length - 1] : null;
                 const { score: lastVoteScore = null, created_at: lastVoteDate = null } = lastVote || {};
@@ -93,7 +93,7 @@ export const DataProvider = ({ children }) => {
                 return {
                     ...c,
                     id,
-                    coords: location.split(','),
+                    coords: location.split(',').map(v => parseFloat(v)),
                     is_external,
                     image: {
                         url: imageUrl,

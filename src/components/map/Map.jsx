@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { fromLonLat, transform } from 'ol/proj';
+import { fromLonLat, toLonLat } from 'ol/proj';
 import { Point, LineString } from 'ol/geom';
 import { VectorImage, Tile as TileLayer, Vector as LayerVector } from 'ol/layer';
 import { Cluster, Vector as VectorSource, XYZ, OSM } from 'ol/source';
@@ -69,7 +69,7 @@ const defaultProps = {
     mapCenter: null,
     defaultMapCenter: [-73.561668, 45.508888], // MTL: [-73.561668, 45.508888] | QC: [-71.252131, 46.819584]
     zoom: null,
-    defaultZoom: 15,// MTL: 15 | QC: 11
+    defaultZoom: 15, // MTL: 15 | QC: 11
     followUserZoom: 18,
     maxZoom: 50,
     lines: null,
@@ -139,13 +139,10 @@ function Map({
         );
     }, []);
 
-    const getMapCenter = useCallback(
-        () => transform(mapRef.current.getView().getCenter(), 'EPSG:3857', 'EPSG:4326'),
-        [],
-    );
+    const getMapCenter = useCallback(() => toLonLat(mapRef.current.getView().getCenter()), []);
 
     const setMapCenter = useCallback((center) => {
-        mapRef.current.getView().setCenter(transform(center, 'EPSG:4326', 'EPSG:3857'));
+        mapRef.current.getView().setCenter(fromLonLat(center));
     }, []);
 
     const getMapZoom = useCallback(() => mapRef.current.getView().getZoom(), []);
@@ -331,7 +328,7 @@ function Map({
         function addFeature(params) {
             const { coords, data = null, clickable = false } = params;
             const { visible = false } = data || {};
-            const points = coords.map((coord) => transform(coord, 'EPSG:4326', 'EPSG:3857'));
+            const points = coords.map((coord) => fromLonLat(coord));
             const feature = new Feature({
                 geometry: new LineString(points),
                 attributes: { ...data, clickable },
@@ -527,11 +524,7 @@ function Map({
 
     useEffect(() => {
         if (mapRef.current !== null && mapCenter !== null) {
-            const lastCenter = transform(
-                mapRef.current.getView().getCenter(),
-                'EPSG:3857',
-                'EPSG:4326',
-            );
+            const lastCenter = toLonLat(mapRef.current.getView().getCenter());
             if (mapCenter[0] !== lastCenter[0] && mapCenter[1] !== lastCenter[1]) {
                 setMapCenter(mapCenter);
             }
