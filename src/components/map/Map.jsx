@@ -501,7 +501,7 @@ function Map({
             mapRef.current.getView().on('change:resolution', onChangeZoom);
             mapRef.current.on('moveend', onMoveEnd);
             mapRef.current.on('click', onMapClick);
-            // mapRef.current.on('pointermove', onMapPointerMove);
+            mapRef.current.on('pointermove', onMapPointerMove);
         }
 
         return () => {
@@ -510,7 +510,7 @@ function Map({
                 mapRef.current.getView().un('change:resolution', onChangeZoom);
                 mapRef.current.un('moveend', onMoveEnd);
                 mapRef.current.un('click', onMapClick);
-                // mapRef.current.un('pointermove', onMapPointerMove);
+                mapRef.current.un('pointermove', onMapPointerMove);
             }
         };
     }, [
