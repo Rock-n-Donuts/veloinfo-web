@@ -209,6 +209,10 @@
     }
 
     &.confirmationOpened {
+        .addContributionButton {
+            pointer-events: none;
+        }
+        
         .addContribution {
             transform: translateY(0);
         }
