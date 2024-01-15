@@ -64,9 +64,9 @@ function HomePage({ addContribution, report, mapLocationZoom }) {
     const hasType = type !== null;
     const confirmationOpened = addContribution && confirmed;
 
-    const isContributionSelected = selectedContributionId !== null;
     const ready = useReady();
     const contributionSelected = useContribution(selectedContributionId);
+    const isContributionSelected = selectedContributionId !== null && contributionSelected !== null;
     const { lines, markers } = useMapData();
     const contributions = useContributions();
     const contributionsCoords = useMemo(
