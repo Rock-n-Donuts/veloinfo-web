@@ -13,7 +13,7 @@ import {
     useReady,
     useContributions,
 } from '../../contexts/DataContext';
-import { useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
+import { useCustomMapLayer, useUserCurrentContribution, useUserUpdateContribution } from '../../contexts/SiteContext';
 import { isSameLocation } from '../../lib/utils';
 import Map from '../map/Map';
 import Meta from '../partials/Meta';
@@ -43,6 +43,7 @@ const defaultProps = {
 };
 
 function HomePage({ addContribution, report, mapLocationZoom }) {
+    const customMapLayer = useCustomMapLayer();
     const intl = useIntl();
     const { id: selectedContributionId = null } = useParams();
     const initialSelectedContributionId = useRef(selectedContributionId);
@@ -291,6 +292,7 @@ function HomePage({ addContribution, report, mapLocationZoom }) {
             </div>
             <div className={styles.mapContainer}>
                 <Map
+                    key={`${customMapLayer ? 'with-custom-map-layer'  : 'without-custom-map-layer'}`}
                     className={styles.map}
                     lines={lines}
                     markers={markers}

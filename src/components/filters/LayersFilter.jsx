@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { useWinterMode } from '../../contexts/SiteContext';
+import { useCustomMapLayer,useSetCustomMapLayer, useWinterMode } from '../../contexts/SiteContext';
 import { useFilters } from '../../contexts/FiltersContext';
 import CyclosmLegend from '../partials/CyclosmLegend';
 import ContributionIcon from '../../icons/Contribution';
@@ -31,6 +31,8 @@ const defaultProps = {
 function LayersFilter({ className, opened, onOpen, onClose }) {
     const { locale } = useIntl();
     const winterMode = useWinterMode();
+    const customMapLayer = useCustomMapLayer();
+    const setCustomMapLayer = useSetCustomMapLayer();
 
     const {
         contributionTypes: selectedContributionTypes,
@@ -218,7 +220,29 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
                                 </div>
                             ) : (
                                 <div className={styles.summerSection}>
-                                    <CyclosmLegend />
+                                    <button
+                                        className={classNames([
+                                            styles.customMapLayer,
+                                            { [styles.selected]: customMapLayer },
+                                        ])}
+                                        type="button"
+                                        onClick={() => {
+                                            setCustomMapLayer(!customMapLayer);
+                                        }}
+                                    >
+                                        <input
+                                            className={styles.checkbox}
+                                            type="checkbox"
+                                            checked={!customMapLayer}
+                                            readOnly
+                                        />
+                                        <span className={styles.label}><FormattedMessage id="bike-paths" /></span>
+                                    </button>
+                                    { !customMapLayer ? 
+                                        <CyclosmLegend />
+                                    : null }
+                                    
+                                    
                                 </div>
                             )}
                         </div>

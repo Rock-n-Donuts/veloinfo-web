@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLocation } from '@fortawesome/free-solid-svg-icons';
 import Cookies from 'js-cookie';
 
-import { useWinterMode } from '../../contexts/SiteContext';
+import { useCustomMapLayer, useWinterMode } from '../../contexts/SiteContext';
 import { useResizeObserver } from '../../hooks/useObserver';
 import { getColoredIcons } from '../../lib/map';
 import { isDeviceMobile, isSameLocation } from '../../lib/utils';
@@ -104,6 +104,7 @@ function Map({
     onLineClick,
     onReady,
 }) {
+    const customMapLayer = useCustomMapLayer();
     const winterMode = useWinterMode();
     const isMobile = useMemo(() => isDeviceMobile(), []);
     const [isHover, setIsHover] = useState(false);
@@ -309,7 +310,7 @@ function Map({
                         source: !isProd
                             ? new OSM()
                             : new XYZ({
-                                  url: winterMode
+                                  url: winterMode || customMapLayer
                                       ? `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
                                       : 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
                               }),
@@ -321,7 +322,7 @@ function Map({
             setReady(true);
             return mapRef.current;
         },
-        [defaultMapCenter, mapCenter, zoom, defaultZoom, maxZoom, disableInteractions, winterMode],
+        [defaultMapCenter, mapCenter, zoom, defaultZoom, maxZoom, disableInteractions, winterMode, customMapLayer],
     );
 
     const drawLines = useCallback((linesGroup) => {
@@ -500,7 +501,7 @@ function Map({
             mapRef.current.getView().on('change:resolution', onChangeZoom);
             mapRef.current.on('moveend', onMoveEnd);
             mapRef.current.on('click', onMapClick);
-            mapRef.current.on('pointermove', onMapPointerMove);
+            // mapRef.current.on('pointermove', onMapPointerMove);
         }
 
         return () => {
@@ -509,7 +510,7 @@ function Map({
                 mapRef.current.getView().un('change:resolution', onChangeZoom);
                 mapRef.current.un('moveend', onMoveEnd);
                 mapRef.current.un('click', onMapClick);
-                mapRef.current.un('pointermove', onMapPointerMove);
+                // mapRef.current.un('pointermove', onMapPointerMove);
             }
         };
     }, [

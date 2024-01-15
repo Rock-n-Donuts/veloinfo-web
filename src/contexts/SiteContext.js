@@ -15,10 +15,15 @@ export const SiteProvider = ({ children }) => {
     );
     const [userContributions, setUserContributions] = useState([]);
     const [winterMode, setWinterMode] = useState(Cookies.get('winterMode') === 'true' || false);
+    const [customMapLayer, setCustomMapLayer] = useState(Cookies.get('custom-map-layer') === 'true' || false);
 
     useEffect(() => {
         Cookies.set('locale', locale);
     }, [locale]);
+
+    useEffect(() => {
+        Cookies.set('custom-map-layer', customMapLayer);
+    }, [customMapLayer]);
 
     return (
         <SiteContext.Provider
@@ -28,7 +33,9 @@ export const SiteProvider = ({ children }) => {
                 userContributions,
                 setUserContributions,
                 winterMode,
-                setWinterMode
+                setWinterMode,
+                customMapLayer,
+                setCustomMapLayer
             }}
         >
             {children}
@@ -62,6 +69,16 @@ export const useWinterMode = () => {
 export const useSetWinterMode = () => {
     const { setWinterMode } = useSite();
     return setWinterMode;
+};
+
+export const useCustomMapLayer = () => {
+    const { customMapLayer } = useSite();
+    return customMapLayer;
+};
+
+export const useSetCustomMapLayer = () => {
+    const { setCustomMapLayer } = useSite();
+    return setCustomMapLayer;
 };
 
 export const useUserContributions = () => {
