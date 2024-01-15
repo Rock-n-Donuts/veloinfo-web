@@ -4,7 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 import classNames from 'classnames';
 import Cookie from 'js-cookie';
-import { v1 as uuid } from 'uuid';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import {
@@ -31,20 +30,19 @@ import LayersFilter from '../filters/LayersFilter';
 
 import styles from '../../styles/pages/home.module.scss';
 
-
 const propTypes = {
     addContribution: PropTypes.bool,
     report: PropTypes.bool,
     mapLocationZoom: PropTypes.number,
-}
+};
 
 const defaultProps = {
     addContribution: false,
     report: false,
     mapLocationZoom: 17,
-}
+};
 
-function HomePage({ addContribution, report, mapLocationZoom, }) {
+function HomePage({ addContribution, report, mapLocationZoom }) {
     const intl = useIntl();
     const { id: selectedContributionId = null } = useParams();
     const initialSelectedContributionId = useRef(selectedContributionId);
@@ -58,7 +56,6 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
     const [contributionDetailsActive, setContributionDetailsActive] = useState(false);
 
     const [contributionSubmited, setContributionSubmitted] = useState(false);
-    const [contributionKey, setContributionKey] = useState(uuid());
     const updateContribution = useUpdateContribution();
 
     const userCurrentContribution = useUserCurrentContribution();
@@ -72,7 +69,10 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
     const contributionSelected = useContribution(selectedContributionId);
     const { lines, markers } = useMapData();
     const contributions = useContributions();
-    const contributionsCoords = useMemo( () => (contributions || []).map(({ coords }) => coords), [contributions]);
+    const contributionsCoords = useMemo(
+        () => (contributions || []).map(({ coords }) => coords),
+        [contributions],
+    );
 
     const mapCenter = useMemo(() => {
         const cookieCenter = Cookie.get('mapCenter') || null;
@@ -133,9 +133,10 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
             setMainMapCenter(center);
             Cookie.set('mapCenter', JSON.stringify(center), { expires: 3650 });
             if (ready && !confirmed) {
-                const foundSame = contributionsCoords.find((coords) => isSameLocation(coords, center)) || null;
+                const foundSame =
+                    contributionsCoords.find((coords) => isSameLocation(coords, center)) || null;
                 userUpdateContribution({ coords: foundSame !== null ? null : center });
-            }            
+            }
         },
         [ready, userUpdateContribution, confirmed, contributionsCoords],
     );
@@ -161,7 +162,6 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
 
             setTimeout(() => {
                 setContributionSubmitted(false);
-                setContributionKey(uuid());
             }, 1000);
         },
         [setContributionSubmitted, updateContribution, goHome],
@@ -209,11 +209,12 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
         }
     }, [contributionSelected, addContribution, report]);
 
-    useEffect( () => {
+    useEffect(() => {
         if (ready) {
-            const foundSame = contributionsCoords.find((coords) => isSameLocation(coords, mainMapCenter)) || null;
+            const foundSame =
+                contributionsCoords.find((coords) => isSameLocation(coords, mainMapCenter)) || null;
             userUpdateContribution({ coords: foundSame !== null ? null : mainMapCenter });
-        }        
+        }
     }, [ready, contributionsCoords, mainMapCenter, userUpdateContribution]);
 
     const openReportLinks = useCallback(() => {
@@ -230,16 +231,19 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
         goHome();
     }, [goHome]);
 
-    const onPhotoLocated = useCallback( coords => {
-        setMainMapCenter(coords);
-        if (mainMap.current.getView().getZoom() < mapLocationZoom) {
-            setMainMapZoom(mapLocationZoom);
-        }        
-    }, [mapLocationZoom]);
+    const onPhotoLocated = useCallback(
+        (coords) => {
+            setMainMapCenter(coords);
+            if (mainMap.current.getView().getZoom() < mapLocationZoom) {
+                setMainMapZoom(mapLocationZoom);
+            }
+        },
+        [mapLocationZoom],
+    );
 
     const loading = !ready;
-    
-    const onMapReady = useCallback( ({ map }) => {
+
+    const onMapReady = useCallback(({ map }) => {
         mainMap.current = map;
     }, []);
 
@@ -298,7 +302,10 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
                     onReady={onMapReady}
                 />
                 <div className={styles.mapMarkerContainer}>
-                    <PhotoUploadMarker className={styles.mapMarker} key={contributionKey} onPhotoLocated={onPhotoLocated} />
+                    <PhotoUploadMarker
+                        className={styles.mapMarker}
+                        onPhotoLocated={onPhotoLocated}
+                    />
                 </div>
             </div>
             <AddContributionButton
@@ -316,7 +323,6 @@ function HomePage({ addContribution, report, mapLocationZoom, }) {
             />
             <HomeMenu className={styles.homeMenu} onClose={closeMenu} />
             <AddContributionConfirmation
-                key={contributionKey}
                 className={styles.addContribution}
                 confirmed={confirmationOpened}
                 onClose={closeAddContribution}
