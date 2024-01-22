@@ -13,7 +13,21 @@
         "color": "#367c99",
         "scale": 1.1,
         "disableAdd": true,
-        "hideCreatedDate": true
+        "hideCreatedDate": true,
+        "votes": {
+            "positive": {
+                "label": {
+                    "fr": "Cool!",
+                    "en": "Cool!"
+                }
+            },
+            "negative": {
+                "label": {
+                    "fr": "Bof...",
+                    "en": "Meh..."
+                }
+            }
+        }
     },
     {
         "id": 1,

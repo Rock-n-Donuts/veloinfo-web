@@ -66,7 +66,10 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         return comment;
     }, [comment, locale]);
 
-    const strippedComment = useMemo( () => (parsedComment || '').replace(/(<([^>]+)>)/gi, ''), [parsedComment]);
+    const strippedComment = useMemo(
+        () => (parsedComment || '').replace(/(<([^>]+)>)/gi, ''),
+        [parsedComment],
+    );
 
     const contributionType = contributionTypes.reduce((prev, ct) => {
         if (prev !== null) {
@@ -87,7 +90,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         label: contributionTypeLabel,
         icon: contributionTypeIcon,
         color: contributionTypeColor,
-        votes: contributionTypeVotes,
+        votes: contributionTypeVotes = null,
         hideCreatedDate: contributionTypeHideCreatedDate,
         qualities: contributionTypeQualities = null,
     } = contributionType || {};
@@ -128,10 +131,19 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             const lastActionVoted =
                 (!hasReply && hasVoted) ||
                 isAfter(parseISO(last_vote_date), parseISO(lastReplyDate));
+            console.log(contributionTypeVotes);
             return {
                 label: `${intl.formatMessage({ id: lastActionVoted ? 'voted' : 'replied' })}${
                     lastActionVoted
-                        ? ` "${(last_vote === 1 ? positiveVoteLabel : negativeVoteLabel)[locale]}"`
+                        ? ` "${
+                              contributionTypeVotes !== null
+                                  ? (last_vote === 1 ? positiveVoteLabel : negativeVoteLabel)[
+                                        locale
+                                    ]
+                                  : intl.formatMessage({
+                                        id: last_vote === 1 ? 'vote-positive' : 'vote-negative',
+                                    })
+                          }"`
                         : ``
                 }`,
                 author: lastActionVoted ? null : lastReplyName,
@@ -147,6 +159,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
         positiveVoteLabel,
         negativeVoteLabel,
         locale,
+        contributionTypeVotes,
     ]);
 
     const reversedReplies = useMemo(() => [...replies].reverse(), [replies]);
