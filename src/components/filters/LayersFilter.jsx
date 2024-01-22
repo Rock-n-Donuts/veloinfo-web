@@ -35,10 +35,10 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
     const setCustomMapLayer = useSetCustomMapLayer();
 
     const {
-        contributionTypes: selectedContributionTypes,
-        setContributionTypes,
-        tronconTypes: selectedTronconTypes,
-        setTronconTypes,
+        contributionsTypes: selectedContributionTypes,
+        setContributionsTypes,
+        tronconsTypes: selectedTronconTypes,
+        setTronconsTypes,
     } = useFilters();
 
     const toggleInArray = useCallback((old, item) => {
@@ -55,16 +55,16 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
 
     const toggleContributionType = useCallback(
         (type) => {
-            setContributionTypes((old) => toggleInArray(old, type));
+            setContributionsTypes((old) => toggleInArray(old, type));
         },
-        [setContributionTypes, toggleInArray],
+        [setContributionsTypes, toggleInArray],
     );
 
     const toggleTronconType = useCallback(
         (type) => {
-            setTronconTypes((old) => toggleInArray(old, type));
+            setTronconsTypes((old) => toggleInArray(old, type));
         },
-        [setTronconTypes, toggleInArray],
+        [setTronconsTypes, toggleInArray],
     );
 
     const onOpenClick = useCallback(() => {
@@ -100,7 +100,7 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
             <div className={styles.popupContainer}>
                 <div className={styles.popup}>
                     <div className={styles.content}>
-                        <div className={styles.contributionTypes}>
+                        <div className={styles.contributionsTypes}>
                             {contributionTypes.map(
                                 (
                                     {
@@ -152,7 +152,7 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
                         <div className={styles.section}>
                             {winterMode ? (
                                 <div className={styles.winterSection}>
-                                    <div className={styles.tronconTypes}>
+                                    <div className={styles.tronconsTypes}>
                                         {tronconTypes.map(({ key, label }, typeIndex) => {
                                             const selected = selectedTronconTypes.indexOf(key) > -1;
                                             return (

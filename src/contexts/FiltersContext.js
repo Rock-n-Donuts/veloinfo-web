@@ -6,7 +6,7 @@ import tronconTypes from '../data/troncon-types.json';
 const FiltersContext = createContext();
 const defaultfromTime = '5days';
 const defaultTronconsTypes = tronconTypes.map(({ key }) => key);
-const defaultContributionTypes = [1, 2];
+const defaultContributionTypes = [1, 2, 6];
 
 export const FiltersProvider = ({ children }) => {
     let cookiesFilters = null;
@@ -16,14 +16,14 @@ export const FiltersProvider = ({ children }) => {
 
     const {
         fromTime: cookieFromTime = null,
-        tronconTypes: cookieTronconsTypes = null,
-        contributionTypes: cookieContributionTypes = null,
+        tronconsTypes: cookieTronconsTypes = null,
+        contributionsTypes: cookieContributionTypes = null,
     } = cookiesFilters || {};
 
     const defaultFilters = {
         fromTime: cookieFromTime !== null ? cookieFromTime : defaultfromTime,
-        tronconTypes: cookieTronconsTypes !== null ? cookieTronconsTypes : defaultTronconsTypes,
-        contributionTypes:
+        tronconsTypes: cookieTronconsTypes !== null ? cookieTronconsTypes : defaultTronconsTypes,
+        contributionsTypes:
             cookieContributionTypes !== null
                 ? cookieContributionTypes.map((id) => `${id}`)
                 : defaultContributionTypes.map((id) => `${id}`),
@@ -32,24 +32,24 @@ export const FiltersProvider = ({ children }) => {
     
 
     const [fromTime, setFromTime] = useState(defaultFilters.fromTime);
-    const [contributionTypes, setContributionTypes] = useState(defaultFilters.contributionTypes);
-    const [tronconTypes, setTronconTypes] = useState(defaultFilters.tronconTypes);
+    const [contributionsTypes, setContributionsTypes] = useState(defaultFilters.contributionsTypes);
+    const [tronconsTypes, setTronconsTypes] = useState(defaultFilters.tronconsTypes);
 
     useEffect(() => {
-        Cookies.set('filters', JSON.stringify({ fromTime, contributionTypes, tronconTypes }), {
+        Cookies.set('filters', JSON.stringify({ fromTime, contributionsTypes, tronconsTypes }), {
             expires: 3650,
         });
-    }, [fromTime, contributionTypes, tronconTypes]);
+    }, [fromTime, contributionsTypes, tronconsTypes]);
 
     return (
         <FiltersContext.Provider
             value={{
                 fromTime,
-                contributionTypes,
-                tronconTypes,
+                contributionsTypes,
+                tronconsTypes,
                 setFromTime,
-                setContributionTypes,
-                setTronconTypes,
+                setContributionsTypes,
+                setTronconsTypes,
             }}
         >
             {children}
@@ -66,19 +66,19 @@ export const useFilters = () => {
 };
 
 export const useSelectedFilters = () => {
-    const { fromTime, contributionTypes, tronconTypes } = useFilters();
+    const { fromTime, contributionsTypes, tronconsTypes } = useFilters();
     const filters = useMemo(
-        () => ({ fromTime, contributionTypes, tronconTypes }),
-        [fromTime, contributionTypes, tronconTypes],
+        () => ({ fromTime, contributionsTypes, tronconsTypes }),
+        [fromTime, contributionsTypes, tronconsTypes],
     );
     return filters;
 };
 
 export const useSetFilters = () => {
-    const { setFromTime, setContributionTypes, setTronconTypes } = useFilters();
+    const { setFromTime, setContributionsTypes, setTronconsTypes } = useFilters();
     const setFilters = useMemo(
-        () => ({ setFromTime, setContributionTypes, setTronconTypes }),
-        [setFromTime, setContributionTypes, setTronconTypes],
+        () => ({ setFromTime, setContributionsTypes, setTronconsTypes }),
+        [setFromTime, setContributionsTypes, setTronconsTypes],
     );
     return setFilters;
 };
