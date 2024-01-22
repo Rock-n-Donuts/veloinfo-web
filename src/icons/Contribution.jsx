@@ -7,7 +7,7 @@ import styles from '../styles/icons/contribution.module.scss';
 import { usePrevious } from '../hooks/usePrevious';
 
 const propTypes = {
-    icon: PropTypes.oneOf(['snow', 'warning', 'parking', 'heart', 'repair', 'camera']),
+    icon: PropTypes.oneOf(['snow', 'warning', 'parking', 'heart', 'repair', 'camera', 'calendar']),
     color: PropTypes.string,
     withoutMarker: PropTypes.bool,
     className: PropTypes.string,

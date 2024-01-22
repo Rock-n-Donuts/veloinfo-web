@@ -6,6 +6,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { v1 as uuid } from 'uuid';
 import axios from 'axios';
 import { isAfter, parseISO } from 'date-fns';
+import parse from 'html-react-parser';
 
 import { useUpdateContribution } from '../../contexts/DataContext';
 import Meta from './Meta';
@@ -53,6 +54,20 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
     const intl = useIntl();
     const { locale } = intl;
 
+    const parsedComment = useMemo(() => {
+        if (comment !== null && comment.length > 0) {
+            try {
+                const jsonComment = JSON.parse(comment);
+                return jsonComment[locale];
+            } catch {
+                return comment;
+            }
+        }
+        return comment;
+    }, [comment, locale]);
+
+    const strippedComment = useMemo( () => (parsedComment || '').replace(/(<([^>]+)>)/gi, ''), [parsedComment]);
+
     const contributionType = contributionTypes.reduce((prev, ct) => {
         if (prev !== null) {
             return prev;
@@ -81,8 +96,11 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             ? contributionTypeQualities.find(({ value }) => `${value}` === `${quality}`)
             : null;
 
-    const { icon: contributionTypeQualityIcon = null, color: contributionTypeQualityColor = null, label: contributionTypeQualityLabel = null } =
-        contributionTypeQuality || {};
+    const {
+        icon: contributionTypeQualityIcon = null,
+        color: contributionTypeQualityColor = null,
+        label: contributionTypeQualityLabel = null,
+    } = contributionTypeQuality || {};
     const finalContributionIcon =
         contributionTypeQualityIcon !== null ? contributionTypeQualityColor : contributionTypeIcon;
     const contributionColor =
@@ -312,8 +330,12 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             {contribution !== null ? (
                 <div className={styles.content}>
                     <Meta
-                        title={`${issue_id}` === '1' ? `${createdAtParsedTime} - ${contributionTypeQualityLabel[locale]} #${id}` : `${contributionTypeLabel[locale]} #${id} - ${comment}`}
-                        description={`${comment}${
+                        title={
+                            `${issue_id}` === '1'
+                                ? `${createdAtParsedTime} - ${contributionTypeQualityLabel[locale]} #${id}`
+                                : `${contributionTypeLabel[locale]} #${id} - ${strippedComment}`
+                        }
+                        description={`${strippedComment}${
                             name !== null && name.length > 0 ? ` - ${name}` : ``
                         }`}
                         image={imageUrl}
@@ -329,7 +351,11 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         />
                         <div className={styles.labelContainer}>
                             <div className={styles.label}>{contributionTypeLabel[locale]}</div>
-                            { contributionTypeQualityLabel !== null ? <div className={styles.qualityLabel}>{contributionTypeQualityLabel[locale]}</div> : null }
+                            {contributionTypeQualityLabel !== null ? (
+                                <div className={styles.qualityLabel}>
+                                    {contributionTypeQualityLabel[locale]}
+                                </div>
+                            ) : null}
                         </div>
                     </div>
                     <div className={styles.dates}>
@@ -357,7 +383,7 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         ) : null}
                     </div>
                     {comment !== null && comment.length > 0 ? (
-                        <div className={styles.comment}>{comment}</div>
+                        <div className={styles.comment}>{parse(parsedComment)}</div>
                     ) : null}
                     {hasMedia ? (
                         <div className={styles.media}>

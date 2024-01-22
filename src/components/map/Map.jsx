@@ -452,7 +452,7 @@ function Map({
                                     src,
                                     img,
                                     imgSize: !src && img ? [img.width, img.height] : undefined,
-                                    scale: scale,
+                                    scale,
                                 }),
                                 text:
                                     length > 1

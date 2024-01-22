@@ -4,6 +4,7 @@ import parking from './parking.svg';
 import repair from './repair.svg';
 import heart from './heart.svg';
 import camera from './camera.svg';
+import calendar from './calendar.svg';
 
 const all = {
     snow,
@@ -11,7 +12,8 @@ const all = {
     parking,
     repair,
     heart,
-    camera
+    camera,
+    calendar
 };
 
 export default all;

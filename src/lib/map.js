@@ -100,6 +100,7 @@ export function getMarkersFromContributions(contributions) {
             quality = false,
             value,
             gray = false,
+            scale = 1,
             withoutMarker,
         }) => ({
             features: contributions
@@ -128,7 +129,7 @@ export function getMarkersFromContributions(contributions) {
                     data: contribution,
                     clickable: true,
                 })),
-            scale: `${id}` === '1' ? 1 : 0.5,
+            scale,
             id,
             icon,
             color,

@@ -1,13 +1,29 @@
 [
     {
+        "id": 6,
+        "label": {
+            "fr": "Événement",
+            "en": "Event"
+        },
+        "labelPlural":{
+            "fr": "Événements",
+            "en": "Events"
+        },
+        "icon": "calendar",
+        "color": "#367c99",
+        "scale": 1.1,
+        "disableAdd": true,
+        "hideCreatedDate": true
+    },
+    {
         "id": 1,
         "label": {
             "fr": "État de la piste",
             "en": "Cycle path state"
         },
         "icon": "snow",
-        "color": "#367c99",
-        "scale": 2,
+        "color": "#f09035",
+        "scale": 1,
         "votes": {
             "positive": {
                 "color": "#f09035",
@@ -63,6 +79,7 @@
         },
         "icon": "camera",
         "color": "#000000",
+        "scale": 0.5,
         "disableAdd": true,
         "hideCreatedDate": true,
         "withoutMarker": true,
@@ -93,7 +110,8 @@
         },
         "disableAdd": true,
         "icon": "parking",
-        "color": "#439667"
+        "color": "#439667",
+        "scale": 0.5
     },
     {
         "id": 4,
@@ -107,7 +125,8 @@
         },
         "disableAdd": true,
         "icon": "repair",
-        "color": "#439667"
+        "color": "#439667",
+        "scale": 0.5
     },
     {
         "id": 5,
@@ -121,6 +140,7 @@
         },
         "disableAdd": true,
         "icon": "heart",
-        "color": "#439667"
+        "color": "#439667",
+        "scale": 0.5
     }
 ]
