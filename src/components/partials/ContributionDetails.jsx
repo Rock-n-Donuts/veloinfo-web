@@ -131,7 +131,6 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
             const lastActionVoted =
                 (!hasReply && hasVoted) ||
                 isAfter(parseISO(last_vote_date), parseISO(lastReplyDate));
-            console.log(contributionTypeVotes);
             return {
                 label: `${intl.formatMessage({ id: lastActionVoted ? 'voted' : 'replied' })}${
                     lastActionVoted
