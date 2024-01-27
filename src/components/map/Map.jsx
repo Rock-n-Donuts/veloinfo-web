@@ -307,8 +307,8 @@ function Map({
                 view,
                 layers: [
                     new TileLayer({
-                        source: !isProd
-                            ? new OSM() || customMapLayer
+                        source: !isProd || customMapLayer
+                            ? new OSM()
                             : new XYZ({
                                   url: winterMode
                                       ? `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
