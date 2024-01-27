@@ -308,9 +308,9 @@ function Map({
                 layers: [
                     new TileLayer({
                         source: !isProd
-                            ? new OSM()
+                            ? new OSM() || customMapLayer
                             : new XYZ({
-                                  url: winterMode || customMapLayer
+                                  url: winterMode
                                       ? `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
                                       : 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
                               }),
