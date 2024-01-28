@@ -15,7 +15,7 @@ export const SiteProvider = ({ children }) => {
     );
     const [userContributions, setUserContributions] = useState([]);
     const [winterMode, setWinterMode] = useState(Cookies.get('winterMode') === 'true' || false);
-    const [customMapLayer, setCustomMapLayer] = useState(Cookies.get('custom-map-layer') === 'true' || false);
+    const [customMapLayer, setCustomMapLayer] = useState(Cookies.get('customMapLayer') === 'true' || false);
 
     useEffect(() => {
         Cookies.set('locale', locale);
