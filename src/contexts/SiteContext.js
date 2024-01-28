@@ -22,7 +22,7 @@ export const SiteProvider = ({ children }) => {
     }, [locale]);
 
     useEffect(() => {
-        Cookies.set('custom-map-layer', customMapLayer);
+        Cookies.set('customMapLayer', customMapLayer);
     }, [customMapLayer]);
 
     return (
