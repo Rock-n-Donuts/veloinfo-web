@@ -395,7 +395,9 @@ function ContributionDetails({ className, contribution, children, onClose, onRea
                         ) : null}
                     </div>
                     {comment !== null && comment.length > 0 ? (
-                        <div className={styles.comment}>{parse(parsedComment)}</div>
+                        <div className={styles.comment}>
+                            <div className={styles.body}>{parse(parsedComment)}</div>
+                        </div>
                     ) : null}
                     {hasMedia ? (
                         <div className={styles.media}>
