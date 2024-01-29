@@ -58,9 +58,9 @@
     }
 
     .comment {
+        text-wrap: pretty;
         white-space: pre-line;
         margin-bottom: 20px;
-        text-wrap: pretty;
 
         h1, h2, h3, h4, h5, h6, b, em {
             font-weight: bold;
