@@ -25,3 +25,4 @@ yarn-error.log*
 
 #custom
 /data
+/cameras_images
