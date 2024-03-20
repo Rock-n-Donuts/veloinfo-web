@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { useCustomMapLayer,useSetCustomMapLayer, useWinterMode } from '../../contexts/SiteContext';
+import { useCustomMapLayer, useSetCustomMapLayer, useWinterMode } from '../../contexts/SiteContext';
 import { useFilters } from '../../contexts/FiltersContext';
 import CyclosmLegend from '../partials/CyclosmLegend';
 import ContributionIcon from '../../icons/Contribution';
@@ -101,7 +101,7 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
                 <div className={styles.popup}>
                     <div className={styles.content}>
                         <div className={styles.contributionsTypes}>
-                            {contributionTypes.map(
+                            {contributionTypes.filter(({ hidden = false }) => !hidden).map(
                                 (
                                     {
                                         id,
@@ -238,11 +238,11 @@ function LayersFilter({ className, opened, onOpen, onClose }) {
                                         />
                                         <span className={styles.label}><FormattedMessage id="bike-paths" /></span>
                                     </button>
-                                    { !customMapLayer ? 
+                                    {!customMapLayer ?
                                         <CyclosmLegend />
-                                    : null }
-                                    
-                                    
+                                        : null}
+
+
                                 </div>
                             )}
                         </div>

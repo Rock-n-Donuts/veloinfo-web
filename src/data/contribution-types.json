@@ -5,7 +5,7 @@
             "fr": "Événement",
             "en": "Event"
         },
-        "labelPlural":{
+        "labelPlural": {
             "fr": "Événements",
             "en": "Events"
         },
@@ -61,7 +61,7 @@
                     "fr": "Praticable",
                     "en": "Bikable"
                 },
-                "color": "#439666"                
+                "color": "#439666"
             },
             {
                 "value": 0,
@@ -69,7 +69,7 @@
                     "fr": "Conduite défensive",
                     "en": "Defensive biking"
                 },
-                "color": "#f09035"                
+                "color": "#f09035"
             },
             {
                 "value": -1,
@@ -97,6 +97,7 @@
         "disableAdd": true,
         "hideCreatedDate": true,
         "withoutMarker": true,
+        "hidden": true,
         "votes": {
             "positive": {
                 "label": {

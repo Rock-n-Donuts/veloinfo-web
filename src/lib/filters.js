@@ -2,6 +2,7 @@ import { addDays, addHours, isBefore } from 'date-fns';
 
 import { parseDate } from './utils';
 import timeChoices from '../data/time-filter-choices.json';
+import contributionTypes from '../data/contribution-types.json';
 
 export const getFilteredTroncons = (troncons, filters) => {
     const { tronconsTypes = [] } = filters || {};
@@ -19,20 +20,22 @@ export const getFilteredTroncons = (troncons, filters) => {
 };
 
 export const getFilteredContributions = (contributions, filters) => {
-    const { contributionsTypes = [], fromTime: fromTimeKey = null } = filters || {};
+    const { contributionsTypes: contributionTypesFilters = [], fromTime: fromTimeKey = null } = filters || {};
     const fromTime = timeChoices.find(({ key }) => key === fromTimeKey) || null;
+
+    const hiddenIds = contributionTypes.filter(({ hidden = false }) => hidden).map(({ id }) => id);
 
     return [...(contributions || [])].map((contribution) => {
         const { issue_id, updated_at } = contribution;
-        const validType = contributionsTypes.indexOf(`${issue_id}`) > -1;
+        const validType = contributionTypesFilters.indexOf(`${issue_id}`) > -1;
         const { days = 0, hours = 0 } = fromTime || {};
 
         const validStatefromTime =
             `${issue_id}` !== `${1}` ||
             fromTime === null ||
             isBefore(addDays(addHours(new Date(), -hours), -days), parseDate(updated_at));
-        
-        const visible = validType && validStatefromTime;
+
+        const visible = validType && validStatefromTime && hiddenIds.indexOf(issue_id) === -1;
         return { ...contribution, visible };
     });
 };

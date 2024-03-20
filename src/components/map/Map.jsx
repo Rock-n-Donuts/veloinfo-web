@@ -25,7 +25,6 @@ import MapMarker from './MapMarker';
 import styles from '../../styles/map/map.module.scss';
 import Loading from '../partials/Loading';
 
-const isProd = process.env.NODE_ENV === 'production';
 const jawgId = process.env.REACT_APP_JAWG_ID;
 const jawgToken = process.env.REACT_APP_JAWG_TOKEN;
 
@@ -307,13 +306,13 @@ function Map({
                 view,
                 layers: [
                     new TileLayer({
-                        source: !isProd || customMapLayer
+                        source: customMapLayer
                             ? new OSM()
                             : new XYZ({
-                                  url: winterMode
-                                      ? `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
-                                      : 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
-                              }),
+                                url: winterMode
+                                    ? `https://tile.jawg.io/${jawgId}/{z}/{x}/{y}.png?access-token=${jawgToken}`
+                                    : 'https://{a-c}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png',
+                            }),
                     }),
                     currentPositionLayerBg.current,
                     currentPositionLayer.current,
@@ -457,19 +456,19 @@ function Map({
                                 text:
                                     length > 1
                                         ? new Text({
-                                              text: length.toString(),
-                                              offsetX: 6,
-                                              offsetY: -3,
-                                              scale: scale * 2,
-                                              font: '12px Arial',
-                                              fill: new Fill({
-                                                  color: '#FFF',
-                                              }),
-                                              stroke: new Stroke({
-                                                  color,
-                                                  width: 5,
-                                              }),
-                                          })
+                                            text: length.toString(),
+                                            offsetX: 6,
+                                            offsetY: -3,
+                                            scale: scale * 2,
+                                            font: '12px Arial',
+                                            fill: new Fill({
+                                                color: '#FFF',
+                                            }),
+                                            stroke: new Stroke({
+                                                color,
+                                                width: 5,
+                                            }),
+                                        })
                                         : undefined,
                             });
                             styleCache[length] = style;
